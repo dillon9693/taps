@@ -4,8 +4,20 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+"psycopg2" = "*"
+sqlalchemy = "*"
+flask = "*"
+flask-restful = "*"
+marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
+black = "*"
+pytest = "*"
+"flake8" = "*"
+mypy = "*"
+pydocstyle = "*"
+rope = "*"
 
 [requires]
 python_version = "3.7"
