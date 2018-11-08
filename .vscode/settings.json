@@ -13,6 +13,7 @@
   "editor.wordWrapColumn": 88,
   "editor.wordWrap": "wordWrapColumn",
   "files.exclude": {
+    "**/__pycache__": true,
     "**/.venv": true,
     "**/.mypy_cache": true,
     "**/.pytest_cache": true
