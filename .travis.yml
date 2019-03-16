@@ -9,4 +9,7 @@ cache:
 script:
   - cd client
   - npm ci
+  # Run prettier format check
+  - npm run format check
+  # Run tests
   - npm test
