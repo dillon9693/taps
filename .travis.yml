@@ -10,7 +10,7 @@ script:
   - cd client
   - npm ci
   # Run prettier format check
-  - npm run format check
+  - npm run format:check
   # Run linter
   - npm run lint
   # Run tests
