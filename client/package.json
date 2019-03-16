@@ -16,7 +16,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "format:check": "prettier --check \"src/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.{css,js,json,md,scss,ts,tsx}\"",
     "lint": "eslint src/**/*.{js,ts,tsx}",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
