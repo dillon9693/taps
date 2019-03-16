@@ -1,0 +1,16 @@
+matrix:
+  include:
+    - language: node_js
+      node_js:
+        - "lts/*"
+      cache:
+        directories:
+          - "$HOME/.npm"
+      before_install:
+        - cd client
+      install:
+        - npm ci
+      script:
+        - npm run format:check
+        - npm run lint
+        - npm test
