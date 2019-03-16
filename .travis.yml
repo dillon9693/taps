@@ -1,18 +1,19 @@
-language: node_js
-node_js:
-  - "lts/*"
-
-cache:
-  directories:
-    - "$HOME/.npm"
-
-script:
-  - cd client
-  # Install npm dependencies
-  - npm ci
-  # Run prettier format check
-  - npm run format:check
-  # Run linter
-  - npm run lint
-  # Run tests
-  - npm test
+matrix:
+  include:
+    - language: node_js
+      node_js:
+        - "lts/*"
+      cache:
+        directories:
+          - "$HOME/.npm"
+      before_install:
+        - cd client
+      install:
+        - npm ci
+      script:
+        # Run prettier format check
+        - npm run format:check
+        # Run linter
+        - npm run lint
+        # Run tests
+        - npm test
