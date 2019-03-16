@@ -11,5 +11,7 @@ script:
   - npm ci
   # Run prettier format check
   - npm run format check
+  # Run linter
+  - npm run lint
   # Run tests
   - npm test
