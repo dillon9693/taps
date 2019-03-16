@@ -8,6 +8,7 @@ cache:
 
 script:
   - cd client
+  # Install npm dependencies
   - npm ci
   # Run prettier format check
   - npm run format:check
