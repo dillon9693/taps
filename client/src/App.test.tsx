@@ -13,3 +13,7 @@ test.skip("renders learn react link", () => {
 
   expect(getByText(/learn/i)).toBeInTheDocument();
 });
+
+test("dummy test", () => {
+  expect(1).toEqual(1);
+});
