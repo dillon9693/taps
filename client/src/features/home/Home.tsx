@@ -1,5 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import Tag from "../../components/Tag/Tag";
+import styles from "./Home.module.scss";
 import { selectTopBeers, selectTopTags } from "./homeSlice";
 
 export function Home() {
@@ -9,16 +11,16 @@ export function Home() {
   return (
     <div>
       <h2>Top Tags</h2>
-      <div>
-        {topTags.map(beer => (
-          <div>{beer.name}</div>
+      <div className={styles.tags}>
+        {topTags.map(tag => (
+          <Tag key={tag.name} name={tag.name} />
         ))}
       </div>
 
       <h2>Top Beers</h2>
-      <div>
+      <div className={styles.tags}>
         {topBeers.map(beer => (
-          <div>{beer.name}</div>
+          <Tag key={beer.name} name={beer.name} />
         ))}
       </div>
     </div>
