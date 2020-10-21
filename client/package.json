@@ -21,6 +21,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "format:all": "prettier --write \"src/**/*.{css,js,json,md,scss,ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{css,js,json,md,scss,ts,tsx}\"",
     "lint": "eslint src/**/*.{js,ts,tsx}",
     "test": "react-scripts test",
