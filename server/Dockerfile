@@ -20,5 +20,9 @@ COPY poetry.lock pyproject.toml ./
 RUN $HOME/.poetry/bin/poetry install --no-dev
 RUN $HOME/.poetry/bin/poetry show
 
+COPY ./entrypoint.sh .
+
 # copy project
 COPY . .
+
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
