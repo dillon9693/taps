@@ -3,15 +3,18 @@ from graphene_django import DjangoObjectType
 
 from taps.models import Beer, Brewery
 
+
 class BreweryType(DjangoObjectType):
     class Meta:
         model = Brewery
         fields = ("id", "name", "beers")
 
+
 class BeerType(DjangoObjectType):
     class Meta:
         model = Beer
         fields = ("id", "name", "brewery")
+
 
 class Query(graphene.ObjectType):
     all_beers = graphene.List(BeerType)
@@ -25,5 +28,6 @@ class Query(graphene.ObjectType):
             return Brewery.objects.get(name=name)
         except Brewery.DoesNotExist:
             return None
+
 
 schema = graphene.Schema(query=Query)
