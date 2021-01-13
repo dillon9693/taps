@@ -1,0 +1,12 @@
+[
+  {
+    "model": "taps.beer",
+    "pk": 1,
+    "fields": { "name": "Whirlpool", "brewery": 1 }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 2,
+    "fields": { "name": "Sip of Sunshine", "brewery": 1 }
+  }
+]

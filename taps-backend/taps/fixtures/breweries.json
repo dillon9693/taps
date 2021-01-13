@@ -1,0 +1,12 @@
+[
+  {
+    "model": "taps.brewery",
+    "pk": 1,
+    "fields": { "name": "Night Shift Brewing" }
+  },
+  {
+    "model": "taps.brewery",
+    "pk": 2,
+    "fields": { "name": "Lawson's Finest Liquids" }
+  }
+]
