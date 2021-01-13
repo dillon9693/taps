@@ -23,7 +23,7 @@ class Query(graphene.ObjectType):
     def resolve_all_beers(root, info):
         return Beer.objects.select_related("brewery").all()
 
-    def resolve_brewery_by_name(root, info):
+    def resolve_brewery_by_name(root, info, name):
         try:
             return Brewery.objects.get(name=name)
         except Brewery.DoesNotExist:
