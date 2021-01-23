@@ -43,7 +43,7 @@ class Query(graphene.ObjectType):
         return (
             Tag.objects.prefetch_related("beers")
             .annotate(beer_count=Count("beers"))
-            .order_by("-beer_count")[:count]
+            .order_by("-beer_count", "name")[:count]
         )
 
 
