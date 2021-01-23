@@ -74,6 +74,14 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Django-environ allows you to utilize 12factor inspired environment variables to configure your Django application."
+name = "django-environ"
+optional = false
+python-versions = "*"
+version = "0.4.5"
+
+[[package]]
+category = "main"
 description = "GraphQL Framework for Python"
 name = "graphene"
 optional = false
@@ -265,7 +273,7 @@ python-versions = "*"
 version = "3.7.4.3"
 
 [metadata]
-content-hash = "ae7551abe69151283912ccc75edc695baee7b0e9cb0b8c057811ed7032d4d535"
+content-hash = "abfc89dc285f09128513d128ce94ce14ad98aca2673deb680d129f1001b58c1a"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -291,6 +299,10 @@ click = [
 django = [
     {file = "Django-3.1.5-py3-none-any.whl", hash = "sha256:efa2ab96b33b20c2182db93147a0c3cd7769d418926f9e9f140a60dca7c64ca9"},
     {file = "Django-3.1.5.tar.gz", hash = "sha256:2d78425ba74c7a1a74b196058b261b9733a8570782f4e2828974777ccca7edf7"},
+]
+django-environ = [
+    {file = "django-environ-0.4.5.tar.gz", hash = "sha256:6c9d87660142608f63ec7d5ce5564c49b603ea8ff25da595fd6098f6dc82afde"},
+    {file = "django_environ-0.4.5-py2.py3-none-any.whl", hash = "sha256:c57b3c11ec1f319d9474e3e5a79134f40174b17c7cc024bbb2fad84646b120c4"},
 ]
 graphene = [
     {file = "graphene-2.1.8-py2.py3-none-any.whl", hash = "sha256:09165f03e1591b76bf57b133482db9be6dac72c74b0a628d3c93182af9c5a896"},
