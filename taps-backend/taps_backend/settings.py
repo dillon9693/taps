@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+import environ
+
+root = environ.Path(__file__)
+env = environ.Env()
+environ.Env.read_env()
+
+SITE_ROOT = root()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,10 +28,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "4mbmtfp_&y+ug6wb(wa-cejvu-0rt3rfrecl854en6*-1vss%n"
+SECRET_KEY = env.str("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -75,12 +84,7 @@ WSGI_APPLICATION = "taps_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+DATABASES = {"default": env.db("DATABASE_URL")}
 
 
 # Password validation
@@ -115,10 +119,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+public_root = root.path("public/")
+MEDIA_ROOT = public_root("media")
+MEDIA_URL = env.str("MEDIA_URL", default="media/")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
+STATIC_ROOT = public_root("static")
+STATIC_URL = env.str("STATIC_URL", default="static/")
 
-STATIC_URL = "/static/"
 
 GRAPHENE = {"SCHEMA": "taps.schema.schema"}
