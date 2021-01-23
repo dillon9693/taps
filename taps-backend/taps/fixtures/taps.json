@@ -1,0 +1,111 @@
+[
+  {
+    "model": "taps.brewery",
+    "pk": 1,
+    "fields": { "name": "Night Shift Brewing" }
+  },
+  {
+    "model": "taps.brewery",
+    "pk": 2,
+    "fields": { "name": "Lawson's Finest Liquids" }
+  },
+  {
+    "model": "taps.brewery",
+    "pk": 3,
+    "fields": { "name": "Molson Coors" }
+  },
+  {
+    "model": "taps.brewery",
+    "pk": 4,
+    "fields": { "name": "Lamplighter Brewing Co." }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 1,
+    "fields": { "name": "Summer" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 2,
+    "fields": { "name": "Skiing" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 3,
+    "fields": { "name": "Chill" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 4,
+    "fields": { "name": "Cookout" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 5,
+    "fields": { "name": "Strong" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 6,
+    "fields": { "name": "Cheap" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 7,
+    "fields": { "name": "Juicy" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 8,
+    "fields": { "name": "Smooth" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 9,
+    "fields": { "name": "Hoppy" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 10,
+    "fields": { "name": "Bitter" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 11,
+    "fields": { "name": "Peppery" }
+  },
+  {
+    "model": "taps.tag",
+    "pk": 12,
+    "fields": { "name": "Football" }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 1,
+    "fields": { "name": "Whirlpool", "brewery": 1, "tags": [1, 8] }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 2,
+    "fields": { "name": "Sip of Sunshine", "brewery": 1, "tags": [2, 7, 9, 10] }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 3,
+    "fields": { "name": "Miller Lite", "brewery": 3, "tags": [1, 6, 12] }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 4,
+    "fields": {
+      "name": "Birds of a Feather",
+      "brewery": 4,
+      "tags": [1, 6, 9, 10]
+    }
+  },
+  {
+    "model": "taps.beer",
+    "pk": 4,
+    "fields": { "name": "Pfaffenheck", "brewery": 1, "tags": [8, 11, 3] }
+  }
+]
