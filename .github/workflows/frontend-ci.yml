@@ -21,6 +21,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: ls
+        run: ls
+      - name: Change directory
+        run: cd client/
       - name: Install dependencies
         run: npm ci
       - name: Run format check
