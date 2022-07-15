@@ -1,7 +1,14 @@
 {
-  "editor.rulers": [
-    88
-  ],
+  "editor.rulers": [88],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+
+  // JS/TS settings
+  "eslint.validate": ["javascript", "typescript"],
+
   // Python settings
   "python.formatting.provider": "black",
   "python.linting.flake8Enabled": true,
@@ -17,6 +24,5 @@
     "**/.venv": true,
     "**/.mypy_cache": true,
     "**/.pytest_cache": true
-  },
-
+  }
 }
