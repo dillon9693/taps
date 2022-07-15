@@ -1,7 +1,15 @@
 {
-  "editor.rulers": [
-    88
-  ],
+  "editor.rulers": [88],
+  "editor.wordWrap": "off",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+
+  // JS/TS settings
+  "eslint.validate": ["javascript", "typescript"],
+
   // Python settings
   "python.formatting.provider": "black",
   "python.linting.flake8Enabled": true,
@@ -10,13 +18,10 @@
   "python.linting.pydocstyleEnabled": true,
   "python.pythonPath": "~/.cache/pypoetry/virtualenvs/taps-backend-wRyTPorY-py3.8/bin/python",
   "python.testing.pytestEnabled": true,
-  "editor.wordWrapColumn": 88,
-  "editor.wordWrap": "wordWrapColumn",
   "files.exclude": {
     "**/__pycache__": true,
     "**/.venv": true,
     "**/.mypy_cache": true,
     "**/.pytest_cache": true
-  },
-
+  }
 }
