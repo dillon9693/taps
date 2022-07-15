@@ -22,7 +22,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
-    "format": "prettier --ignore-path ../.gitignore --write \"**/*.+(js|ts|json)\""
+    "format": "prettier --ignore-path ../.gitignore --write \"**/*.+(js|ts|json|md)\"",
+    "format:check": "prettier --ignore-path ../.gitignore --check \"**/*.+(js|ts|json|md)\""
   },
   "eslintConfig": {
     "extends": [
