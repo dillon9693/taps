@@ -1,5 +1,6 @@
 {
   "editor.rulers": [88],
+  "editor.wordWrap": "off",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
@@ -17,8 +18,6 @@
   "python.linting.pydocstyleEnabled": true,
   "python.pythonPath": "~/.cache/pypoetry/virtualenvs/taps-backend-wRyTPorY-py3.8/bin/python",
   "python.testing.pytestEnabled": true,
-  "editor.wordWrapColumn": 88,
-  "editor.wordWrap": "wordWrapColumn",
   "files.exclude": {
     "**/__pycache__": true,
     "**/.venv": true,
