@@ -5,12 +5,7 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem",
-        }}
-      >
+      <nav>
         <Link to="/home">Home</Link>
         <Link to="/search">Search</Link>
       </nav>
