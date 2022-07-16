@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { Beer, getBeers } from "../services/beerService";
 
+import BeerLogo from "../images/beer.svg";
 import "./Home.css";
 
 export default function Home() {
@@ -19,7 +20,7 @@ export default function Home() {
         {beers.map((beer) => (
           <div className="beer-card" key={beer.id}>
             {beer.name}
-            <img alt={`beer ${beer.id}`} />
+            <img src={BeerLogo} alt={`beer ${beer.id}`} />
             {beer.brewery}
           </div>
         ))}

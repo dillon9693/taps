@@ -7,10 +7,13 @@ main.Home .beer-wrapper {
 
 main.Home .beer-card {
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
   padding: 8rem 1rem;
 }
 
 main.Home .beer-card img {
   display: block;
-  margin: 0.5rem 0;
+  margin: 1rem auto;
+  width: 80px;
 }
