@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Beer, getBeers } from "../services/beerService";
 
+import "./Home.css";
+
 export default function Home() {
   const [beers, setBeers] = useState<Beer[]>([]);
 
@@ -10,13 +12,18 @@ export default function Home() {
   }, []);
 
   return (
-    <main>
+    <main className="Home">
       <h2>Home</h2>
-      <ol>
+
+      <div className="beer-wrapper">
         {beers.map((beer) => (
-          <li key={beer.id}>{beer.name}</li>
+          <div className="beer-card" key={beer.id}>
+            {beer.name}
+            <img alt={`beer ${beer.id}`} />
+            {beer.brewery}
+          </div>
         ))}
-      </ol>
+      </div>
     </main>
   );
 }

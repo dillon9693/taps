@@ -9,7 +9,9 @@ function App() {
         <Link to="/home">Home</Link>
         <Link to="/search">Search</Link>
       </nav>
-      <Outlet />
+      <div className="App__outlet-wrapper">
+        <Outlet />
+      </div>
     </div>
   );
 }
