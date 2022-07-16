@@ -15,6 +15,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}>
+          <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
           <Route path="search" element={<Search />} />
         </Route>
