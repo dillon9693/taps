@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "name": "Heady Topper",
+    "brewery": "Alchemist Beer"
+  },
+  {
+    "id": 2,
+    "name": "Focal Banger",
+    "brewery": "Alchemist Beer"
+  },
+  {
+    "id": 3,
+    "name": "Whirlpool",
+    "brewery": "Night Shift Brewing"
+  },
+  {
+    "id": 4,
+    "name": "Birds of a Feather",
+    "brewery": "Lamplighter"
+  },
+  {
+    "id": 5,
+    "name": "Long Trail Ale",
+    "brewery": "Long Trail Brewing Co."
+  },
+  {
+    "id": 6,
+    "name": "Fluffy",
+    "brewery": "Night Shift Brewing"
+  },
+  {
+    "id": 7,
+    "name": "Green State Lager",
+    "brewery": "Zero Gravity Brewery"
+  },
+  {
+    "id": 8,
+    "name": "Conehead IPA",
+    "brewery": "Zero Gravity Brewery"
+  },
+  {
+    "id": 9,
+    "name": "A Year With Dr. Nandu",
+    "brewery": "Aeronaut Brewing"
+  }
+]
