@@ -45,27 +45,3 @@ export const SEARCH_BEERS = gql`
     }
   }
 `;
-
-export const ALL_BREWERIES = gql`
-  query GetBreweries($location: String, $search: String) {
-    allBreweries(location: $location, search: $search) {
-      id
-      name
-      location
-      description
-      yearFounded
-      website
-      beerCount
-    }
-  }
-`;
-
-export const TOP_TAGS = gql`
-  query GetTopTags {
-    topTags {
-      id
-      name
-      beerCount
-    }
-  }
-`;
