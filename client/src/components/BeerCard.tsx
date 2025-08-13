@@ -13,6 +13,7 @@ import { Beer } from "../types/beer";
 interface BeerCardProps {
   beer: Beer;
 }
+
 export default function BeerCard(props: BeerCardProps) {
   const { beer } = props;
 
