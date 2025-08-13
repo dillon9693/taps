@@ -1,0 +1,21 @@
+# Taps
+
+Beer discovery app.
+
+## Local development
+
+### Front-End
+
+To run front-end:
+
+```
+cd client && npm start
+```
+
+### Back-end
+
+To run back-end:
+
+```
+cd taps-backend && poetry run ./manage.py runserver 8000
+```
