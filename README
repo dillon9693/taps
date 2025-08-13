@@ -6,6 +6,8 @@ Beer discovery app.
 
 ### Front-End
 
+The front-end uses React and [Apollo](https://www.apollographql.com/docs/react) (as a GraphQL client). It uses [Material UI](https://mui.com/material-ui/) as the component library.
+
 To run front-end:
 
 ```
@@ -13,6 +15,10 @@ cd client && npm start
 ```
 
 ### Back-end
+
+The back-end is built using Python and [Django](https://www.djangoproject.com/). The GraphQL queries are defined using [graphene](https://graphene-python.org/).
+
+The back-end uses [Poetry](https://python-poetry.org/) to manage Python versioning and environment. Any commands that run Python should be prefixed with `poetry run`.
 
 All commands below need to be run from the `taps-backend` folder.
 
