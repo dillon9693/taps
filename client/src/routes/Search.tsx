@@ -3,12 +3,7 @@ import { useQuery } from "@apollo/client";
 import {
   Container,
   Grid,
-  Card,
-  CardContent,
-  CardMedia,
   Typography,
-  Rating,
-  Chip,
   Box,
   CircularProgress,
   Alert,
@@ -19,6 +14,7 @@ import {
 } from "@mui/material";
 import { SEARCH_BEERS } from "../graphql/queries";
 import { Beer } from "../types/beer";
+import BeerCard from "../components/BeerCard";
 
 const BEER_STYLES = [
   { value: "IPA", label: "India Pale Ale" },
@@ -110,68 +106,7 @@ export default function Search() {
         <Grid container spacing={4}>
           {data?.allBeers?.map((beer) => (
             <Grid item xs={12} sm={6} md={4} key={beer.id}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={beer.imageUrl || "/beer-placeholder.jpg"}
-                  alt={beer.name}
-                  sx={{ objectFit: "cover" }}
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    {beer.name}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    {beer.brewery.name} • {beer.brewery.location}
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Rating
-                      value={beer.averageRating}
-                      precision={0.1}
-                      readOnly
-                    />
-                  </Box>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    {beer.description}
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" component="span" sx={{ mr: 2 }}>
-                      ABV: {beer.abv}%
-                    </Typography>
-                    {beer.ibu && (
-                      <Typography variant="body2" component="span">
-                        IBU: {beer.ibu}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                    <Chip
-                      label={beer.styleDisplay}
-                      color="primary"
-                      size="small"
-                    />
-                    {beer.tags.map((tag) => (
-                      <Chip
-                        key={tag.name}
-                        label={tag.name}
-                        size="small"
-                        variant="outlined"
-                      />
-                    ))}
-                  </Box>
-                </CardContent>
-              </Card>
+              <BeerCard beer={beer} />
             </Grid>
           ))}
         </Grid>
