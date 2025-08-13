@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
+import React from "react";
+import { useQuery } from "@apollo/client";
 import {
   Container,
   Grid,
@@ -11,33 +11,22 @@ import {
   Chip,
   Box,
   CircularProgress,
-  Alert
-} from '@mui/material';
-import { FEATURED_BEERS } from '../graphql/queries';
+  Alert,
+} from "@mui/material";
+import { FEATURED_BEERS } from "../graphql/queries";
+import { Beer } from "../types/beer";
 
-interface Beer {
-  id: string;
-  name: string;
-  brewery: {
-    name: string;
-    location: string;
-  };
-  style: string;
-  styleDisplay: string;
-  abv: number;
-  ibu: number | null;
-  description: string;
-  averageRating: number;
-  imageUrl: string;
-  tags: { name: string }[];
-}
+type FeaturedBeersResult = {
+  featuredBeers: Beer[];
+};
 
 export default function Home() {
-  const { loading, error, data } = useQuery(FEATURED_BEERS);
+  const { loading, error, data } =
+    useQuery<FeaturedBeersResult>(FEATURED_BEERS);
 
   if (loading) {
     return (
-      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+      <Container sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
         <CircularProgress />
       </Container>
     );
@@ -57,25 +46,35 @@ export default function Home() {
         Featured Beers
       </Typography>
       <Grid container spacing={4}>
-        {data.featuredBeers.map((beer: Beer) => (
+        {data?.featuredBeers?.map((beer) => (
           <Grid item xs={12} sm={6} md={4} key={beer.id}>
-            <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Card
+              sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+            >
               <CardMedia
                 component="img"
                 height="200"
-                image={beer.imageUrl || '/beer-placeholder.jpg'}
+                image={beer.imageUrl || "/beer-placeholder.jpg"}
                 alt={beer.name}
-                sx={{ objectFit: 'cover' }}
+                sx={{ objectFit: "cover" }}
               />
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography gutterBottom variant="h5" component="h2">
                   {beer.name}
                 </Typography>
-                <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  gutterBottom
+                >
                   {beer.brewery.name} • {beer.brewery.location}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
-                  <Rating value={Number(beer.averageRating)} precision={0.1} readOnly />
+                  <Rating
+                    value={Number(beer.averageRating)}
+                    precision={0.1}
+                    readOnly
+                  />
                 </Box>
                 <Typography variant="body2" color="text.secondary" paragraph>
                   {beer.description}
@@ -90,10 +89,19 @@ export default function Home() {
                     </Typography>
                   )}
                 </Box>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  <Chip label={beer.styleDisplay} color="primary" size="small" />
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                  <Chip
+                    label={beer.styleDisplay}
+                    color="primary"
+                    size="small"
+                  />
                   {beer.tags.map((tag) => (
-                    <Chip key={tag.name} label={tag.name} size="small" variant="outlined" />
+                    <Chip
+                      key={tag.name}
+                      label={tag.name}
+                      size="small"
+                      variant="outlined"
+                    />
                   ))}
                 </Box>
               </CardContent>

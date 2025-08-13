@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
 import {
   Container,
   Grid,
@@ -16,44 +16,32 @@ import {
   MenuItem,
   Slider,
   Paper,
-} from '@mui/material';
-import { SEARCH_BEERS } from '../graphql/queries';
-
-interface Beer {
-  id: string;
-  name: string;
-  brewery: {
-    name: string;
-    location: string;
-  };
-  style: string;
-  styleDisplay: string;
-  abv: number;
-  ibu: number | null;
-  description: string;
-  averageRating: number;
-  imageUrl: string;
-  tags: { name: string }[];
-}
+} from "@mui/material";
+import { SEARCH_BEERS } from "../graphql/queries";
+import { Beer } from "../types/beer";
 
 const BEER_STYLES = [
-  { value: 'IPA', label: 'India Pale Ale' },
-  { value: 'DIPA', label: 'Double IPA' },
-  { value: 'STOUT', label: 'Stout' },
-  { value: 'PORTER', label: 'Porter' },
-  { value: 'LAGER', label: 'Lager' },
-  { value: 'PILSNER', label: 'Pilsner' },
-  { value: 'WHEAT', label: 'Wheat Beer' },
-  { value: 'SOUR', label: 'Sour' },
-  { value: 'OTHER', label: 'Other' },
+  { value: "IPA", label: "India Pale Ale" },
+  { value: "DIPA", label: "Double IPA" },
+  { value: "STOUT", label: "Stout" },
+  { value: "PORTER", label: "Porter" },
+  { value: "LAGER", label: "Lager" },
+  { value: "PILSNER", label: "Pilsner" },
+  { value: "WHEAT", label: "Wheat Beer" },
+  { value: "SOUR", label: "Sour" },
+  { value: "OTHER", label: "Other" },
 ];
 
+type SearchBeersResult = {
+  allBeers: Beer[];
+};
+
 export default function Search() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStyle, setSelectedStyle] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStyle, setSelectedStyle] = useState("");
   const [abvRange, setAbvRange] = useState<number[]>([0, 15]);
 
-  const { loading, error, data } = useQuery(SEARCH_BEERS, {
+  const { loading, error, data } = useQuery<SearchBeersResult>(SEARCH_BEERS, {
     variables: {
       search: searchTerm || undefined,
       style: selectedStyle || undefined,
@@ -111,7 +99,7 @@ export default function Search() {
       </Paper>
 
       {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <CircularProgress />
         </Box>
       )}
@@ -120,25 +108,39 @@ export default function Search() {
       )}
       {!loading && !error && (
         <Grid container spacing={4}>
-          {data.allBeers.map((beer: Beer) => (
+          {data?.allBeers?.map((beer) => (
             <Grid item xs={12} sm={6} md={4} key={beer.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <CardMedia
                   component="img"
                   height="200"
-                  image={beer.imageUrl || '/beer-placeholder.jpg'}
+                  image={beer.imageUrl || "/beer-placeholder.jpg"}
                   alt={beer.name}
-                  sx={{ objectFit: 'cover' }}
+                  sx={{ objectFit: "cover" }}
                 />
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography gutterBottom variant="h5" component="h2">
                     {beer.name}
                   </Typography>
-                  <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                  <Typography
+                    variant="subtitle1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
                     {beer.brewery.name} • {beer.brewery.location}
                   </Typography>
                   <Box sx={{ mb: 2 }}>
-                    <Rating value={beer.averageRating} precision={0.1} readOnly />
+                    <Rating
+                      value={beer.averageRating}
+                      precision={0.1}
+                      readOnly
+                    />
                   </Box>
                   <Typography variant="body2" color="text.secondary" paragraph>
                     {beer.description}
@@ -153,10 +155,19 @@ export default function Search() {
                       </Typography>
                     )}
                   </Box>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                    <Chip label={beer.styleDisplay} color="primary" size="small" />
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    <Chip
+                      label={beer.styleDisplay}
+                      color="primary"
+                      size="small"
+                    />
                     {beer.tags.map((tag) => (
-                      <Chip key={tag.name} label={tag.name} size="small" variant="outlined" />
+                      <Chip
+                        key={tag.name}
+                        label={tag.name}
+                        size="small"
+                        variant="outlined"
+                      />
                     ))}
                   </Box>
                 </CardContent>
