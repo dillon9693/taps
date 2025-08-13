@@ -8,10 +8,12 @@ Beer discovery app.
 
 The front-end uses React and [Apollo](https://www.apollographql.com/docs/react) (as a GraphQL client). It uses [Material UI](https://mui.com/material-ui/) as the component library.
 
+All commands below need to be run from the `client` folder.
+
 To run front-end:
 
 ```
-cd client && npm start
+npm start
 ```
 
 ### Back-end
