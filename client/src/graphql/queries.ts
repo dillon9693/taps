@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FEATURED_BEERS = gql`
   query GetFeaturedBeers {
@@ -24,7 +24,12 @@ export const FEATURED_BEERS = gql`
 `;
 
 export const SEARCH_BEERS = gql`
-  query SearchBeers($style: String, $minAbv: Float, $maxAbv: Float, $search: String) {
+  query SearchBeers(
+    $style: String
+    $minAbv: Float
+    $maxAbv: Float
+    $search: String
+  ) {
     allBeers(style: $style, minAbv: $minAbv, maxAbv: $maxAbv, search: $search) {
       id
       name
