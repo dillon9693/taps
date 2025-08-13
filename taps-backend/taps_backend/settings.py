@@ -16,7 +16,7 @@ import environ
 
 root = environ.Path(__file__)
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(str(Path(__file__).resolve().parent.parent / '.env'))
 
 SITE_ROOT = root()
 
@@ -46,19 +46,27 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "taps",
+    "taps.apps.TapsConfig",
     "graphene_django",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # Must be before CommonMiddleware
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# CORS settings
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React development server
+]
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "taps_backend.urls"
 
