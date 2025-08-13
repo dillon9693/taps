@@ -14,8 +14,24 @@ cd client && npm start
 
 ### Back-end
 
+All commands below need to be run from the `taps-backend` folder.
+
 To run back-end:
 
 ```
-cd taps-backend && poetry run ./manage.py runserver 8000
+poetry run ./manage.py runserver 8000
+```
+
+To create sample data:
+
+```
+poetry run python manage.py add_sample_data
+```
+
+Note: this doesn't delete any existing data
+
+To create a new super user in Django admin portal:
+
+```
+poetry run python manage.py createsuperuser
 ```
