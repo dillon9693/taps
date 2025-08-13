@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Container,
-  Grid,
+  Grid2,
   Typography,
   Box,
   CircularProgress,
@@ -53,8 +53,8 @@ export default function Search() {
   return (
     <Container sx={{ mt: 4 }}>
       <Paper sx={{ p: 3, mb: 4 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+        <Grid2 container spacing={3}>
+          <Grid2 size={{ xs: 12, md: 4 }}>
             <TextField
               fullWidth
               label="Search beers"
@@ -62,8 +62,8 @@ export default function Search() {
               onChange={(e) => setSearchTerm(e.target.value)}
               variant="outlined"
             />
-          </Grid>
-          <Grid item xs={12} md={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 4 }}>
             <TextField
               fullWidth
               select
@@ -79,8 +79,8 @@ export default function Search() {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
-          <Grid item xs={12} md={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 4 }}>
             <Typography gutterBottom>ABV Range (%)</Typography>
             <Slider
               value={abvRange}
@@ -90,8 +90,8 @@ export default function Search() {
               max={15}
               step={0.5}
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Paper>
 
       {loading && (
@@ -103,13 +103,13 @@ export default function Search() {
         <Alert severity="error">Error loading beers: {error.message}</Alert>
       )}
       {!loading && !error && (
-        <Grid container spacing={4}>
+        <Grid2 container spacing={4}>
           {data?.allBeers?.map((beer) => (
-            <Grid item xs={12} sm={6} md={4} key={beer.id}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={beer.id}>
               <BeerCard beer={beer} />
-            </Grid>
+            </Grid2>
           ))}
-        </Grid>
+        </Grid2>
       )}
     </Container>
   );
