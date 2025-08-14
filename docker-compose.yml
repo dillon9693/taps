@@ -19,15 +19,11 @@ services:
       retries: 5
 
   backend:
-    image: python:3.11-slim
-    working_dir: /app
+    build:
+      context: ./taps-backend
+      dockerfile: Dockerfile
     command: >
-      bash -c "pip install poetry &&
-               cd /app &&
-               poetry config virtualenvs.create false &&
-               poetry lock &&
-               poetry install --without dev &&
-               python manage.py migrate &&
+      bash -c "python manage.py migrate &&
                python manage.py collectstatic --noinput &&
                gunicorn taps_backend.wsgi:application --bind 0.0.0.0:8000"
     volumes:
@@ -36,10 +32,9 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgres://tapsadmin:tapspassword@db:5432/tapsdb
-      - DEBUG=False
+      - DEBUG=True
       - SECRET_KEY=local-development-secret-key
-      - DJANGO_SETTINGS_MODULE=taps_backend.production_settings
-      - POETRY_VIRTUALENVS_CREATE=false
+      - DJANGO_SETTINGS_MODULE=taps_backend.development_settings
     depends_on:
       db:
         condition: service_healthy

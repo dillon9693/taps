@@ -1,19 +1,18 @@
-[project]
+[tool.poetry]
 name = "taps-backend"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Dillon Kerr",email = "dillon.p.kerr@gmail.com"}
-]
+authors = ["Dillon Kerr <dillon.p.kerr@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11,<4"
-dependencies = [
-    "django (>=5.1.6,<6.0.0)",
-    "graphene-django (>=3.2.2,<4.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "django-environ (>=0.12.0,<0.13.0)",
-    "django-cors-headers (>=4.7.0,<5.0.0)"
-]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+django = ">=5.1.6,<6.0.0"
+graphene-django = ">=3.2.2,<4.0.0"
+psycopg2-binary = ">=2.9.10,<3.0.0"
+django-environ = ">=0.12.0,<0.13.0"
+django-cors-headers = ">=4.7.0,<5.0.0"
+gunicorn = ">=23.0.0,<24.0.0"
 
 
 [build-system]

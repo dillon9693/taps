@@ -4,6 +4,8 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
+ENV SECRET_KEY=docker-build-secret-key
+ENV DATABASE_URL=postgres://tapsadmin:tapspassword@db:5432/tapsdb
 
 # Set work directory
 WORKDIR /app

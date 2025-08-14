@@ -14,14 +14,12 @@ from pathlib import Path
 
 import environ
 
-root = environ.Path(__file__)
 env = environ.Env()
 environ.Env.read_env(str(Path(__file__).resolve().parent.parent / '.env'))
 
-SITE_ROOT = root()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+SITE_ROOT = str(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,7 +32,9 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+]
 
 
 # Application definition
@@ -127,13 +127,12 @@ USE_L10N = True
 
 USE_TZ = True
 
-public_root = root.path("public/")
-MEDIA_ROOT = public_root("media")
+MEDIA_ROOT = BASE_DIR / "public" / "media"
 MEDIA_URL = env.str("MEDIA_URL", default="media/")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-STATIC_ROOT = public_root("static")
+STATIC_ROOT = BASE_DIR / "public" / "static"
 STATIC_URL = env.str("STATIC_URL", default="static/")
 
 
