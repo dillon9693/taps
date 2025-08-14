@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=tapsadmin
+      - POSTGRES_PASSWORD=tapspassword
+      - POSTGRES_DB=tapsdb
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tapsadmin -d tapsdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./taps-backend
+    command: >
+      sh -c "poetry run python manage.py migrate &&
+             poetry run python manage.py collectstatic --noinput &&
+             poetry run gunicorn taps_backend.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./taps-backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgres://tapsadmin:tapspassword@db:5432/tapsdb
+      - DEBUG=False
+      - SECRET_KEY=local-development-secret-key
+      - DJANGO_SETTINGS_MODULE=taps_backend.production_settings
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/graphql
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
