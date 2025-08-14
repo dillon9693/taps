@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir poetry==1.7.1
 COPY pyproject.toml poetry.lock ./
 
 # Configure poetry to not use a virtual environment
-RUN poetry config virtualenvs.create false --local
+ENV POETRY_VIRTUALENVS_CREATE=false
 
 # Install dependencies
 RUN poetry install --no-dev --no-interaction --no-ansi
