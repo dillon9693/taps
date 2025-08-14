@@ -20,6 +20,7 @@ ALLOWED_HOSTS = [
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     'https://taps.dillonkerr.com',
+    'http://localhost:3000',  # For local development
 ]
 CORS_ALLOW_CREDENTIALS = True
 
