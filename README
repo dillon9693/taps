@@ -14,14 +14,45 @@ You can run the application locally in two ways: using Docker Compose for a prod
 
 This method uses Docker Compose to run the entire application stack (frontend, backend, and database) in a production-like environment.
 
-1. Make sure you have Docker and Docker Compose installed
+#### Installing Docker and Docker Compose
+
+1. **Install Docker Desktop**:
+
+   - For macOS: Download and install from [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop)
+   - For Windows: Download and install from [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop)
+   - For Linux: Follow the instructions for your distribution on [Docker Engine](https://docs.docker.com/engine/install/)
+
+2. **Verify Docker installation**:
+
+   ```bash
+   docker --version
+   ```
+
+3. **Install Docker Compose** (if not included with Docker Desktop):
+
+   - For macOS and Windows: Docker Compose is included with Docker Desktop
+   - For Linux:
+     ```bash
+     sudo apt-get update
+     sudo apt-get install docker-compose-plugin
+     ```
+
+4. **Verify Docker Compose installation**:
+   ```bash
+   docker compose version
+   ```
+
+#### Running the Application
+
+1. Make sure Docker Desktop is running
 2. Run the following command from the project root:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 3. Access the application:
+
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8000/graphql
    - Admin interface: http://localhost:8000/admin
@@ -29,13 +60,13 @@ docker-compose up
 4. To create sample data:
 
 ```bash
-docker-compose exec backend poetry run python manage.py add_sample_data
+docker compose exec backend poetry run python manage.py add_sample_data
 ```
 
 5. To create a superuser:
 
 ```bash
-docker-compose exec backend poetry run python manage.py createsuperuser
+docker compose exec backend poetry run python manage.py createsuperuser
 ```
 
 ### Running Frontend and Backend Separately (Development)
