@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-// TODO generalize this for different environments
-const GRAPHQL_ENDPOINT = "http://localhost:8000/graphql";
+// Use environment variable with fallback for local development
+const GRAPHQL_ENDPOINT = process.env.REACT_APP_API_URL || "http://localhost:8000/graphql";
 
 const client = new ApolloClient({
   uri: GRAPHQL_ENDPOINT,
