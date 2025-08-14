@@ -2,6 +2,10 @@
 
 Beer discovery app.
 
+## Deployment
+
+This application can be deployed to production using AWS and Vercel. For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Local development
 
 ### Front-End
