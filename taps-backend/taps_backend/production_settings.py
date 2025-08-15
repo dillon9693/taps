@@ -15,8 +15,6 @@ TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
     '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
-    'localhost',
-    '127.0.0.1',
 ]
 
 # CORS settings for production
