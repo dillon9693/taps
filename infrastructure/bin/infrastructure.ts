@@ -57,6 +57,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     ecsSecurityGroup: networkStack.ecsSecurityGroup,
     albSecurityGroup: networkStack.albSecurityGroup,
     databaseSecret: databaseStack.databaseSecret,
+    djangoSecret: databaseStack.djangoSecret,
     databaseEndpoint: databaseStack.postgresInstance.dbInstanceEndpointAddress,
     databasePort: databaseStack.postgresInstance.dbInstanceEndpointPort,
     databaseName: databaseStack.databaseName,

@@ -13,6 +13,7 @@ interface ComputeStackProps extends cdk.StackProps {
   ecsSecurityGroup: ec2.SecurityGroup;
   albSecurityGroup: ec2.SecurityGroup;
   databaseSecret: secretsmanager.Secret;
+  djangoSecret: secretsmanager.Secret;
   databaseEndpoint: string;
   databasePort: string;
   databaseName: string;
@@ -55,6 +56,9 @@ export class ComputeStack extends cdk.Stack {
 
     // Grant access to the database secret
     props.databaseSecret.grantRead(executionRole);
+    
+    // Grant access to the Django secret
+    props.djangoSecret.grantRead(executionRole);
 
     // Create Task Role
     const taskRole = new iam.Role(this, 'TapsTaskRole', {
@@ -92,7 +96,8 @@ export class ComputeStack extends cdk.Stack {
           'password'
         ),
         'SECRET_KEY': ecs.Secret.fromSecretsManager(
-          secretsmanager.Secret.fromSecretNameV2(this, 'DjangoSecretKey', 'taps/django/secret-key')
+          props.djangoSecret,
+          'SECRET_KEY'
         ),
       },
       healthCheck: {

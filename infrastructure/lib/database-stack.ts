@@ -12,6 +12,7 @@ interface DatabaseStackProps extends cdk.StackProps {
 export class DatabaseStack extends cdk.Stack {
   public readonly postgresInstance: rds.DatabaseInstance;
   public readonly databaseSecret: secretsmanager.Secret;
+  public readonly djangoSecret: secretsmanager.Secret;
   public readonly databaseName: string = 'tapsdb';
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
@@ -28,6 +29,18 @@ export class DatabaseStack extends cdk.Stack {
         includeSpace: false,
         passwordLength: 16,
         requireEachIncludedType: true
+      },
+    });
+
+    // Create Django secret key
+    this.djangoSecret = new secretsmanager.Secret(this, 'DjangoSecretKey', {
+      secretName: 'taps/django/secret-key',
+      description: 'Django secret key for Taps application',
+      generateSecretString: {
+        secretStringTemplate: '{}',
+        generateStringKey: 'SECRET_KEY',
+        excludeCharacters: '"@/\\\'',
+        passwordLength: 50,
       },
     });
 
