@@ -3,7 +3,7 @@ name: Deploy Taps Application (Staging)
 on:
   push:
     branches:
-      - feature/production-deployment  # Deploy staging on feature branch push
+      - feature/production-deployment # Deploy staging on feature branch push
   workflow_dispatch:
 
 env:
