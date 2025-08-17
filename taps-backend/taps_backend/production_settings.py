@@ -34,8 +34,8 @@ SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static and media files
-STATIC_URL = 'https://taps.dillonkerr.com/static/'
-MEDIA_URL = 'https://taps.dillonkerr.com/media/'
+STATIC_URL = 'https://api.taps.dillonkerr.com/static/'
+MEDIA_URL = 'https://api.taps.dillonkerr.com/media/'
 
 # Logging configuration
 LOGGING = {
