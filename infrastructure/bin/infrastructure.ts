@@ -101,6 +101,15 @@ if (!account) {
   throw new Error('CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured.');
 }
 
+// Create the staging environment
+createEnvironment(app, {
+  name: 'Staging',
+  account,
+  region,
+  domainName: 'dillonkerr.com',
+  apiSubDomain: 'api.staging.taps',
+});
+
 // Create the production environment
 createEnvironment(app, {
   name: 'Production',
