@@ -9,12 +9,12 @@ test("renders app with navigation", () => {
       <App />
     </BrowserRouter>
   );
-  
+
   // Test that the app renders with navigation links
   const homeLink = screen.getByRole("link", { name: /home/i });
   const searchLink = screen.getByRole("link", { name: /search/i });
   const appTitle = screen.getByText(/TAPS/i);
-  
+
   expect(homeLink).toBeInTheDocument();
   expect(searchLink).toBeInTheDocument();
   expect(appTitle).toBeInTheDocument();
