@@ -93,9 +93,13 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
 // Initialize the CDK app
 const app = new cdk.App();
 
-// Get environment variables or use defaults
-const account = process.env.CDK_DEFAULT_ACCOUNT || process.env.AWS_ACCOUNT_ID || '123456789012';
-const region = process.env.CDK_DEFAULT_REGION || process.env.AWS_REGION || 'us-east-1';
+// Get environment variables - CDK sets these automatically when AWS credentials are configured
+const account = process.env.CDK_DEFAULT_ACCOUNT;
+const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+
+if (!account) {
+  throw new Error('CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured.');
+}
 
 // Create the production environment
 createEnvironment(app, {
