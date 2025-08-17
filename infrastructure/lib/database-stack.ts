@@ -73,10 +73,10 @@ export class DatabaseStack extends cdk.Stack {
       storageType: rds.StorageType.GP2,
       backupRetention: cdk.Duration.days(7),
       deleteAutomatedBackups: true,
-      deletionProtection: false, // Set to true for production
+      deletionProtection: true, // Enable for production data safety
       databaseName: this.databaseName,
       credentials: rds.Credentials.fromSecret(this.databaseSecret),
-      multiAz: false, // Set to true for production
+      multiAz: true, // Enable for production high availability
       autoMinorVersionUpgrade: true,
       publiclyAccessible: false,
     });
