@@ -3,7 +3,6 @@ name = "taps-backend"
 version = "0.1.0"
 description = ""
 authors = ["Dillon Kerr <dillon.p.kerr@gmail.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
