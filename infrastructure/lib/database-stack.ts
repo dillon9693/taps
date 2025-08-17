@@ -52,7 +52,7 @@ export class DatabaseStack extends cdk.Stack {
       description: 'Parameter group for Taps PostgreSQL database',
       parameters: {
         'max_connections': '100',
-        'shared_buffers': '16MB',
+        'shared_buffers': '2048',  // In 8KB pages, so 2048 * 8KB = 16MB
       },
     });
 
