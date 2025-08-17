@@ -6,6 +6,8 @@ import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
 interface ComputeStackProps extends cdk.StackProps {
@@ -17,6 +19,8 @@ interface ComputeStackProps extends cdk.StackProps {
   databaseEndpoint: string;
   databasePort: string;
   databaseName: string;
+  domainName: string;
+  apiSubDomain: string;
 }
 
 export class ComputeStack extends cdk.Stack {
@@ -24,6 +28,8 @@ export class ComputeStack extends cdk.Stack {
   public readonly ecrRepository: ecr.Repository;
   public readonly loadBalancer: elbv2.IApplicationLoadBalancer;
   public readonly httpsListener: elbv2.IApplicationListener;
+  public readonly certificate: acm.ICertificate;
+  public readonly apiDomainName: string;
 
   constructor(scope: Construct, id: string, props: ComputeStackProps) {
     super(scope, id, props);
@@ -38,6 +44,20 @@ export class ComputeStack extends cdk.Stack {
           description: 'Only keep the 5 most recent images',
         },
       ],
+    });
+
+    // Construct the full domain name for the API
+    this.apiDomainName = `${props.apiSubDomain}.${props.domainName}`;
+
+    // Look up the hosted zone
+    const hostedZone = route53.HostedZone.fromLookup(this, 'TapsHostedZone', {
+      domainName: props.domainName,
+    });
+
+    // Create a certificate for the domain
+    this.certificate = new acm.Certificate(this, 'TapsCertificate', {
+      domainName: this.apiDomainName,
+      validation: acm.CertificateValidation.fromDns(hostedZone),
     });
 
     // Create ECS Cluster
@@ -149,11 +169,12 @@ export class ComputeStack extends cdk.Stack {
       }),
     });
 
-    // Create HTTPS Listener (will be configured in the domain stack)
+    // Create HTTPS Listener with SSL certificate
     this.httpsListener = this.loadBalancer.addListener('TapsHttpsListener', {
       port: 443,
       open: true,
       defaultTargetGroups: [targetGroup],
+      certificates: [this.certificate],
     });
 
     // Create ECS Service
@@ -203,6 +224,20 @@ export class ComputeStack extends cdk.Stack {
       value: this.ecrRepository.repositoryUri,
       description: 'The URI of the ECR repository',
       exportName: 'TapsEcrRepositoryUri',
+    });
+
+    // Output the API domain name
+    new cdk.CfnOutput(this, 'ApiDomainName', {
+      value: this.apiDomainName,
+      description: 'The domain name of the API',
+      exportName: 'TapsApiDomainName',
+    });
+
+    // Output the certificate ARN
+    new cdk.CfnOutput(this, 'CertificateArn', {
+      value: this.certificate.certificateArn,
+      description: 'The ARN of the certificate',
+      exportName: 'TapsCertificateArn',
     });
   }
 }

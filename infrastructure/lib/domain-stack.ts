@@ -7,13 +7,11 @@ import { Construct } from 'constructs';
 
 interface DomainStackProps extends cdk.StackProps {
   loadBalancer: elbv2.IApplicationLoadBalancer;
-  httpsListener: elbv2.IApplicationListener;
   domainName: string;
   subDomain: string;
 }
 
 export class DomainStack extends cdk.Stack {
-  public readonly certificate: acm.ICertificate;
   public readonly apiDomainName: string;
 
   constructor(scope: Construct, id: string, props: DomainStackProps) {
@@ -27,14 +25,7 @@ export class DomainStack extends cdk.Stack {
       domainName: props.domainName,
     });
 
-    // Create a certificate for the domain
-    this.certificate = new acm.Certificate(this, 'TapsCertificate', {
-      domainName: this.apiDomainName,
-      validation: acm.CertificateValidation.fromDns(hostedZone),
-    });
-
-    // Add the certificate to the HTTPS listener
-    props.httpsListener.addCertificates('TapsCertificates', [this.certificate]);
+    // Certificate is now created in the compute stack
 
     // Create a DNS record for the API
     new route53.ARecord(this, 'TapsApiRecord', {
@@ -52,11 +43,6 @@ export class DomainStack extends cdk.Stack {
       exportName: 'TapsApiDomainName',
     });
 
-    // Output the certificate ARN
-    new cdk.CfnOutput(this, 'CertificateArn', {
-      value: this.certificate.certificateArn,
-      description: 'The ARN of the certificate',
-      exportName: 'TapsCertificateArn',
-    });
+    // Certificate ARN is now output from the compute stack
   }
 }

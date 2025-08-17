@@ -61,6 +61,8 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     databaseEndpoint: databaseStack.postgresInstance.dbInstanceEndpointAddress,
     databasePort: databaseStack.postgresInstance.dbInstanceEndpointPort,
     databaseName: databaseStack.databaseName,
+    domainName: config.domainName,
+    apiSubDomain: config.apiSubDomain,
     env,
     tags,
   });
@@ -70,7 +72,6 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     stackName: `${prefix}-domain`,
     description: `Domain infrastructure for Taps ${config.name} environment`,
     loadBalancer: computeStack.loadBalancer,
-    httpsListener: computeStack.httpsListener,
     domainName: config.domainName,
     subDomain: config.apiSubDomain,
     env,
