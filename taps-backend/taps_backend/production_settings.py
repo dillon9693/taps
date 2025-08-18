@@ -23,8 +23,6 @@ TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
     'api.staging.taps.dillonkerr.com',  # Staging API domain
-    '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
-    '*' # Temporary wildcard for testing; replace with specific origins in production
 ]
 
 print("ALLOWED_HOSTS set to:")
