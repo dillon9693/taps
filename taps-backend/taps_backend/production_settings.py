@@ -19,6 +19,7 @@ if all(key in os.environ for key in ['DATABASE_HOST', 'DATABASE_PORT', 'DATABASE
 DEBUG = False
 TEMPLATE_DEBUG = False
 
+# TODO set these based on staging vs. prod
 # Allow the domain where the app will be hosted
 ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
@@ -33,6 +34,7 @@ print(os.environ.get('VPC_CIDR', 'Not Set'))
 
 
 # Add custom middleware for health check SSL handling
+# TODO do we need this health check middleware anymore?
 MIDDLEWARE = ['taps_backend.middleware.HealthCheckSSLMiddleware'] + MIDDLEWARE
 
 # Configure CIDR ranges for ALLOWED_HOSTS
@@ -58,6 +60,7 @@ SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Static and media files
+# TODO set these based on staging vs. prod
 STATIC_URL = 'https://api.taps.dillonkerr.com/static/'
 MEDIA_URL = 'https://api.taps.dillonkerr.com/media/'
 
