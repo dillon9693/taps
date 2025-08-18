@@ -38,9 +38,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = [
-    "*" # TODO remove this in the future
-]
+ALLOWED_HOSTS = []
 
 
 # Application definition

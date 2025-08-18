@@ -138,7 +138,7 @@ export class ComputeStack extends cdk.Stack {
         ),
       },
       healthCheck: {
-        command: ['CMD-SHELL', 'curl -f http://localhost:8000/health/ || exit 1'],
+        command: ['CMD-SHELL', 'curl -f http://localhost:8000/taps/health/ || exit 1'],
         interval: cdk.Duration.seconds(30),
         timeout: cdk.Duration.seconds(5),
         retries: 3,
@@ -168,7 +168,7 @@ export class ComputeStack extends cdk.Stack {
       protocol: elbv2.ApplicationProtocol.HTTP,
       targetType: elbv2.TargetType.IP,
       healthCheck: {
-        path: '/health/',
+        path: '/taps/health/',
         interval: cdk.Duration.seconds(60),
         timeout: cdk.Duration.seconds(5),
         healthyHttpCodes: '200',
