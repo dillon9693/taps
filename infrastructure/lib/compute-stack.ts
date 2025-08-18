@@ -85,7 +85,7 @@ export class ComputeStack extends cdk.Stack {
 
     // Grant access to the database secret
     props.databaseSecret.grantRead(executionRole);
-    
+
     // Grant access to the Django secret
     props.djangoSecret.grantRead(executionRole);
 
@@ -111,7 +111,7 @@ export class ComputeStack extends cdk.Stack {
 
     // Determine image tag based on environment
     const imageTag = props.environment === Environment.STAGING ? 'staging-latest' : 'latest';
-    
+
     // Add Container to Task Definition
     const container = taskDefinition.addContainer('TapsContainer', {
       image: ecs.ContainerImage.fromEcrRepository(this.ecrRepository, imageTag),

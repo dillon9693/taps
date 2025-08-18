@@ -24,9 +24,13 @@ ALLOWED_HOSTS = [
     '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
 ]
 
-# Add VPC CIDR for ALB health checks (more restrictive than full private ranges)
+# Add AllowCIDRMiddleware to support VPC CIDR ranges in ALLOWED_HOSTS
+MIDDLEWARE = MIDDLEWARE + ['allow_cidr.middleware.AllowCIDRMiddleware']
+
+# Configure CIDR ranges for ALLOWED_HOSTS
+ALLOWED_CIDR_NETS = []
 if 'VPC_CIDR' in os.environ:
-    ALLOWED_HOSTS.append(os.environ['VPC_CIDR'])
+    ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
