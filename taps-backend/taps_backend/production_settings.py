@@ -24,6 +24,7 @@ TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
     'api.staging.taps.dillonkerr.com',  # Staging API domain
+    'localhost',
 ]
 
 print("ALLOWED_HOSTS set to:")
