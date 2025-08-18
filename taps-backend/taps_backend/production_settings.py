@@ -20,8 +20,13 @@ TEMPLATE_DEBUG = False
 # Allow the domain where the app will be hosted
 ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
+    'api.staging.taps.dillonkerr.com',  # Staging API domain
     '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
 ]
+
+# Add VPC CIDR for ALB health checks (more restrictive than full private ranges)
+if 'VPC_CIDR' in os.environ:
+    ALLOWED_HOSTS.append(os.environ['VPC_CIDR'])
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [

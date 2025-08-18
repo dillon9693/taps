@@ -125,6 +125,7 @@ export class ComputeStack extends cdk.Stack {
         'DATABASE_PORT': props.databasePort,
         'DATABASE_NAME': props.databaseName,
         'DATABASE_USER': props.databaseUser,
+        'VPC_CIDR': props.vpc.vpcCidrBlock,  // Restrict ALLOWED_HOSTS to our VPC only
       },
       secrets: {
         'DATABASE_PASSWORD': ecs.Secret.fromSecretsManager(
