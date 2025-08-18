@@ -6,8 +6,6 @@ Extends the base settings and overrides values specific to production environmen
 from .settings import *  # Import all base settings
 import os
 
-print("IN PRODUCTION SETTINGS")
-
 # Override base settings for production
 
 # Construct DATABASE_URL from individual components
@@ -26,12 +24,6 @@ ALLOWED_HOSTS = [
     'api.staging.taps.dillonkerr.com',  # Staging API domain
     'localhost', # For Dockerfile health check
 ]
-
-print("ALLOWED_HOSTS set to:")
-print(ALLOWED_HOSTS)
-
-print("VPC CIDR:")
-print(os.environ.get('VPC_CIDR', 'Not Set'))
 
 # Add django-allow-cidr middleware first to handle CIDR ranges in ALLOWED_HOSTS
 MIDDLEWARE = [

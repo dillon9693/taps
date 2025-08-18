@@ -5,8 +5,6 @@ Extends the base settings and overrides values specific to development environme
 
 from .settings import *  # Import all base settings
 
-print("IN DEV SETTINGS")
-
 # Security settings
 DEBUG = True
 TEMPLATE_DEBUG = True
