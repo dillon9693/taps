@@ -4,8 +4,14 @@ Extends the base settings and overrides values specific to production environmen
 """
 
 from .settings import *  # Import all base settings
+import os
 
 # Override base settings for production
+
+# Construct DATABASE_URL from individual components
+if all(key in os.environ for key in ['DATABASE_HOST', 'DATABASE_PORT', 'DATABASE_NAME', 'DATABASE_USER']):
+    DATABASE_URL = f"postgres://{os.environ['DATABASE_USER']}:{os.environ.get('DATABASE_PASSWORD', '')}@{os.environ['DATABASE_HOST']}:{os.environ['DATABASE_PORT']}/{os.environ['DATABASE_NAME']}"
+    os.environ['DATABASE_URL'] = DATABASE_URL
 
 # Security settings
 DEBUG = False

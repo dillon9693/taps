@@ -14,6 +14,7 @@ export class DatabaseStack extends cdk.Stack {
   public readonly databaseSecret: secretsmanager.Secret;
   public readonly djangoSecret: secretsmanager.Secret;
   public readonly databaseName: string = 'tapsdb';
+  public readonly databaseUser: string = 'tapsadmin';
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
@@ -23,7 +24,7 @@ export class DatabaseStack extends cdk.Stack {
       secretName: 'taps/database/credentials',
       description: 'Credentials for Taps PostgreSQL database',
       generateSecretString: {
-        secretStringTemplate: JSON.stringify({ username: 'tapsadmin' }),
+        secretStringTemplate: JSON.stringify({ username: this.databaseUser }),
         generateStringKey: 'password',
         excludePunctuation: true,
         includeSpace: false,

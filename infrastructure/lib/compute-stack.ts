@@ -24,6 +24,7 @@ interface ComputeStackProps extends cdk.StackProps {
   databaseEndpoint: string;
   databasePort: string;
   databaseName: string;
+  databaseUser: string;
   domainName: string;
   apiSubDomain: string;
   environment: Environment;
@@ -120,9 +121,13 @@ export class ComputeStack extends cdk.Stack {
       }),
       environment: {
         'DJANGO_SETTINGS_MODULE': 'taps_backend.production_settings',
+        'DATABASE_HOST': props.databaseEndpoint,
+        'DATABASE_PORT': props.databasePort,
+        'DATABASE_NAME': props.databaseName,
+        'DATABASE_USER': props.databaseUser,
       },
       secrets: {
-        'DATABASE_URL': ecs.Secret.fromSecretsManager(
+        'DATABASE_PASSWORD': ecs.Secret.fromSecretsManager(
           props.databaseSecret,
           'password'
         ),

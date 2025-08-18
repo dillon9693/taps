@@ -61,6 +61,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     databaseEndpoint: databaseStack.postgresInstance.dbInstanceEndpointAddress,
     databasePort: databaseStack.postgresInstance.dbInstanceEndpointPort,
     databaseName: databaseStack.databaseName,
+    databaseUser: databaseStack.databaseUser,
     domainName: config.domainName,
     apiSubDomain: config.apiSubDomain,
     environment: config.name === 'Staging' ? Environment.STAGING : Environment.PRODUCTION,
