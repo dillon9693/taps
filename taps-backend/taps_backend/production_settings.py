@@ -33,10 +33,13 @@ print(ALLOWED_HOSTS)
 print("VPC CIDR:")
 print(os.environ.get('VPC_CIDR', 'Not Set'))
 
+# Add django-allow-cidr middleware first to handle CIDR ranges in ALLOWED_HOSTS
+MIDDLEWARE = ['allow_cidr.middleware.AllowCIDRMiddleware'] + MIDDLEWARE
+
 # Configure CIDR ranges for ALLOWED_HOSTS
-# ALLOWED_CIDR_NETS = []
-# if 'VPC_CIDR' in os.environ:
-#     ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
+ALLOWED_CIDR_NETS = []
+if 'VPC_CIDR' in os.environ:
+    ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
