@@ -32,10 +32,11 @@ print(ALLOWED_HOSTS)
 print("VPC CIDR:")
 print(os.environ.get('VPC_CIDR', 'Not Set'))
 
+print("REMOVED HEALTH CHECK")
 
 # Add custom middleware for health check SSL handling
 # TODO do we need this health check middleware anymore?
-MIDDLEWARE = ['taps_backend.middleware.HealthCheckSSLMiddleware'] + MIDDLEWARE
+# MIDDLEWARE = ['taps_backend.middleware.HealthCheckSSLMiddleware'] + MIDDLEWARE
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 # ALLOWED_CIDR_NETS = []
