@@ -28,16 +28,16 @@ ALLOWED_HOSTS = [
 MIDDLEWARE = MIDDLEWARE + ['allow_cidr.middleware.AllowCIDRMiddleware']
 
 # Configure CIDR ranges for ALLOWED_HOSTS
-ALLOWED_CIDR_NETS = []
-if 'VPC_CIDR' in os.environ:
-    ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
+# ALLOWED_CIDR_NETS = []
+# if 'VPC_CIDR' in os.environ:
+#     ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     'https://taps.dillonkerr.com',
     'https://taps-staging.dillonkerr.com',  # Staging frontend custom domain
-    'https://client-virid-xi.vercel.app',  # Staging frontend Vercel URL
     'http://localhost:3000',  # For local development
+    '*' # Temporary wildcard for testing; replace with specific origins in production
 ]
 CORS_ALLOW_CREDENTIALS = True
 
