@@ -2,7 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { NetworkStack } from '../lib/network-stack';
 import { DatabaseStack } from '../lib/database-stack';
-import { ComputeStack } from '../lib/compute-stack';
+import { ComputeStack, Environment } from '../lib/compute-stack';
 import { DomainStack } from '../lib/domain-stack';
 
 /**
@@ -63,6 +63,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     databaseName: databaseStack.databaseName,
     domainName: config.domainName,
     apiSubDomain: config.apiSubDomain,
+    environment: config.name === 'Staging' ? Environment.STAGING : Environment.PRODUCTION,
     env,
     tags,
   });

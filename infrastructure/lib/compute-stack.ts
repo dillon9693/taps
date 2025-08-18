@@ -10,6 +10,11 @@ import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 
+export enum Environment {
+  STAGING = 'Staging',
+  PRODUCTION = 'Production'
+}
+
 interface ComputeStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
   ecsSecurityGroup: ec2.SecurityGroup;
@@ -21,6 +26,7 @@ interface ComputeStackProps extends cdk.StackProps {
   databaseName: string;
   domainName: string;
   apiSubDomain: string;
+  environment: Environment;
 }
 
 export class ComputeStack extends cdk.Stack {
@@ -100,9 +106,12 @@ export class ComputeStack extends cdk.Stack {
       taskRole: taskRole,
     });
 
+    // Determine image tag based on environment
+    const imageTag = props.environment === Environment.STAGING ? 'staging-latest' : 'latest';
+    
     // Add Container to Task Definition
     const container = taskDefinition.addContainer('TapsContainer', {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecrRepository, 'latest'),
+      image: ecs.ContainerImage.fromEcrRepository(this.ecrRepository, imageTag),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'taps',
         logGroup: logGroup,
@@ -177,11 +186,11 @@ export class ComputeStack extends cdk.Stack {
       certificates: [this.certificate],
     });
 
-    // Create ECS Service
+    // Create ECS Service - start with 0 tasks until Docker image is available
     const service = new ecs.FargateService(this, 'TapsService', {
       cluster: cluster,
       taskDefinition: taskDefinition,
-      desiredCount: 2,
+      desiredCount: 0,
       securityGroups: [props.ecsSecurityGroup],
       assignPublicIp: false,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
