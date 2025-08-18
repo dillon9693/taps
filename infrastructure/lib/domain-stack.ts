@@ -17,9 +17,6 @@ export class DomainStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DomainStackProps) {
     super(scope, id, props);
 
-    // Construct the full domain name for the API
-    this.apiDomainName = `${props.subDomain}.${props.domainName}`;
-
     // Look up the hosted zone
     const hostedZone = route53.HostedZone.fromLookup(this, 'TapsHostedZone', {
       domainName: props.domainName,
@@ -35,14 +32,5 @@ export class DomainStack extends cdk.Stack {
         new route53Targets.LoadBalancerTarget(props.loadBalancer)
       ),
     });
-
-    // Output the API domain name
-    new cdk.CfnOutput(this, 'ApiDomainName', {
-      value: this.apiDomainName,
-      description: 'The domain name of the API',
-      exportName: 'TapsApiDomainName',
-    });
-
-    // Certificate ARN is now output from the compute stack
   }
 }
