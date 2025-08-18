@@ -22,6 +22,7 @@ ALLOWED_HOSTS = [
     'api.taps.dillonkerr.com',
     'api.staging.taps.dillonkerr.com',  # Staging API domain
     '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
+    '*' # Temporary wildcard for testing; replace with specific origins in production
 ]
 
 # Add AllowCIDRMiddleware to support VPC CIDR ranges in ALLOWED_HOSTS
@@ -37,7 +38,6 @@ CORS_ALLOWED_ORIGINS = [
     'https://taps.dillonkerr.com',
     'https://taps-staging.dillonkerr.com',  # Staging frontend custom domain
     'http://localhost:3000',  # For local development
-    '*' # Temporary wildcard for testing; replace with specific origins in production
 ]
 CORS_ALLOW_CREDENTIALS = True
 
