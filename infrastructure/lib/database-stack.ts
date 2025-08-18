@@ -42,7 +42,7 @@ export class DatabaseStack extends cdk.Stack {
         generateStringKey: 'SECRET_KEY',
         excludeCharacters: '"@/\\\'',
         passwordLength: 50,
-      },I
+      },
     });
 
     // Create a parameter group for PostgreSQL
