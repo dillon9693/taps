@@ -66,8 +66,10 @@ export class ComputeStack extends cdk.Stack {
       validation: acm.CertificateValidation.fromDns(hostedZone),
     });
 
-    // Create ECS Cluster
+    // Create ECS Cluster with predictable name
+    const clusterName = props.environment === Environment.STAGING ? 'taps-staging-cluster' : 'taps-production-cluster';
     const cluster = new ecs.Cluster(this, 'TapsCluster', {
+      clusterName: clusterName,
       vpc: props.vpc,
       containerInsights: true,
     });
@@ -187,7 +189,9 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create ECS Service - start with 0 tasks until Docker image is available
+    const serviceName = props.environment === Environment.STAGING ? 'taps-staging-service' : 'taps-production-service';
     const service = new ecs.FargateService(this, 'TapsService', {
+      serviceName: serviceName,
       cluster: cluster,
       taskDefinition: taskDefinition,
       desiredCount: 0,
