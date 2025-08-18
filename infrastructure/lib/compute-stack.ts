@@ -200,7 +200,7 @@ export class ComputeStack extends cdk.Stack {
       serviceName: serviceName,
       cluster: cluster,
       taskDefinition: taskDefinition,
-      desiredCount: 2,
+      desiredCount: 1,
       securityGroups: [props.ecsSecurityGroup],
       assignPublicIp: false,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
