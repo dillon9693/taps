@@ -20,6 +20,8 @@ ALLOWED_HOSTS = [
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     'https://taps.dillonkerr.com',
+    'https://taps-staging.dillonkerr.com',  # Staging frontend custom domain
+    'https://client-virid-xi.vercel.app',  # Staging frontend Vercel URL
     'http://localhost:3000',  # For local development
 ]
 CORS_ALLOW_CREDENTIALS = True
