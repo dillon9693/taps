@@ -14,22 +14,26 @@ The Taps application is deployed using the following architecture:
 ## Infrastructure Components
 
 ### Network Infrastructure
+
 - VPC with public and private subnets across 2 AZs
 - NAT Gateway for private subnet internet access
 - Security groups for ECS, RDS, and ALB
 
 ### Database Infrastructure
+
 - RDS PostgreSQL instance in private subnet
 - Automated backups and snapshots
 - Secrets Manager for database credentials
 
 ### Compute Infrastructure
+
 - ECS Fargate for containerized Django application
 - ECR repository for Docker images
 - Application Load Balancer for traffic distribution
 - Auto-scaling based on CPU and memory utilization
 
 ### Domain Infrastructure
+
 - ACM certificate for HTTPS
 - Route 53 for DNS management
 - Custom domain configuration
@@ -50,7 +54,6 @@ The following secrets need to be configured in GitHub Actions:
 - `AWS_ROLE_TO_ASSUME`: ARN of the IAM role to assume for AWS deployments
 - `VERCEL_TOKEN`: Vercel API token
 - `VERCEL_ORG_ID`: Vercel organization ID
-- `VERCEL_PROJECT_ID`: Vercel project ID
 
 ## Manual Deployment Steps
 
