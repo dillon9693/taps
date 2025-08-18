@@ -110,6 +110,21 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-allow-cidr"
+version = "0.8.0"
+description = "A Django Middleware to enable use of CIDR IP ranges in ALLOWED_HOSTS."
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "django_allow_cidr-0.8.0-py2.py3-none-any.whl", hash = "sha256:724ce76b7b4a25c641ddcd33777e2e95da622dd2c11937f0d76d0cd3d54b1622"},
+    {file = "django_allow_cidr-0.8.0.tar.gz", hash = "sha256:d6f80230621dd5b19ec1665b85abf8218b02556ff7cf0ddda41e2607267a3277"},
+]
+
+[package.dependencies]
+Django = ">=4.2"
+
+[[package]]
 name = "django-cors-headers"
 version = "4.7.0"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
@@ -469,4 +484,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "fe37fb812be98aaa67b42ec411ce77bb0142192649c363b926811a39e3998443"
+content-hash = "ce622723d099865c543c8d6f3d58d73aae806f2179b7d3637a9def94bdafb138"
