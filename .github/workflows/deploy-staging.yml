@@ -21,7 +21,7 @@ jobs:
 
   deploy-infrastructure:
     name: Deploy Infrastructure (Staging)
-    needs: [test-frontend, test-backend]
+    needs: [test-frontend, test-backend, deploy-backend]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -57,7 +57,7 @@ jobs:
 
   deploy-backend:
     name: Deploy Backend (Staging)
-    needs: [deploy-infrastructure]
+    needs: [test-backend]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
