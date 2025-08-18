@@ -34,7 +34,10 @@ print("VPC CIDR:")
 print(os.environ.get('VPC_CIDR', 'Not Set'))
 
 # Add django-allow-cidr middleware first to handle CIDR ranges in ALLOWED_HOSTS
-MIDDLEWARE = ['allow_cidr.middleware.AllowCIDRMiddleware'] + MIDDLEWARE
+MIDDLEWARE = [
+    'taps_backend.middleware.HealthCheckSSLMiddleware',
+    'allow_cidr.middleware.AllowCIDRMiddleware',
+] + MIDDLEWARE
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 ALLOWED_CIDR_NETS = []
