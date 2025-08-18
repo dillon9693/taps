@@ -5,7 +5,7 @@ Extends the base settings and overrides values specific to development environme
 
 from .settings import *  # Import all base settings
 
-# Override base settings for development
+print("IN DEV SETTINGS")
 
 # Security settings
 DEBUG = True

@@ -6,6 +6,8 @@ Extends the base settings and overrides values specific to production environmen
 from .settings import *  # Import all base settings
 import os
 
+print("IN PRODUCTION SETTINGS")
+
 # Override base settings for production
 
 # Construct DATABASE_URL from individual components
@@ -24,6 +26,13 @@ ALLOWED_HOSTS = [
     '.execute-api.us-east-1.amazonaws.com',  # For AWS API Gateway
     '*' # Temporary wildcard for testing; replace with specific origins in production
 ]
+
+print("ALLOWED_HOSTS set to:")
+print(ALLOWED_HOSTS)
+
+print("VPC CIDR:")
+print(os.environ.get('VPC_CIDR', 'Not Set'))
+
 
 # Add AllowCIDRMiddleware to support VPC CIDR ranges in ALLOWED_HOSTS
 # MIDDLEWARE = MIDDLEWARE + ['allow_cidr.middleware.AllowCIDRMiddleware']

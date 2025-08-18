@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 import environ
+import os
+
+print("IN BASE SETTINGS")
+
+print("DJANGO_SETTINGS_MODULE:")
+print(os.environ.get("DJANGO_SETTINGS_MODULE", "Not Set"))
 
 env = environ.Env()
 environ.Env.read_env(str(Path(__file__).resolve().parent.parent / '.env'))
