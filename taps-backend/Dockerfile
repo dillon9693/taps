@@ -41,7 +41,7 @@ CMD ["gunicorn", "--bind", "0.0.0.0:8000", "taps_backend.wsgi:application"]
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health/ || exit 1
+    CMD curl -f http://localhost:8000/taps/health/ || exit 1
 
 # Expose port
 EXPOSE 8000
