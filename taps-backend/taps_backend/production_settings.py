@@ -26,7 +26,7 @@ ALLOWED_HOSTS = [
 ]
 
 # Add AllowCIDRMiddleware to support VPC CIDR ranges in ALLOWED_HOSTS
-MIDDLEWARE = MIDDLEWARE + ['allow_cidr.middleware.AllowCIDRMiddleware']
+# MIDDLEWARE = MIDDLEWARE + ['allow_cidr.middleware.AllowCIDRMiddleware']
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 # ALLOWED_CIDR_NETS = []
