@@ -21,7 +21,7 @@ if all([database_host, database_port, database_name, database_user]):
     database_password = env.str('DATABASE_PASSWORD', default='')
     database_url = f"postgres://{database_user}:{database_password}@{database_host}:{database_port}/{database_name}"
     # Override the DATABASES setting with the constructed URL
-    DATABASES = {"default": env.db_url('DATABASE_URL', default=database_url)}
+    DATABASES = {"default": env.db_url_config(database_url)}
 
 # Security settings
 DEBUG = False
