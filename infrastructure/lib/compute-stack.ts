@@ -32,7 +32,6 @@ export class ComputeStack extends cdk.Stack {
   public readonly loadBalancerDnsName: string;
   public readonly ecrRepository: ecr.Repository;
   public readonly loadBalancer: elbv2.IApplicationLoadBalancer;
-  public readonly httpsListener: elbv2.IApplicationListener;
   public readonly certificate: acm.ICertificate;
   public readonly apiDomainName: string;
 
@@ -127,7 +126,7 @@ export class ComputeStack extends cdk.Stack {
         'DATABASE_PORT': props.databasePort,
         'DATABASE_NAME': props.databaseName,
         'DATABASE_USER': props.databaseUser,
-        'VPC_CIDR': props.vpc.vpcCidrBlock,  // Restrict ALLOWED_HOSTS to our VPC only
+        'VPC_CIDR': props.vpc.vpcCidrBlock,  // Used to restrict Django ALLOWED_HOSTS to our VPC only
       },
       secrets: {
         'DATABASE_PASSWORD': ecs.Secret.fromSecretsManager(
@@ -178,7 +177,7 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create HTTP Listener
-    const httpListener = this.loadBalancer.addListener('TapsHttpListener', {
+    this.loadBalancer.addListener('TapsHttpListener', {
       port: 80,
       open: true,
       defaultAction: elbv2.ListenerAction.redirect({
@@ -189,7 +188,7 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create HTTPS Listener with SSL certificate
-    this.httpsListener = this.loadBalancer.addListener('TapsHttpsListener', {
+    this.loadBalancer.addListener('TapsHttpsListener', {
       port: 443,
       open: true,
       defaultTargetGroups: [targetGroup],
