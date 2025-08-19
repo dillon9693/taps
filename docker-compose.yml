@@ -6,10 +6,6 @@ services:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=tapsadmin
-      - POSTGRES_PASSWORD=tapspassword
-      - POSTGRES_DB=tapsdb
     ports:
       - "5432:5432"
     healthcheck:
@@ -18,6 +14,7 @@ services:
       timeout: 5s
       retries: 5
 
+  # TODO currently using SQLite for local development, switch to Postgres
   backend:
     build:
       context: ./taps-backend
@@ -27,8 +24,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgres://tapsadmin:tapspassword@db:5432/tapsdb
-      - DEBUG=True
       - SECRET_KEY=local-development-secret-key
       - DJANGO_SETTINGS_MODULE=taps_backend.development_settings
     depends_on:
