@@ -211,7 +211,7 @@ export class ComputeStack extends cdk.Stack {
     // Add Auto Scaling
     const scaling = service.autoScaleTaskCount({
       minCapacity: 2,
-      maxCapacity: 10,
+      maxCapacity: 4,
     });
 
     scaling.scaleOnCpuUtilization('CpuScaling', {
