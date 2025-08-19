@@ -13,17 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./client
+  test-frontend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/test-frontend.yml
 
-    steps:
-      test-frontend:
-        if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
-        uses: ./.github/workflows/test-frontend.yml
-
-      test-backend:
-        if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
-        uses: ./.github/workflows/test-backend.yml
+  test-backend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/test-backend.yml
