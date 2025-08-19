@@ -12,8 +12,6 @@ interface DomainStackProps extends cdk.StackProps {
 }
 
 export class DomainStack extends cdk.Stack {
-  public readonly apiDomainName: string;
-
   constructor(scope: Construct, id: string, props: DomainStackProps) {
     super(scope, id, props);
 

@@ -94,26 +94,5 @@ export class DatabaseStack extends cdk.Stack {
       autoMinorVersionUpgrade: true,
       publiclyAccessible: false,
     });
-
-    // Output the database endpoint
-    new cdk.CfnOutput(this, 'DatabaseEndpoint', {
-      value: this.postgresInstance.dbInstanceEndpointAddress,
-      description: 'The endpoint of the database',
-      exportName: 'TapsDatabaseEndpoint',
-    });
-
-    // Output the database port
-    new cdk.CfnOutput(this, 'DatabasePort', {
-      value: this.postgresInstance.dbInstanceEndpointPort,
-      description: 'The port of the database',
-      exportName: 'TapsDatabasePort',
-    });
-
-    // Output the database secret ARN
-    new cdk.CfnOutput(this, 'DatabaseSecretArn', {
-      value: this.databaseSecret.secretArn,
-      description: 'The ARN of the database secret',
-      exportName: 'TapsDatabaseSecretArn',
-    });
   }
 }

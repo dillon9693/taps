@@ -80,12 +80,5 @@ export class NetworkStack extends cdk.Stack {
       ec2.Port.tcp(5432),
       'Allow traffic from ECS to RDS on port 5432'
     );
-
-    // Output the VPC ID
-    new cdk.CfnOutput(this, 'VpcId', {
-      value: this.vpc.vpcId,
-      description: 'The ID of the VPC',
-      exportName: 'TapsVpcId',
-    });
   }
 }

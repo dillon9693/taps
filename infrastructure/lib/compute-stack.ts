@@ -29,11 +29,7 @@ interface ComputeStackProps extends cdk.StackProps {
 }
 
 export class ComputeStack extends cdk.Stack {
-  public readonly loadBalancerDnsName: string;
-  public readonly ecrRepository: ecr.Repository;
   public readonly loadBalancer: elbv2.IApplicationLoadBalancer;
-  public readonly certificate: acm.ICertificate;
-  public readonly apiDomainName: string;
 
   constructor(scope: Construct, id: string, props: ComputeStackProps) {
     super(scope, id, props);
@@ -41,7 +37,7 @@ export class ComputeStack extends cdk.Stack {
     const envLowercase = props.environment.toLowerCase();
 
     // Create ECR Repository for Docker images
-    this.ecrRepository = new ecr.Repository(this, 'TapsRepository', {
+    const ecrRepository = new ecr.Repository(this, 'TapsRepository', {
       repositoryName: 'taps-backend',
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       lifecycleRules: [
@@ -53,7 +49,7 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Construct the full domain name for the API
-    this.apiDomainName = `${props.apiSubDomain}.${props.domainName}`;
+    const apiDomainName = `${props.apiSubDomain}.${props.domainName}`;
 
     // Look up the hosted zone
     const hostedZone = route53.HostedZone.fromLookup(this, 'TapsHostedZone', {
@@ -61,8 +57,8 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create a certificate for the domain
-    this.certificate = new acm.Certificate(this, 'TapsCertificate', {
-      domainName: this.apiDomainName,
+    const domainCertificate = new acm.Certificate(this, 'TapsCertificate', {
+      domainName: apiDomainName,
       validation: acm.CertificateValidation.fromDns(hostedZone),
     });
 
@@ -115,7 +111,7 @@ export class ComputeStack extends cdk.Stack {
         : `${envLowercase}-latest`;
     // Add Container to Task Definition
     const container = taskDefinition.addContainer('TapsContainer', {
-      image: ecs.ContainerImage.fromEcrRepository(this.ecrRepository, imageTag),
+      image: ecs.ContainerImage.fromEcrRepository(ecrRepository, imageTag),
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: 'taps',
         logGroup: logGroup,
@@ -192,7 +188,7 @@ export class ComputeStack extends cdk.Stack {
       port: 443,
       open: true,
       defaultTargetGroups: [targetGroup],
-      certificates: [this.certificate],
+      certificates: [domainCertificate],
     });
 
     // Create ECS Service - start with 0 tasks until Docker image is available
@@ -228,36 +224,5 @@ export class ComputeStack extends cdk.Stack {
 
     // Add service as target to target group
     targetGroup.addTarget(service);
-
-    // Store the load balancer DNS name
-    this.loadBalancerDnsName = this.loadBalancer.loadBalancerDnsName;
-
-    // Output the load balancer DNS name
-    new cdk.CfnOutput(this, 'LoadBalancerDnsName', {
-      value: this.loadBalancer.loadBalancerDnsName,
-      description: 'The DNS name of the load balancer',
-      exportName: 'TapsLoadBalancerDnsName',
-    });
-
-    // Output the ECR repository URI
-    new cdk.CfnOutput(this, 'EcrRepositoryUri', {
-      value: this.ecrRepository.repositoryUri,
-      description: 'The URI of the ECR repository',
-      exportName: 'TapsEcrRepositoryUri',
-    });
-
-    // Output the API domain name
-    new cdk.CfnOutput(this, 'ApiDomainName', {
-      value: this.apiDomainName,
-      description: 'The domain name of the API',
-      exportName: 'TapsApiDomainName',
-    });
-
-    // Output the certificate ARN
-    new cdk.CfnOutput(this, 'CertificateArn', {
-      value: this.certificate.certificateArn,
-      description: 'The ARN of the certificate',
-      exportName: 'TapsCertificateArn',
-    });
   }
 }
