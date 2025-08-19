@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
 ENV SECRET_KEY=docker-build-secret-key
-ENV DATABASE_URL=postgres://tapsadmin:tapspassword@db:5432/tapsdb
+# DATABASE_URL will be provided by ECS environment variables
 
 # Set work directory
 WORKDIR /app

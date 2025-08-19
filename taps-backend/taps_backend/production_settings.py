@@ -5,13 +5,23 @@ Extends the base settings and overrides values specific to production environmen
 
 from .settings import *  # Import all base settings
 import os
+import environ
+
+env = environ.Env()
 
 # Override base settings for production
 
-# Construct DATABASE_URL from individual components
-if all(key in os.environ for key in ['DATABASE_HOST', 'DATABASE_PORT', 'DATABASE_NAME', 'DATABASE_USER']):
-    DATABASE_URL = f"postgres://{os.environ['DATABASE_USER']}:{os.environ.get('DATABASE_PASSWORD', '')}@{os.environ['DATABASE_HOST']}:{os.environ['DATABASE_PORT']}/{os.environ['DATABASE_NAME']}"
-    os.environ['DATABASE_URL'] = DATABASE_URL
+# Construct database URL from individual components and override DATABASES setting
+database_host = env.str('DATABASE_HOST', default='')
+database_port = env.str('DATABASE_PORT', default='')
+database_name = env.str('DATABASE_NAME', default='')
+database_user = env.str('DATABASE_USER', default='')
+
+if all([database_host, database_port, database_name, database_user]):
+    database_password = env.str('DATABASE_PASSWORD', default='')
+    database_url = f"postgres://{database_user}:{database_password}@{database_host}:{database_port}/{database_name}"
+    # Override the DATABASES setting with the constructed URL
+    DATABASES = {"default": env.db_url('DATABASE_URL', default=database_url)}
 
 # Security settings
 DEBUG = False
