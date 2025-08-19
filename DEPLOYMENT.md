@@ -40,12 +40,41 @@ The Taps application is deployed using the following architecture:
 
 ## Deployment Process
 
-The deployment process is fully automated using GitHub Actions. The workflow is defined in `.github/workflows/deploy.yml` and consists of the following steps:
+### Production Deployment
+
+The production deployment process is fully automated using GitHub Actions. The workflow is defined in `.github/workflows/deploy.yml` and consists of the following steps:
 
 1. **Test**: Run tests for both frontend and backend
 2. **Deploy Infrastructure**: Deploy AWS infrastructure using CDK
 3. **Deploy Backend**: Build and push Docker image to ECR, update ECS service
 4. **Deploy Frontend**: Deploy React application to Vercel
+
+### Staging Deployment (Opt-in)
+
+Staging deployments are available for feature branches using an opt-in system via PR labels:
+
+#### How to Deploy to Staging
+
+1. **Create a Pull Request** from your feature branch as usual
+2. **Add the `deploy-staging` label** to the PR when you want to deploy to staging
+3. **Automatic deployments**: Every subsequent commit to the PR will automatically trigger a new staging deployment
+4. **Stop deployments**: Remove the `deploy-staging` label to prevent future deployments
+
+#### Staging Workflow Details
+
+- **Workflow file**: `.github/workflows/deploy-staging.yml`
+- **Trigger**: Pull request events (opened, synchronized, labeled)
+- **Condition**: Only runs when the `deploy-staging` label is present
+- **Environment**: Deploys to staging infrastructure (`taps-staging-*` resources)
+- **Image tagging**: Docker images tagged as `staging-pr{number}-{sha}` for traceability
+
+#### Benefits of Opt-in Staging
+
+- **No automatic staging deployments** for every PR
+- **Multiple deployments per PR** supported for iterative testing
+- **Easy visual management** via GitHub PR labels
+- **Resource efficiency** - only deploy when needed
+- **Better tracking** with PR-specific image tags
 
 ## Required Secrets
 
