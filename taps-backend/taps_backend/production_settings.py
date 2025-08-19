@@ -3,7 +3,6 @@ Production settings for taps_backend project.
 Extends the base settings and overrides values specific to production environment.
 """
 
-
 import environ
 
 from .settings import *
