@@ -3,7 +3,7 @@ Development settings for taps_backend project.
 Extends the base settings and overrides values specific to development environment.
 """
 
-from .settings import *
+from .settings import *  # noqa: F403
 
 # Security settings
 DEBUG = True
@@ -64,4 +64,4 @@ LOGGING = {
     },
 }
 
-DATABASES = {"default": env.db("DATABASE_URL")}
+DATABASES = {"default": env.db("DATABASE_URL")} # noqa: F405

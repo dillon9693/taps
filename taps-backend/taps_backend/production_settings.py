@@ -5,7 +5,7 @@ Extends the base settings and overrides values specific to production environmen
 
 import environ
 
-from .settings import *
+from .settings import *  # noqa: F403
 
 env = environ.Env()
 
@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
 MIDDLEWARE = [
     "taps_backend.middleware.HealthCheckSSLMiddleware",
     "allow_cidr.middleware.AllowCIDRMiddleware",
-] + MIDDLEWARE
+] + MIDDLEWARE # noqa: F405
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 ALLOWED_CIDR_NETS = []

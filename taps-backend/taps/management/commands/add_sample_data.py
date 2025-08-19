@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from django.core.management.base import BaseCommand
 
 from taps.models import Beer, Brewery, Tag

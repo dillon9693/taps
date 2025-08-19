@@ -80,7 +80,7 @@ class Query(graphene.ObjectType):
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
 
     def resolve_all_beers(
-        root, info, style=None, min_abv=None, max_abv=None, search=None
+        self, info, style=None, min_abv=None, max_abv=None, search=None
     ):
         qs = Beer.objects.select_related("brewery").prefetch_related("tags")
 
@@ -97,7 +97,7 @@ class Query(graphene.ObjectType):
 
         return qs.order_by("-created_at")
 
-    def resolve_featured_beers(root, info, count=6):
+    def resolve_featured_beers(self, info, count=6):
         return (
             Beer.objects.select_related("brewery")
             .prefetch_related("tags")
@@ -105,7 +105,7 @@ class Query(graphene.ObjectType):
             .order_by("-average_rating")[:count]
         )
 
-    def resolve_beer_by_id(root, info, id):
+    def resolve_beer_by_id(self, info, id):
         try:
             return (
                 Beer.objects.select_related("brewery")
@@ -115,7 +115,7 @@ class Query(graphene.ObjectType):
         except Beer.DoesNotExist:
             return None
 
-    def resolve_all_breweries(root, info, location=None, search=None):
+    def resolve_all_breweries(self, info, location=None, search=None):
         qs = Brewery.objects.prefetch_related("beers")
 
         if location:
@@ -127,13 +127,13 @@ class Query(graphene.ObjectType):
 
         return qs.order_by("name")
 
-    def resolve_brewery_by_name(root, info, name):
+    def resolve_brewery_by_name(self, info, name):
         try:
             return Brewery.objects.prefetch_related("beers").get(name=name)
         except Brewery.DoesNotExist:
             return None
 
-    def resolve_top_tags(root, info, count=10):
+    def resolve_top_tags(self, info, count=10):
         return (
             Tag.objects.prefetch_related("beers")
             .annotate(beer_count=Count("beers"))
