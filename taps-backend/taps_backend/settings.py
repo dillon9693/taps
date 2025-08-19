@@ -90,8 +90,8 @@ WSGI_APPLICATION = "taps_backend.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {"default": env.db("DATABASE_URL")}
+# To be set in environment-specific settings files
+DATABASES = {}
 
 
 # Password validation

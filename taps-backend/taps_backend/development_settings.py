@@ -63,3 +63,5 @@ LOGGING = {
         },
     },
 }
+
+DATABASES = {"default": env.db("DATABASE_URL")}
