@@ -1,0 +1,134 @@
+name: Deploy Taps Application (Staging)
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: taps-backend
+
+jobs:
+  test-frontend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/test-frontend.yml
+
+  test-backend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/test-backend.yml
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    needs: [test-frontend, test-backend, deploy-backend]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: ./infrastructure
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: CDK Bootstrap
+        run: npx cdk bootstrap
+
+      - name: CDK Deploy (Staging only)
+        run: npx cdk deploy taps-staging-* --require-approval never
+
+  deploy-backend:
+    name: Deploy Backend (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    needs: [test-backend]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: staging-pr${{ github.event.pull_request.number }}-${{ github.sha }}
+          SECRET_KEY: fake-secret-key
+          DJANGO_SETTINGS_MODULE: taps_backend.production_settings
+        run: |
+          echo $DJANGO_SETTINGS_MODULE
+          echo $SECRET_KEY
+          cd taps-backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Force ECS service update (Staging)
+        run: |
+          aws ecs update-service --cluster taps-staging-cluster --service taps-staging-service --force-new-deployment
+
+  deploy-frontend:
+    name: Deploy Frontend (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    needs: [deploy-infrastructure]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information (Staging)
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts (Staging)
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          REACT_APP_API_URL: https://api.staging.taps.dillonkerr.com/graphql
+
+      - name: Deploy Project Artifacts to Vercel (Staging)
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}

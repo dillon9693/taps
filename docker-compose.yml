@@ -1,0 +1,47 @@
+name: taps
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    # Uncomment below to enable query logging
+    # command: postgres -c log_statement=all -c log_destination=stderr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tapsadmin -d tapsdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    env_file: .env
+    build:
+      context: ./taps-backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./taps-backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.local
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000/graphql
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
