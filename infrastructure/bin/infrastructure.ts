@@ -9,7 +9,8 @@ import { DomainStack } from '../lib/domain-stack';
  * Interface for environment configuration
  */
 interface EnvironmentConfig {
-  name: string;
+  // name: string;
+  environmentName: Environment;
   account: string;
   region: string;
   domainName: string;
@@ -21,20 +22,20 @@ interface EnvironmentConfig {
  */
 function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
   const env = { account: config.account, region: config.region };
-  const envName = config.name.toLowerCase();
+  const envName = config.environmentName.toLowerCase();
   const prefix = `taps-${envName}`;
 
   // Common tags for all stacks
   const tags = {
-    Project: 'Taps',
-    Environment: config.name,
-    ManagedBy: 'CDK',
+    Project: "Taps",
+    Environment: config.environmentName,
+    ManagedBy: "CDK",
   };
 
   // Create the network stack
   const networkStack = new NetworkStack(app, `${prefix}-network`, {
     stackName: `${prefix}-network`,
-    description: `Network infrastructure for Taps ${config.name} environment`,
+    description: `Network infrastructure for Taps ${config.environmentName} environment`,
     env,
     tags,
   });
@@ -42,7 +43,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
   // Create the database stack
   const databaseStack = new DatabaseStack(app, `${prefix}-database`, {
     stackName: `${prefix}-database`,
-    description: `Database infrastructure for Taps ${config.name} environment`,
+    description: `Database infrastructure for Taps ${config.environmentName} environment`,
     vpc: networkStack.vpc,
     securityGroup: networkStack.rdsSecurityGroup,
     env,
@@ -52,7 +53,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
   // Create the compute stack
   const computeStack = new ComputeStack(app, `${prefix}-compute`, {
     stackName: `${prefix}-compute`,
-    description: `Compute infrastructure for Taps ${config.name} environment`,
+    description: `Compute infrastructure for Taps ${config.environmentName} environment`,
     vpc: networkStack.vpc,
     ecsSecurityGroup: networkStack.ecsSecurityGroup,
     albSecurityGroup: networkStack.albSecurityGroup,
@@ -64,7 +65,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     databaseUser: databaseStack.databaseUser,
     domainName: config.domainName,
     apiSubDomain: config.apiSubDomain,
-    environment: config.name === 'Staging' ? Environment.STAGING : Environment.PRODUCTION,
+    environment: config.environmentName,
     env,
     tags,
   });
@@ -72,7 +73,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
   // Create the domain stack
   const domainStack = new DomainStack(app, `${prefix}-domain`, {
     stackName: `${prefix}-domain`,
-    description: `Domain infrastructure for Taps ${config.name} environment`,
+    description: `Domain infrastructure for Taps ${config.environmentName} environment`,
     loadBalancer: computeStack.loadBalancer,
     domainName: config.domainName,
     subDomain: config.apiSubDomain,
@@ -106,20 +107,20 @@ if (!account) {
 
 // Create the staging environment
 createEnvironment(app, {
-  name: 'Staging',
+  environmentName: Environment.STAGING,
   account,
   region,
-  domainName: 'dillonkerr.com',
-  apiSubDomain: 'api.staging.taps',
+  domainName: "dillonkerr.com",
+  apiSubDomain: "api.staging.taps",
 });
 
 // Create the production environment
 createEnvironment(app, {
-  name: 'Production',
+  environmentName: Environment.PRODUCTION,
   account,
   region,
-  domainName: 'dillonkerr.com',
-  apiSubDomain: 'api.taps',
+  domainName: "dillonkerr.com",
+  apiSubDomain: "api.taps",
 });
 
 // Synthesize the CloudFormation template
