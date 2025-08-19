@@ -40,8 +40,10 @@ MIDDLEWARE = [
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 ALLOWED_CIDR_NETS = []
-if 'VPC_CIDR' in os.environ:
-    ALLOWED_CIDR_NETS = [os.environ['VPC_CIDR']]
+
+vpc_cidr = env.str('VPC_CIDR', default='')
+if len(vpc_cidr) > 0:
+    ALLOWED_CIDR_NETS.append(vpc_cidr)
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
