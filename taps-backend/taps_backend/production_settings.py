@@ -3,13 +3,11 @@ Production settings for taps_backend project.
 Extends the base settings and overrides values specific to production environment.
 """
 
-from .settings import *  # Import all base settings
+from .settings import *
 import os
 import environ
 
 env = environ.Env()
-
-# Override base settings for production
 
 # Construct database URL from individual components and override DATABASES setting
 database_host = env.str('DATABASE_HOST', default='')
@@ -35,7 +33,6 @@ ALLOWED_HOSTS = [
     'localhost', # For Dockerfile health check
 ]
 
-# Add django-allow-cidr middleware first to handle CIDR ranges in ALLOWED_HOSTS
 MIDDLEWARE = [
     'taps_backend.middleware.HealthCheckSSLMiddleware',
     'allow_cidr.middleware.AllowCIDRMiddleware',
@@ -50,7 +47,7 @@ if 'VPC_CIDR' in os.environ:
 CORS_ALLOWED_ORIGINS = [
     'https://taps.dillonkerr.com',
     'https://taps-staging.dillonkerr.com',  # Staging frontend custom domain
-    'http://localhost:3000',  # For local development
+    'http://localhost:3000', # Needed for health check
 ]
 CORS_ALLOW_CREDENTIALS = True
 

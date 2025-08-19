@@ -22,8 +22,6 @@ export class DomainStack extends cdk.Stack {
       domainName: props.domainName,
     });
 
-    // Certificate is now created in the compute stack
-
     // Create a DNS record for the API
     new route53.ARecord(this, 'TapsApiRecord', {
       zone: hostedZone,

@@ -3,7 +3,7 @@ Development settings for taps_backend project.
 Extends the base settings and overrides values specific to development environment.
 """
 
-from .settings import *  # Import all base settings
+from .settings import *
 
 # Security settings
 DEBUG = True
