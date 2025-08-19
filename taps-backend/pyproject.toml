@@ -21,3 +21,25 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
+ruff = "^0.12.9"
+
+[tool.ruff]
+# Exclude common Django directories
+exclude = [
+    ".git",
+    "__pycache__",
+    "migrations",
+    ".venv",
+    "node_modules",
+]
+
+# Same as Black
+line-length = 88
+
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default
+lint.select = ["E", "F", "W", "I", "N", "DJ"]
+
+# Django-specific rules
+[tool.ruff.lint.per-file-ignores]
+"*/settings*.py" = ["E501"]  # Allow long lines in settings files
+"*/migrations/*.py" = ["E501", "F401"]  # Relax rules for migrations
