@@ -3,8 +3,6 @@ FROM python:3.11-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
-ENV SECRET_KEY=docker-build-secret-key
 
 # Set work directory
 WORKDIR /app

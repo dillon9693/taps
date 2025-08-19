@@ -13,15 +13,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 
 import environ
-import os
-
-env = environ.Env()
-environ.Env.read_env(str(Path(__file__).resolve().parent.parent / '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SITE_ROOT = str(BASE_DIR)
 
+env = environ.Env()
+env_file = str(BASE_DIR / '.env')
+environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -34,7 +33,6 @@ DEBUG = env.bool("DEBUG", default=False)
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 

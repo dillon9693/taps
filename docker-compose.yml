@@ -8,6 +8,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
+    # Uncomment below to enable query logging
+    # command: postgres -c log_statement=all -c log_destination=stderr
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U tapsadmin -d tapsdb"]
       interval: 5s
@@ -24,7 +26,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SECRET_KEY=local-development-secret-key
       - DJANGO_SETTINGS_MODULE=taps_backend.development_settings
     depends_on:
       db:
