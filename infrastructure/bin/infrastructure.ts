@@ -2,8 +2,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { NetworkStack } from '../lib/network-stack';
 import { DatabaseStack } from '../lib/database-stack';
-import { ComputeStack, Environment } from '../lib/compute-stack';
+import { ComputeStack } from '../lib/compute-stack';
 import { DomainStack } from '../lib/domain-stack';
+import { Environment } from '../lib/environment';
 
 /**
  * Interface for environment configuration

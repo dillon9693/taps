@@ -9,11 +9,9 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as route53 from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
+import { Environment } from './environment';
 
-export enum Environment {
-  STAGING = 'Staging',
-  PRODUCTION = 'Production'
-}
+
 
 interface ComputeStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
