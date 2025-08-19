@@ -3,9 +3,10 @@ Production settings for taps_backend project.
 Extends the base settings and overrides values specific to production environment.
 """
 
-from .settings import *
-import os
+
 import environ
+
+from .settings import *
 
 env = environ.Env()
 

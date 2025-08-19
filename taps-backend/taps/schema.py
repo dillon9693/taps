@@ -1,6 +1,6 @@
 import graphene
-from graphene_django import DjangoObjectType
 from django.db.models import Count
+from graphene_django import DjangoObjectType
 
 from taps.models import Beer, Brewery, Tag
 
