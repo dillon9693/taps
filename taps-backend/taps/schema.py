@@ -10,7 +10,15 @@ class BreweryType(DjangoObjectType):
 
     class Meta:
         model = Brewery
-        fields = ("id", "name", "location", "description", "year_founded", "website", "beers")
+        fields = (
+            "id",
+            "name",
+            "location",
+            "description",
+            "year_founded",
+            "website",
+            "beers",
+        )
 
     def resolve_beer_count(self, info):
         return self.beers.count()
@@ -22,9 +30,18 @@ class BeerType(DjangoObjectType):
     class Meta:
         model = Beer
         fields = (
-            "id", "name", "brewery", "style", "abv", "ibu",
-            "description", "average_rating", "image_url", "tags",
-            "created_at", "updated_at"
+            "id",
+            "name",
+            "brewery",
+            "style",
+            "abv",
+            "ibu",
+            "description",
+            "average_rating",
+            "image_url",
+            "tags",
+            "created_at",
+            "updated_at",
         )
 
     def resolve_style_display(self, info):
@@ -62,7 +79,9 @@ class Query(graphene.ObjectType):
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
 
-    def resolve_all_beers(root, info, style=None, min_abv=None, max_abv=None, search=None):
+    def resolve_all_beers(
+        root, info, style=None, min_abv=None, max_abv=None, search=None
+    ):
         qs = Beer.objects.select_related("brewery").prefetch_related("tags")
 
         if style:
@@ -72,18 +91,27 @@ class Query(graphene.ObjectType):
         if max_abv is not None:
             qs = qs.filter(abv__lte=max_abv)
         if search:
-            qs = qs.filter(name__icontains=search) | qs.filter(description__icontains=search)
+            qs = qs.filter(name__icontains=search) | qs.filter(
+                description__icontains=search
+            )
 
         return qs.order_by("-created_at")
 
     def resolve_featured_beers(root, info, count=6):
-        return Beer.objects.select_related("brewery").prefetch_related("tags").filter(
-            average_rating__isnull=False
-        ).order_by("-average_rating")[:count]
+        return (
+            Beer.objects.select_related("brewery")
+            .prefetch_related("tags")
+            .filter(average_rating__isnull=False)
+            .order_by("-average_rating")[:count]
+        )
 
     def resolve_beer_by_id(root, info, id):
         try:
-            return Beer.objects.select_related("brewery").prefetch_related("tags").get(id=id)
+            return (
+                Beer.objects.select_related("brewery")
+                .prefetch_related("tags")
+                .get(id=id)
+            )
         except Beer.DoesNotExist:
             return None
 
@@ -93,7 +121,9 @@ class Query(graphene.ObjectType):
         if location:
             qs = qs.filter(location__icontains=location)
         if search:
-            qs = qs.filter(name__icontains=search) | qs.filter(description__icontains=search)
+            qs = qs.filter(name__icontains=search) | qs.filter(
+                description__icontains=search
+            )
 
         return qs.order_by("name")
 
