@@ -9,7 +9,6 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: taps-backend
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
 
 jobs:
   test-frontend:

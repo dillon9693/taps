@@ -53,7 +53,6 @@ The following secrets need to be configured in GitHub Actions:
 
 - `AWS_ROLE_TO_ASSUME`: ARN of the IAM role to assume for AWS deployments
 - `VERCEL_TOKEN`: Vercel API token
-- `VERCEL_ORG_ID`: Vercel organization ID
 
 ## Manual Deployment Steps
 
