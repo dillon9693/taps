@@ -19,14 +19,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SITE_ROOT = str(BASE_DIR)
 
 env = environ.Env()
-env_file = str(BASE_DIR / '.env')
-environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
+print(len(SECRET_KEY))
+print(env.str("DJANGO_SETTINGS_MODULE", default="NOT SET"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)

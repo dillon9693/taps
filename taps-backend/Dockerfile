@@ -3,6 +3,9 @@ FROM python:3.11-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+# TODO figure out how to get rid of below? Might cause issues if we use static files
+ENV SECRET_KEY=fake
+ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
 
 # Set work directory
 WORKDIR /app
