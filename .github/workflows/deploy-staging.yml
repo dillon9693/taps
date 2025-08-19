@@ -1,9 +1,8 @@
 name: Deploy Taps Application (Staging)
 
 on:
-  push:
-    branches:
-      - feature/production-deployment # Deploy staging on feature branch push
+  pull_request:
+    types: [opened, synchronize, labeled]
   workflow_dispatch:
 
 env:
@@ -12,13 +11,16 @@ env:
 
 jobs:
   test-frontend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     uses: ./.github/workflows/test-frontend.yml
 
   test-backend:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     uses: ./.github/workflows/test-backend.yml
 
   deploy-infrastructure:
     name: Deploy Infrastructure (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     needs: [test-frontend, test-backend, deploy-backend]
     runs-on: ubuntu-latest
     permissions:
@@ -55,6 +57,7 @@ jobs:
 
   deploy-backend:
     name: Deploy Backend (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     needs: [test-backend]
     runs-on: ubuntu-latest
     permissions:
@@ -78,7 +81,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: staging-${{ github.sha }}
+          IMAGE_TAG: staging-pr${{ github.event.pull_request.number }}-${{ github.sha }}
         run: |
           cd taps-backend
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:staging-latest .
@@ -92,6 +95,7 @@ jobs:
 
   deploy-frontend:
     name: Deploy Frontend (Staging)
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     needs: [deploy-infrastructure]
     runs-on: ubuntu-latest
     defaults:
