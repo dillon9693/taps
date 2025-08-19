@@ -39,6 +39,8 @@ export class ComputeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: ComputeStackProps) {
     super(scope, id, props);
 
+    const envLowercase = props.environment.toLowerCase();
+
     // Create ECR Repository for Docker images
     this.ecrRepository = new ecr.Repository(this, 'TapsRepository', {
       repositoryName: 'taps-backend',
@@ -66,7 +68,7 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create ECS Cluster with predictable name
-    const clusterName = props.environment === Environment.STAGING ? 'taps-staging-cluster' : 'taps-production-cluster';
+    const clusterName = `taps-${envLowercase}-cluster`;
     const cluster = new ecs.Cluster(this, 'TapsCluster', {
       clusterName: clusterName,
       vpc: props.vpc,
@@ -108,8 +110,10 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Determine image tag based on environment
-    const imageTag = props.environment === Environment.STAGING ? 'staging-latest' : 'latest';
-
+    const imageTag =
+      props.environment === Environment.PRODUCTION
+        ? "latest"
+        : `${envLowercase}-latest`;
     // Add Container to Task Definition
     const container = taskDefinition.addContainer('TapsContainer', {
       image: ecs.ContainerImage.fromEcrRepository(this.ecrRepository, imageTag),
@@ -193,7 +197,7 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Create ECS Service - start with 0 tasks until Docker image is available
-    const serviceName = props.environment === Environment.STAGING ? 'taps-staging-service' : 'taps-production-service';
+    const serviceName = `taps-${envLowercase}-service`;
     const service = new ecs.FargateService(this, 'TapsService', {
       serviceName: serviceName,
       cluster: cluster,
