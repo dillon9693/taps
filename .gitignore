@@ -113,3 +113,6 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Claude Code
+.claude/settings.local.json
