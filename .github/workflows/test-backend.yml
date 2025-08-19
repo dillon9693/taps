@@ -30,6 +30,9 @@ jobs:
       - name: Check code formatting
         run: poetry run black --check --diff .
 
+      - name: Lint with Ruff
+        run: poetry run ruff check .
+
       - name: Run tests
         run: poetry run python manage.py test
         env:
