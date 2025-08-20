@@ -27,7 +27,10 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Lint
+      - name: Format checks
+        run: poetry run format check .
+
+      - name: Lint checks
         run: poetry run ruff check .
 
       - name: Run tests
