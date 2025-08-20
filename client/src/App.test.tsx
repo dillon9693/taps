@@ -7,7 +7,7 @@ test("renders app with navigation", () => {
   render(
     <BrowserRouter>
       <App />
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 
   // Test that the app renders with navigation links
