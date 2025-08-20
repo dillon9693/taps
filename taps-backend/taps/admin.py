@@ -1,6 +1,6 @@
 from django.contrib import admin
-from taps.models import Beer, Brewery, Tag
 
+from taps.models import Beer, Brewery, Tag
 
 admin.site.register(Beer)
 admin.site.register(Brewery)

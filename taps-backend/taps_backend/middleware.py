@@ -17,9 +17,9 @@ class HealthCheckSSLMiddleware:
 
     def __call__(self, request):
         # Skip SSL redirect for health check endpoints by marking them as already secure
-        if request.path.startswith('/taps/health/'):
+        if request.path.startswith("/taps/health/"):
             # Override the META to prevent SecurityMiddleware from redirecting
-            request.META['HTTP_X_FORWARDED_PROTO'] = 'https'
+            request.META["HTTP_X_FORWARDED_PROTO"] = "https"
             request._is_secure_override = True
 
         response = self.get_response(request)

@@ -27,6 +27,12 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
+      - name: Format checks
+        run: poetry run ruff format --check .
+
+      - name: Lint checks
+        run: poetry run ruff check .
+
       - name: Run tests
         run: poetry run python manage.py test
         env:
