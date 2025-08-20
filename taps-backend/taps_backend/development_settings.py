@@ -64,4 +64,4 @@ LOGGING = {
     },
 }
 
-DATABASES = {"default": env.db("DATABASE_URL")} # noqa: F405
+DATABASES = {"default": env.db("DATABASE_URL")}  # noqa: F405

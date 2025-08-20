@@ -36,7 +36,7 @@ ALLOWED_HOSTS = [
 MIDDLEWARE = [
     "taps_backend.middleware.HealthCheckSSLMiddleware",
     "allow_cidr.middleware.AllowCIDRMiddleware",
-] + MIDDLEWARE # noqa: F405
+] + MIDDLEWARE  # noqa: F405
 
 # Configure CIDR ranges for ALLOWED_HOSTS
 ALLOWED_CIDR_NETS = []
