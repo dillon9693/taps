@@ -105,7 +105,7 @@ const region = process.env.CDK_DEFAULT_REGION || "us-east-1";
 
 if (!account) {
   throw new Error(
-    "CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured."
+    "CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured.",
   );
 }
 

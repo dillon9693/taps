@@ -43,7 +43,7 @@ export class DatabaseStack extends cdk.Stack {
           passwordLength: 16,
           requireEachIncludedType: true,
         },
-      }
+      },
     );
 
     // Create Django secret key
@@ -86,7 +86,7 @@ export class DatabaseStack extends cdk.Stack {
       }),
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.BURSTABLE3,
-        ec2.InstanceSize.SMALL
+        ec2.InstanceSize.SMALL,
       ),
       vpc: props.vpc,
       vpcSubnets: {

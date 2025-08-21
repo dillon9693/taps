@@ -73,7 +73,7 @@ export class ComputeStack extends cdk.Stack {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName(
-          "service-role/AmazonECSTaskExecutionRolePolicy"
+          "service-role/AmazonECSTaskExecutionRolePolicy",
         ),
       ],
     });
@@ -105,7 +105,7 @@ export class ComputeStack extends cdk.Stack {
         cpu: 512,
         executionRole: executionRole,
         taskRole: taskRole,
-      }
+      },
     );
 
     // Determine image tag based on environment
@@ -131,11 +131,11 @@ export class ComputeStack extends cdk.Stack {
       secrets: {
         DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(
           props.databaseSecret,
-          "password"
+          "password",
         ),
         SECRET_KEY: ecs.Secret.fromSecretsManager(
           props.djangoSecret,
-          "SECRET_KEY"
+          "SECRET_KEY",
         ),
       },
       healthCheck: {
@@ -180,7 +180,7 @@ export class ComputeStack extends cdk.Stack {
           timeout: cdk.Duration.seconds(5),
           healthyHttpCodes: "200",
         },
-      }
+      },
     );
 
     // Create HTTP Listener

@@ -45,12 +45,12 @@ export class NetworkStack extends cdk.Stack {
     this.albSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(80),
-      "Allow HTTP traffic from anywhere"
+      "Allow HTTP traffic from anywhere",
     );
     this.albSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(443),
-      "Allow HTTPS traffic from anywhere"
+      "Allow HTTPS traffic from anywhere",
     );
 
     // Create security group for ECS Fargate tasks
@@ -64,7 +64,7 @@ export class NetworkStack extends cdk.Stack {
     this.ecsSecurityGroup.addIngressRule(
       this.albSecurityGroup,
       ec2.Port.tcp(8000),
-      "Allow traffic from ALB to ECS on port 8000"
+      "Allow traffic from ALB to ECS on port 8000",
     );
 
     // Create security group for RDS
@@ -78,7 +78,7 @@ export class NetworkStack extends cdk.Stack {
     this.rdsSecurityGroup.addIngressRule(
       this.ecsSecurityGroup,
       ec2.Port.tcp(5432),
-      "Allow traffic from ECS to RDS on port 5432"
+      "Allow traffic from ECS to RDS on port 5432",
     );
   }
 }

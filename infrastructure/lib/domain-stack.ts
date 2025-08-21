@@ -24,7 +24,7 @@ export class DomainStack extends cdk.Stack {
       zone: hostedZone,
       recordName: props.subDomain,
       target: route53.RecordTarget.fromAlias(
-        new route53Targets.LoadBalancerTarget(props.loadBalancer)
+        new route53Targets.LoadBalancerTarget(props.loadBalancer),
       ),
     });
   }
