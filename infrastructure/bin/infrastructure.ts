@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib';
-import { NetworkStack } from '../lib/network-stack';
-import { DatabaseStack } from '../lib/database-stack';
-import { ComputeStack } from '../lib/compute-stack';
-import { DomainStack } from '../lib/domain-stack';
-import { Environment } from '../lib/environment';
+import * as cdk from "aws-cdk-lib";
+import { NetworkStack } from "../lib/network-stack";
+import { DatabaseStack } from "../lib/database-stack";
+import { ComputeStack } from "../lib/compute-stack";
+import { DomainStack } from "../lib/domain-stack";
+import { Environment } from "../lib/environment";
 
 /**
  * Interface for environment configuration
@@ -101,10 +101,12 @@ const app = new cdk.App();
 
 // Get environment variables - CDK sets these automatically when AWS credentials are configured
 const account = process.env.CDK_DEFAULT_ACCOUNT;
-const region = process.env.CDK_DEFAULT_REGION || 'us-east-1';
+const region = process.env.CDK_DEFAULT_REGION || "us-east-1";
 
 if (!account) {
-  throw new Error('CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured.');
+  throw new Error(
+    "CDK_DEFAULT_ACCOUNT not set. Ensure AWS credentials are properly configured."
+  );
 }
 
 // Create the staging environment

@@ -1,14 +1,14 @@
-import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as rds from 'aws-cdk-lib/aws-rds';
-import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
-import { Construct } from 'constructs';
-import { Environment } from './environment';
+import * as cdk from "aws-cdk-lib";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import * as rds from "aws-cdk-lib/aws-rds";
+import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
+import { Construct } from "constructs";
+import { Environment } from "./environment";
 
 interface DatabaseStackProps extends cdk.StackProps {
   vpc: ec2.Vpc;
   securityGroup: ec2.SecurityGroup;
-  environment: Environment
+  environment: Environment;
 }
 
 export class DatabaseStack extends cdk.Stack {
@@ -16,7 +16,7 @@ export class DatabaseStack extends cdk.Stack {
   public readonly databaseSecret: secretsmanager.Secret;
   public readonly djangoSecret: secretsmanager.Secret;
   public readonly databaseName;
-  public readonly databaseUser: string = 'tapsadmin';
+  public readonly databaseUser: string = "tapsadmin";
 
   constructor(scope: Construct, id: string, props: DatabaseStackProps) {
     super(scope, id, props);
@@ -47,13 +47,13 @@ export class DatabaseStack extends cdk.Stack {
     );
 
     // Create Django secret key
-    this.djangoSecret = new secretsmanager.Secret(this, 'DjangoSecretKey', {
+    this.djangoSecret = new secretsmanager.Secret(this, "DjangoSecretKey", {
       secretName: `${nameWithEnv}/django/secret-key`,
       description: `Django secret key for Taps application ${envDescriptionSuffix}`,
       generateSecretString: {
-        secretStringTemplate: '{}',
-        generateStringKey: 'SECRET_KEY',
-        excludeCharacters: '"@/\\\'',
+        secretStringTemplate: "{}",
+        generateStringKey: "SECRET_KEY",
+        excludeCharacters: "\"@/\\'",
         passwordLength: 50,
       },
     });
@@ -80,7 +80,7 @@ export class DatabaseStack extends cdk.Stack {
     });
 
     // Create the RDS PostgreSQL instance
-    this.postgresInstance = new rds.DatabaseInstance(this, 'TapsDatabase', {
+    this.postgresInstance = new rds.DatabaseInstance(this, "TapsDatabase", {
       engine: rds.DatabaseInstanceEngine.postgres({
         version: rds.PostgresEngineVersion.VER_15,
       }),

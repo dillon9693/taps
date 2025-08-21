@@ -1,6 +1,6 @@
-import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import * as ec2 from "aws-cdk-lib/aws-ec2";
+import { Construct } from "constructs";
 
 export class NetworkStack extends cdk.Stack {
   public readonly vpc: ec2.Vpc;
@@ -12,22 +12,22 @@ export class NetworkStack extends cdk.Stack {
     super(scope, id, props);
 
     // Create a VPC with public and private subnets across 2 AZs
-    this.vpc = new ec2.Vpc(this, 'TapsVPC', {
+    this.vpc = new ec2.Vpc(this, "TapsVPC", {
       maxAzs: 2,
       natGateways: 1, // Use 1 NAT Gateway to save costs
       subnetConfiguration: [
         {
-          name: 'public',
+          name: "public",
           subnetType: ec2.SubnetType.PUBLIC,
           cidrMask: 24,
         },
         {
-          name: 'private',
+          name: "private",
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
           cidrMask: 24,
         },
         {
-          name: 'isolated',
+          name: "isolated",
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
           cidrMask: 24,
         },
@@ -35,9 +35,9 @@ export class NetworkStack extends cdk.Stack {
     });
 
     // Create security group for the Application Load Balancer
-    this.albSecurityGroup = new ec2.SecurityGroup(this, 'ALBSecurityGroup', {
+    this.albSecurityGroup = new ec2.SecurityGroup(this, "ALBSecurityGroup", {
       vpc: this.vpc,
-      description: 'Security group for the Application Load Balancer',
+      description: "Security group for the Application Load Balancer",
       allowAllOutbound: true,
     });
 
@@ -45,18 +45,18 @@ export class NetworkStack extends cdk.Stack {
     this.albSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(80),
-      'Allow HTTP traffic from anywhere'
+      "Allow HTTP traffic from anywhere"
     );
     this.albSecurityGroup.addIngressRule(
       ec2.Peer.anyIpv4(),
       ec2.Port.tcp(443),
-      'Allow HTTPS traffic from anywhere'
+      "Allow HTTPS traffic from anywhere"
     );
 
     // Create security group for ECS Fargate tasks
-    this.ecsSecurityGroup = new ec2.SecurityGroup(this, 'ECSSecurityGroup', {
+    this.ecsSecurityGroup = new ec2.SecurityGroup(this, "ECSSecurityGroup", {
       vpc: this.vpc,
-      description: 'Security group for ECS Fargate tasks',
+      description: "Security group for ECS Fargate tasks",
       allowAllOutbound: true,
     });
 
@@ -64,13 +64,13 @@ export class NetworkStack extends cdk.Stack {
     this.ecsSecurityGroup.addIngressRule(
       this.albSecurityGroup,
       ec2.Port.tcp(8000),
-      'Allow traffic from ALB to ECS on port 8000'
+      "Allow traffic from ALB to ECS on port 8000"
     );
 
     // Create security group for RDS
-    this.rdsSecurityGroup = new ec2.SecurityGroup(this, 'RDSSecurityGroup', {
+    this.rdsSecurityGroup = new ec2.SecurityGroup(this, "RDSSecurityGroup", {
       vpc: this.vpc,
-      description: 'Security group for RDS PostgreSQL',
+      description: "Security group for RDS PostgreSQL",
       allowAllOutbound: false,
     });
 
@@ -78,7 +78,7 @@ export class NetworkStack extends cdk.Stack {
     this.rdsSecurityGroup.addIngressRule(
       this.ecsSecurityGroup,
       ec2.Port.tcp(5432),
-      'Allow traffic from ECS to RDS on port 5432'
+      "Allow traffic from ECS to RDS on port 5432"
     );
   }
 }
