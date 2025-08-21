@@ -26,7 +26,7 @@ export class DatabaseStack extends cdk.Stack {
     const nameWithEnv = `taps-${envLowercase}`;
     const envDescriptionSuffix = `for ${props.environment} environment`;
 
-    this.databaseName = `tabsdb-${envLowercase}`;
+    this.databaseName = `tabsdb${envLowercase}`;
 
     // Create a secret for the database credentials
     this.databaseSecret = new secretsmanager.Secret(
