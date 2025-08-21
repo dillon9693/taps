@@ -17,9 +17,12 @@ jobs:
   test-backend:
     uses: ./.github/workflows/test-backend.yml
 
+  test-infrastructure:
+    uses: ./.github/workflows/test-infrastructure.yml
+
   deploy-infrastructure:
     name: Deploy Infrastructure
-    needs: [test-frontend, test-backend]
+    needs: [test-frontend, test-backend, test-infrastructure]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

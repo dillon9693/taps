@@ -18,6 +18,10 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
     uses: ./.github/workflows/test-backend.yml
 
+  test-infrastructure:
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
+    uses: ./.github/workflows/test-infrastructure.yml
+
   deploy-infrastructure:
     name: Deploy Infrastructure (Staging)
     if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
@@ -58,7 +62,7 @@ jobs:
   deploy-backend:
     name: Deploy Backend (Staging)
     if: contains(github.event.pull_request.labels.*.name, 'deploy-staging')
-    needs: [test-backend]
+    needs: [test-backend, test-infrastructure]
     runs-on: ubuntu-latest
     permissions:
       id-token: write

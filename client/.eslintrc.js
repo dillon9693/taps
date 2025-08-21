@@ -1,21 +1,16 @@
 module.exports = {
-  env: {
-    browser: true,
-    es2021: true,
-    "jest/globals": true,
-  },
   extends: [
+    "../.eslintrc.base.js",
     "plugin:react/recommended",
     "airbnb",
-    "plugin:prettier/recommended",
   ],
-  parser: "@typescript-eslint/parser",
+  env: {
+    browser: true,
+  },
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: "latest",
-    sourceType: "module",
   },
   settings: {
     "import/resolver": {
@@ -24,7 +19,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["jest", "react", "@typescript-eslint"],
+  plugins: ["react"],
   rules: {
     "react/jsx-filename-extension": [
       2,
