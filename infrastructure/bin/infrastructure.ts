@@ -47,6 +47,7 @@ function createEnvironment(app: cdk.App, config: EnvironmentConfig) {
     description: `Database infrastructure for Taps ${config.environmentName} environment`,
     vpc: networkStack.vpc,
     securityGroup: networkStack.rdsSecurityGroup,
+    environment: config.environmentName,
     env,
     tags,
   });
