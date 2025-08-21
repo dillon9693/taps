@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: taps-backend
+  ECR_REPOSITORY: taps-backend-staging
 
 jobs:
   test-frontend:
