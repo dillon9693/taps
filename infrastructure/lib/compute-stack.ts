@@ -38,7 +38,7 @@ export class ComputeStack extends cdk.Stack {
 
     // Create ECR Repository for Docker images
     const ecrRepository = new ecr.Repository(this, 'TapsRepository', {
-      repositoryName: 'taps-backend',
+      repositoryName: `taps-backend-${envLowercase}`,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
       lifecycleRules: [
         {
@@ -91,7 +91,7 @@ export class ComputeStack extends cdk.Stack {
 
     // Create CloudWatch Log Group
     const logGroup = new logs.LogGroup(this, 'TapsLogGroup', {
-      logGroupName: '/ecs/taps-backend',
+      logGroupName: `/ecs/taps-backend-${envLowercase}`,
       retention: logs.RetentionDays.ONE_MONTH,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
