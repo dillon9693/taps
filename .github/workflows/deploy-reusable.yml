@@ -12,8 +12,8 @@ on:
         required: true
         type: string
       frontend_api_url:
-        description: "Frontend API URL (optional)"
-        required: false
+        description: "Frontend API URL"
+        required: true
         type: string
     secrets:
       AWS_ROLE_TO_ASSUME:
@@ -109,15 +109,15 @@ jobs:
       - name: Run database migrations
         run: |
           echo "Running database migrations for ${{ inputs.environment }} environment..."
-          
+
           # Get values from CDK outputs
           STACK_NAME="taps-${{ inputs.environment }}-compute"
           OUTPUTS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Outputs')
-          
+
           MIGRATION_TASK_FAMILY=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="MigrationTaskFamily") | .OutputValue')
           SUBNETS=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="ECSSubnets") | .OutputValue')
           SECURITY_GROUP=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="ECSSecurityGroup") | .OutputValue')
-          
+
           # Run migration task
           TASK_ARN=$(aws ecs run-task \
             --cluster "taps-${{ inputs.environment }}-cluster" \
@@ -126,23 +126,23 @@ jobs:
             --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SECURITY_GROUP],assignPublicIp=DISABLED}" \
             --query 'tasks[0].taskArn' \
             --output text)
-          
+
           echo "Migration task started: $TASK_ARN"
-          
+
           # Wait for completion and check result
           aws ecs wait tasks-stopped --cluster "taps-${{ inputs.environment }}-cluster" --tasks "$TASK_ARN"
-          
+
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster "taps-${{ inputs.environment }}-cluster" \
             --tasks "$TASK_ARN" \
             --query 'tasks[0].containers[0].exitCode' \
             --output text)
-          
+
           if [ "$EXIT_CODE" != "0" ]; then
             echo "❌ Migration failed with exit code: $EXIT_CODE"
             exit 1
           fi
-          
+
           echo "✅ Database migrations completed successfully"
 
       - name: Scale up and update ECS service
