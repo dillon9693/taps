@@ -175,11 +175,11 @@ jobs:
 
       - name: Set Vercel project environment variables
         run: |
-          echo "VERCEL_ORG_ID=dillon-kerrs-projects" >> $GITHUB_ENV
+          echo "VERCEL_ORG_ID=team_QbgwTQFRan4Kh4MLKt0WrbJq" >> $GITHUB_ENV
           if [ "${{ inputs.environment }}" = "production" ]; then
-            echo "VERCEL_PROJECT_ID=taps-production" >> $GITHUB_ENV
+            echo "VERCEL_PROJECT_ID=prj_1j6jkSnsSYiYhHOZ9wW5i31RCVrl" >> $GITHUB_ENV
           else
-            echo "VERCEL_PROJECT_ID=taps-staging" >> $GITHUB_ENV
+            echo "VERCEL_PROJECT_ID=prj_V6z9Xx53SqqY3X6u0zt3P6AuS58T" >> $GITHUB_ENV
           fi
 
       - name: Pull Vercel Environment Information
