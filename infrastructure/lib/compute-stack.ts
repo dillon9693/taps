@@ -235,5 +235,64 @@ export class ComputeStack extends cdk.Stack {
 
     // Add service as target to target group
     targetGroup.addTarget(service);
+
+    // Create Migration Task Definition
+    const migrationTaskDefinition = new ecs.FargateTaskDefinition(
+      this,
+      "TapsMigrationTaskDefinition",
+      {
+        memoryLimitMiB: 512,
+        cpu: 256,
+        executionRole: executionRole,
+        taskRole: taskRole,
+      },
+    );
+
+    // Add Migration Container to Task Definition
+    migrationTaskDefinition.addContainer("TapsMigrationContainer", {
+      image: ecs.ContainerImage.fromEcrRepository(ecrRepository, imageTag),
+      logging: ecs.LogDrivers.awsLogs({
+        streamPrefix: "taps-migration",
+        logGroup: logGroup,
+      }),
+      environment: {
+        DJANGO_SETTINGS_MODULE: "taps_backend.production_settings",
+        DATABASE_HOST: props.databaseEndpoint,
+        DATABASE_PORT: props.databasePort,
+        DATABASE_NAME: props.databaseName,
+        DATABASE_USER: props.databaseUser,
+      },
+      secrets: {
+        DATABASE_PASSWORD: ecs.Secret.fromSecretsManager(
+          props.databaseSecret,
+          "password",
+        ),
+        SECRET_KEY: ecs.Secret.fromSecretsManager(
+          props.djangoSecret,
+          "SECRET_KEY",
+        ),
+      },
+      // Override the default command to run migrations
+      command: ["poetry", "run", "python", "manage.py", "migrate", "--noinput"],
+    });
+
+    // Output migration task definition family name for GitHub Actions
+    new cdk.CfnOutput(this, "MigrationTaskFamily", {
+      value: migrationTaskDefinition.family,
+      description: "ECS task definition family for migrations",
+    });
+
+    // Output network configuration for migration tasks
+    new cdk.CfnOutput(this, "ECSSubnets", {
+      value: props.vpc.privateSubnets
+        .map((subnet) => subnet.subnetId)
+        .join(","),
+      description: "Private subnet IDs for ECS tasks",
+    });
+
+    new cdk.CfnOutput(this, "ECSSecurityGroup", {
+      value: props.ecsSecurityGroup.securityGroupId,
+      description: "Security group ID for ECS tasks",
+    });
   }
 }
