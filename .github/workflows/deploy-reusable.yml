@@ -1,0 +1,166 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "Environment to deploy to (production or staging)"
+        required: true
+        type: string
+      image_tag:
+        description: "Docker image tag"
+        required: true
+        type: string
+      frontend_api_url:
+        description: "Frontend API URL (optional)"
+        required: false
+        type: string
+    secrets:
+      AWS_ROLE_TO_ASSUME:
+        required: true
+      VERCEL_TOKEN:
+        required: true
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  test-frontend:
+    uses: ./.github/workflows/test-frontend.yml
+
+  test-backend:
+    uses: ./.github/workflows/test-backend.yml
+
+  test-infrastructure:
+    uses: ./.github/workflows/test-infrastructure.yml
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure (${{ inputs.environment }})
+    needs: [test-frontend, test-backend, test-infrastructure]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: ./infrastructure
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: CDK Bootstrap
+        run: npx cdk bootstrap
+
+      - name: CDK Deploy
+        run: npx cdk deploy taps-${{ inputs.environment }}-* --require-approval never
+
+  deploy-backend:
+    name: Deploy Backend (${{ inputs.environment }})
+    needs: [deploy-infrastructure]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: taps-backend-${{ inputs.environment }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          SECRET_KEY: fake-secret-key
+          DJANGO_SETTINGS_MODULE: taps_backend.production_settings
+        run: |
+          cd taps-backend
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.environment }}-latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.environment }}-latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Scale up and update ECS service
+        run: |
+          aws ecs update-service --cluster taps-${{ inputs.environment }}-cluster --service taps-${{ inputs.environment }}-service --desired-count 1 --force-new-deployment
+
+  deploy-frontend:
+    name: Deploy Frontend (${{ inputs.environment }})
+    needs: [deploy-infrastructure]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Set Vercel environment
+        run: |
+          if [ "${{ inputs.environment }}" = "production" ]; then
+            echo "VERCEL_ENV=production" >> $GITHUB_ENV
+            echo "USE_PROD_FLAG=true" >> $GITHUB_ENV
+          else
+            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
+            echo "USE_PROD_FLAG=false" >> $GITHUB_ENV
+          fi
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ env.VERCEL_ENV }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: |
+          if [ "${{ env.USE_PROD_FLAG }}" = "true" ]; then
+            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel build --token=${{ secrets.VERCEL_TOKEN }}
+          fi
+        env:
+          REACT_APP_API_URL: ${{ inputs.frontend_api_url }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: |
+          if [ "${{ env.USE_PROD_FLAG }}" = "true" ]; then
+            vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          else
+            vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+          fi
