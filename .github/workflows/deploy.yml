@@ -16,4 +16,3 @@ jobs:
       frontend_api_url: https://api.taps.dillonkerr.com/graphql
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
