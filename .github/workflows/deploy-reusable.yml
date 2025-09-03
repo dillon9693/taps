@@ -4,15 +4,15 @@ on:
   workflow_call:
     inputs:
       environment:
-        description: 'Environment to deploy to (production or staging)'
+        description: "Environment to deploy to (production or staging)"
         required: true
         type: string
       image_tag:
-        description: 'Docker image tag'
+        description: "Docker image tag"
         required: true
         type: string
       frontend_api_url:
-        description: 'Frontend API URL (optional)'
+        description: "Frontend API URL (optional)"
         required: false
         type: string
     secrets:

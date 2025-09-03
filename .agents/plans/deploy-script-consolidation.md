@@ -9,14 +9,17 @@ Consolidate the staging (`deploy-staging.yml`) and production (`deploy.yml`) dep
 
 1. **Create reusable deployment workflow**
    - Create `.github/workflows/deploy-reusable.yml` as a reusable workflow
-   - Parameterize environment-specific values:
-     - ECR repository name (`taps-backend-production` vs `taps-backend-staging`)
-     - CDK deployment target (`taps-production-*` vs `taps-staging-*`)
-     - ECS cluster/service names 
-     - Docker image tagging strategy
-     - Vercel environment (`production` vs `preview`)
-     - Vercel build flags (`--prod` flag presence)
-     - Frontend API URL configuration
+   - Use simplified parameter interface with only 3 inputs:
+     - `environment` (production/staging) 
+     - `image_tag` (deployment-specific tag)
+     - `frontend_api_url` (optional, for staging)
+   - Derive resource names automatically from environment:
+     - ECR repository: `taps-backend-{environment}`
+     - CDK target: `taps-{environment}-*`
+     - ECS cluster/service: `taps-{environment}-cluster/service`
+   - Use conditional logic for Vercel configuration:
+     - Environment mapping (production → production, staging → preview)
+     - Build flags (production uses `--prod`, staging doesn't)
 
 2. **Update production deploy script**
    - Replace job definitions with calls to reusable workflow
@@ -30,13 +33,6 @@ Consolidate the staging (`deploy-staging.yml`) and production (`deploy.yml`) dep
    - Maintain existing triggers (PR with labels, workflow_dispatch)
    - Maintain existing conditional logic (`contains(github.event.pull_request.labels.*.name, 'deploy-staging')`)
 
-4. **Environment parameter mapping**
-   - `environment`: `production` | `staging`
-   - `ecr_repository`: Derived from environment
-   - `cdk_target`: Derived from environment  
-   - `image_tag_strategy`: Different logic for staging (includes PR number)
-   - `vercel_environment`: `production` | `preview`
-   - `api_url`: Environment-specific API endpoints
 
 # Risks & Considerations
 
