@@ -12,6 +12,7 @@ jobs:
     with:
       environment: staging
       image_tag: staging-pr${{ github.event.pull_request.number }}-${{ github.sha }}
+      commit_hash: ${{ github.sha }}
       frontend_api_url: https://api.staging.taps.dillonkerr.com/graphql
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
