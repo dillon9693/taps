@@ -10,10 +10,12 @@ import "./index.css";
 const version = process.env.VERSION;
 if (version) {
   console.log(`App version: ${version}`);
+} else {
+  console.log("No app version found");
 }
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
+  document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
@@ -28,7 +30,7 @@ root.render(
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
