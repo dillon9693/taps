@@ -106,6 +106,45 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.environment }}-latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      - name: Run database migrations
+        run: |
+          echo "Running database migrations for ${{ inputs.environment }} environment..."
+          
+          # Get values from CDK outputs
+          STACK_NAME="taps-${{ inputs.environment }}-compute"
+          OUTPUTS=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --query 'Stacks[0].Outputs')
+          
+          MIGRATION_TASK_FAMILY=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="MigrationTaskFamily") | .OutputValue')
+          SUBNETS=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="ECSSubnets") | .OutputValue')
+          SECURITY_GROUP=$(echo "$OUTPUTS" | jq -r '.[] | select(.OutputKey=="ECSSecurityGroup") | .OutputValue')
+          
+          # Run migration task
+          TASK_ARN=$(aws ecs run-task \
+            --cluster "taps-${{ inputs.environment }}-cluster" \
+            --task-definition "$MIGRATION_TASK_FAMILY" \
+            --launch-type FARGATE \
+            --network-configuration "awsvpcConfiguration={subnets=[$SUBNETS],securityGroups=[$SECURITY_GROUP],assignPublicIp=DISABLED}" \
+            --query 'tasks[0].taskArn' \
+            --output text)
+          
+          echo "Migration task started: $TASK_ARN"
+          
+          # Wait for completion and check result
+          aws ecs wait tasks-stopped --cluster "taps-${{ inputs.environment }}-cluster" --tasks "$TASK_ARN"
+          
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster "taps-${{ inputs.environment }}-cluster" \
+            --tasks "$TASK_ARN" \
+            --query 'tasks[0].containers[0].exitCode' \
+            --output text)
+          
+          if [ "$EXIT_CODE" != "0" ]; then
+            echo "❌ Migration failed with exit code: $EXIT_CODE"
+            exit 1
+          fi
+          
+          echo "✅ Database migrations completed successfully"
+
       - name: Scale up and update ECS service
         run: |
           aws ecs update-service --cluster taps-${{ inputs.environment }}-cluster --service taps-${{ inputs.environment }}-service --desired-count 1 --force-new-deployment
