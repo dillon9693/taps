@@ -86,7 +86,7 @@ export class DatabaseStack extends cdk.Stack {
       }),
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.BURSTABLE3,
-        ec2.InstanceSize.MICRO, // Free Tier eligible
+        ec2.InstanceSize.MICRO,
       ),
       vpc: props.vpc,
       vpcSubnets: {
@@ -103,7 +103,7 @@ export class DatabaseStack extends cdk.Stack {
       deletionProtection: true, // Enable for production data safety
       databaseName: this.databaseName,
       credentials: rds.Credentials.fromSecret(this.databaseSecret),
-      multiAz: false, // Disabled for cost optimization
+      multiAz: false,
       autoMinorVersionUpgrade: true,
       publiclyAccessible: false,
     });
