@@ -86,7 +86,7 @@ export class DatabaseStack extends cdk.Stack {
       }),
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.BURSTABLE3,
-        ec2.InstanceSize.SMALL,
+        ec2.InstanceSize.MICRO, // Free Tier eligible
       ),
       vpc: props.vpc,
       vpcSubnets: {
@@ -98,12 +98,12 @@ export class DatabaseStack extends cdk.Stack {
       allocatedStorage: 20,
       maxAllocatedStorage: 100,
       storageType: rds.StorageType.GP2,
-      backupRetention: cdk.Duration.days(7),
+      backupRetention: cdk.Duration.days(1),
       deleteAutomatedBackups: true,
       deletionProtection: true, // Enable for production data safety
       databaseName: this.databaseName,
       credentials: rds.Credentials.fromSecret(this.databaseSecret),
-      multiAz: true, // Enable for production high availability
+      multiAz: false, // Disabled for cost optimization
       autoMinorVersionUpgrade: true,
       publiclyAccessible: false,
     });

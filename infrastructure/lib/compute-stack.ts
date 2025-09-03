@@ -92,7 +92,7 @@ export class ComputeStack extends cdk.Stack {
     // Create CloudWatch Log Group
     const logGroup = new logs.LogGroup(this, "TapsLogGroup", {
       logGroupName: `/ecs/taps-backend-${envLowercase}`,
-      retention: logs.RetentionDays.ONE_MONTH,
+      retention: logs.RetentionDays.ONE_WEEK,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
@@ -101,8 +101,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsTaskDefinition",
       {
-        memoryLimitMiB: 1024,
-        cpu: 512,
+        memoryLimitMiB: 512,
+        cpu: 256,
         executionRole: executionRole,
         taskRole: taskRole,
       },
@@ -208,7 +208,7 @@ export class ComputeStack extends cdk.Stack {
       serviceName: serviceName,
       cluster: cluster,
       taskDefinition: taskDefinition,
-      desiredCount: 0,
+      desiredCount: 1,
       securityGroups: [props.ecsSecurityGroup],
       assignPublicIp: false,
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
@@ -217,8 +217,8 @@ export class ComputeStack extends cdk.Stack {
 
     // Add Auto Scaling
     const scaling = service.autoScaleTaskCount({
-      minCapacity: 2,
-      maxCapacity: 4,
+      minCapacity: 1,
+      maxCapacity: 2,
     });
 
     scaling.scaleOnCpuUtilization("CpuScaling", {
