@@ -168,7 +168,7 @@ jobs:
           cache-dependency-path: client/package-lock.json
 
       - name: Install dependencies
-        run: npm ciCo
+        run: npm ci
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
