@@ -7,6 +7,13 @@ import Search from "./routes/Search";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 
+const version = process.env.REACT_APP_VERSION;
+if (version) {
+  console.log(`App version: ${version}`);
+} else {
+  console.log("No app version found");
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );

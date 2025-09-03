@@ -11,6 +11,10 @@ on:
         description: "Docker image tag"
         required: true
         type: string
+      commit_hash:
+        description: "Current commit hash (for staging deployments)"
+        required: false
+        type: string
       frontend_api_url:
         description: "Frontend API URL"
         required: true
@@ -173,33 +177,23 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Set Vercel environment
+      - name: Set Vercel project environment variables
         run: |
+          echo "VERCEL_ORG_ID=team_QbgwTQFRan4Kh4MLKt0WrbJq" >> $GITHUB_ENV
           if [ "${{ inputs.environment }}" = "production" ]; then
-            echo "VERCEL_ENV=production" >> $GITHUB_ENV
-            echo "USE_PROD_FLAG=true" >> $GITHUB_ENV
+            echo "VERCEL_PROJECT_ID=prj_1j6jkSnsSYiYhHOZ9wW5i31RCVrl" >> $GITHUB_ENV
           else
-            echo "VERCEL_ENV=preview" >> $GITHUB_ENV
-            echo "USE_PROD_FLAG=false" >> $GITHUB_ENV
+            echo "VERCEL_PROJECT_ID=prj_V6z9Xx53SqqY3X6u0zt3P6AuS58T" >> $GITHUB_ENV
           fi
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.VERCEL_ENV }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build Project Artifacts
-        run: |
-          if [ "${{ env.USE_PROD_FLAG }}" = "true" ]; then
-            vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            vercel build --token=${{ secrets.VERCEL_TOKEN }}
-          fi
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           REACT_APP_API_URL: ${{ inputs.frontend_api_url }}
+          REACT_APP_VERSION: ${{ inputs.commit_hash || '' }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: |
-          if [ "${{ env.USE_PROD_FLAG }}" = "true" ]; then
-            vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-          else
-            vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-          fi
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
