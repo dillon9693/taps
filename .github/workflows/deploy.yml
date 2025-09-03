@@ -93,9 +93,9 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Force ECS service update
+      - name: Scale up and update ECS service
         run: |
-          aws ecs update-service --cluster taps-production-cluster --service taps-production-service --force-new-deployment
+          aws ecs update-service --cluster taps-production-cluster --service taps-production-service --desired-count 1 --force-new-deployment
 
   deploy-frontend:
     name: Deploy Frontend
