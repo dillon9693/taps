@@ -6,6 +6,8 @@ import { HttpLink } from "@apollo/client/link/http";
 const GRAPHQL_ENDPOINT =
   process.env.REACT_APP_API_URL || "http://localhost:8000/graphql";
 
+console.log("Graph QL endpoint:", GRAPHQL_ENDPOINT);
+
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
