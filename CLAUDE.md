@@ -171,6 +171,8 @@ These rules ensure maintainability, safety, and developer velocity.
 - **BP-1 (MUST)** Ask the user clarifying questions.
 - **BP-2 (SHOULD)** Draft and confirm an approach for complex work.
 - **BP-3 (SHOULD)** If ≥ 2 approaches exist, list clear pros and cons.
+- **BP-4 (MUST)** When a plan is agreed upon with the user, create a plan document in `.agents/plans` following the format described in `.agents/plans/example.md`.
+- **BP-5 (SHOULD)** If a plan changes during implementation, update the related plan document accordingly.
 
 ### 2 - While Coding
 
