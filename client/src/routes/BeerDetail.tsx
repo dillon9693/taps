@@ -87,8 +87,13 @@ export default function BeerDetail() {
                   precision={0.1}
                   readOnly
                   size="large"
+                  sx={{ verticalAlign: "middle" }}
                 />
-                <Typography variant="body1" component="span" sx={{ ml: 1 }}>
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{ ml: 1, verticalAlign: "middle" }}
+                >
                   {beer.averageRating}/5
                 </Typography>
               </Box>
