@@ -50,3 +50,26 @@ export const SEARCH_BEERS = gql`
     }
   }
 `;
+
+export const GET_BEER = gql`
+  query GetBeer($id: ID!) {
+    beer(id: $id) {
+      id
+      name
+      brewery {
+        name
+        location
+      }
+      style
+      styleDisplay
+      abv
+      ibu
+      description
+      averageRating
+      imageUrl
+      tags {
+        name
+      }
+    }
+  }
+`;
