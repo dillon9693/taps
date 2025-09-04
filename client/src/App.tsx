@@ -27,7 +27,7 @@ function App() {
                 <TapsLogo width={32} height={32} />
               </Box>
               <Text size="xl" fw={700} style={{ color: "white" }}>
-                TAPS
+                Taps
               </Text>
             </Group>
             <Group gap="xs">

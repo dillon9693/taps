@@ -20,6 +20,14 @@ export const theme = createTheme({
   },
   // Set accent as the primary color for the app
   primaryColor: "accent",
+
+  // Font family configuration
+  fontFamily:
+    "Poppins, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+  headings: {
+    fontFamily:
+      "Poppins, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+  },
 });
 
 export default theme;
