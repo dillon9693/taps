@@ -12,10 +12,13 @@ import {
   RangeSlider,
   Paper,
   Stack,
+  Button,
+  Group,
 } from "@mantine/core";
 import { SEARCH_BEERS } from "../graphql/queries";
 import { Beer } from "../types/beer";
 import BeerCard from "../components/BeerCard";
+import useDebounce from "../hooks/useDebounce";
 
 const BEER_STYLES = [
   { value: "", label: "All Styles" },
@@ -30,21 +33,38 @@ const BEER_STYLES = [
   { value: "OTHER", label: "Other" },
 ];
 
+// Default filter values
+const DEFAULT_SEARCH_TERM = "";
+const DEFAULT_STYLE = "";
+const DEFAULT_ABV_RANGE: [number, number] = [0, 15];
+
 type SearchBeersResult = {
   allBeers: Beer[];
 };
 
 export default function Search() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStyle, setSelectedStyle] = useState("");
-  const [abvRange, setAbvRange] = useState<[number, number]>([0, 15]);
+  const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+  const [selectedStyle, setSelectedStyle] = useState(DEFAULT_STYLE);
+  const [abvRange, setAbvRange] = useState(DEFAULT_ABV_RANGE);
+
+  // Reset filters to default values
+  const handleResetFilters = () => {
+    setSearchTerm(DEFAULT_SEARCH_TERM);
+    setSelectedStyle(DEFAULT_STYLE);
+    setAbvRange(DEFAULT_ABV_RANGE);
+  };
+
+  // Debounced search parameters
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const debouncedStyle = useDebounce(selectedStyle, 300);
+  const debouncedAbvRange = useDebounce(abvRange, 300);
 
   const { loading, error, data } = useQuery<SearchBeersResult>(SEARCH_BEERS, {
     variables: {
-      search: searchTerm || undefined,
-      style: selectedStyle || undefined,
-      minAbv: abvRange[0] || undefined,
-      maxAbv: abvRange[1] || undefined,
+      search: debouncedSearchTerm || undefined,
+      style: debouncedStyle || undefined,
+      minAbv: debouncedAbvRange[0] || undefined,
+      maxAbv: debouncedAbvRange[1] || undefined,
     },
   });
 
@@ -78,7 +98,8 @@ export default function Search() {
                 onChange={setAbvRange}
                 min={0}
                 max={15}
-                step={0.5}
+                step={0.1}
+                minRange={0}
                 marks={[
                   { value: 0, label: "0%" },
                   { value: 7.5, label: "7.5%" },
@@ -89,6 +110,11 @@ export default function Search() {
             </Stack>
           </Grid.Col>
         </Grid>
+        <Group justify="flex-end" mt="md">
+          <Button variant="outline" onClick={handleResetFilters}>
+            Reset Filters
+          </Button>
+        </Group>
       </Paper>
 
       {loading && (
