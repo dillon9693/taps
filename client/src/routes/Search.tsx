@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Container,
@@ -39,12 +39,46 @@ export default function Search() {
   const [selectedStyle, setSelectedStyle] = useState("");
   const [abvRange, setAbvRange] = useState<[number, number]>([0, 15]);
 
+  // Debounced search parameters
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [debouncedStyle, setDebouncedStyle] = useState("");
+  const [debouncedAbvRange, setDebouncedAbvRange] = useState<[number, number]>([
+    0, 15,
+  ]);
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Debounce style selection
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedStyle(selectedStyle);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [selectedStyle]);
+
+  // Debounce ABV range
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAbvRange(abvRange);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [abvRange]);
+
   const { loading, error, data } = useQuery<SearchBeersResult>(SEARCH_BEERS, {
     variables: {
-      search: searchTerm || undefined,
-      style: selectedStyle || undefined,
-      minAbv: abvRange[0] || undefined,
-      maxAbv: abvRange[1] || undefined,
+      search: debouncedSearchTerm || undefined,
+      style: debouncedStyle || undefined,
+      minAbv: debouncedAbvRange[0] || undefined,
+      maxAbv: debouncedAbvRange[1] || undefined,
     },
   });
 
