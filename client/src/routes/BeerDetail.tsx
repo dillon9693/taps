@@ -92,12 +92,6 @@ export default function BeerDetail() {
                   {beer.averageRating}/5
                 </Typography>
               </Box>
-              <Chip
-                label={beer.styleDisplay}
-                color="primary"
-                size="medium"
-                sx={{ fontSize: "1rem", py: 1 }}
-              />
             </CardContent>
           </Grid2>
         </Grid2>
