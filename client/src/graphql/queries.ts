@@ -53,7 +53,7 @@ export const SEARCH_BEERS = gql`
 
 export const GET_BEER = gql`
   query GetBeer($id: ID!) {
-    beer(id: $id) {
+    beerById(id: $id) {
       id
       name
       brewery {

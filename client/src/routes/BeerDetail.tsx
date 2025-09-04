@@ -19,7 +19,7 @@ import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types/beer";
 
 type GetBeerResult = {
-  beer: Beer;
+  beerById: Beer;
 };
 
 export default function BeerDetail() {
@@ -45,7 +45,7 @@ export default function BeerDetail() {
     );
   }
 
-  if (!data?.beer) {
+  if (!data?.beerById) {
     return (
       <Container sx={{ mt: 4 }}>
         <Alert severity="error">Beer not found</Alert>
@@ -53,7 +53,7 @@ export default function BeerDetail() {
     );
   }
 
-  const { beer } = data;
+  const { beerById: beer } = data;
 
   return (
     <Container sx={{ mt: 4, mb: 4 }}>
