@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -8,7 +9,7 @@ import {
   Chip,
   Box,
 } from "@mui/material";
-import { Beer } from "../types/beer";
+import type { Beer } from "../types/beer";
 
 interface BeerCardProps {
   beer: Beer;
@@ -18,7 +19,22 @@ export default function BeerCard(props: BeerCardProps) {
   const { beer } = props;
 
   return (
-    <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <Card
+      component={Link}
+      to={`/beer/${beer.id}`}
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        textDecoration: "none",
+        color: "inherit",
+        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: 4,
+        },
+      }}
+    >
       <CardMedia
         component="img"
         height="200"
