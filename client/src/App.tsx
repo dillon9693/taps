@@ -22,14 +22,18 @@ function App() {
       <AppShell header={{ height: 64 }} padding="md">
         <AppShell.Header style={{ backgroundColor: theme.colors.accent[5] }}>
           <Group h="100%" px="md" justify="space-between">
-            <Group>
-              <Box>
+            <Box
+              component={Link}
+              to="/home"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <Group gap="xs">
                 <TapsLogo width={32} height={32} />
-              </Box>
-              <Text size="xl" fw={700} style={{ color: "white" }}>
-                Taps
-              </Text>
-            </Group>
+                <Text size="xl" fw={700} style={{ color: "white" }}>
+                  Taps
+                </Text>
+              </Group>
+            </Box>
             <Group gap="xs">
               <Button
                 variant="subtle"
