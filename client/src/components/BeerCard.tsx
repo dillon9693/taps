@@ -9,6 +9,7 @@ import {
   Stack,
   Image,
   Box,
+  useMantineTheme,
 } from "@mantine/core";
 import type { Beer } from "../types/beer";
 
@@ -18,6 +19,7 @@ interface BeerCardProps {
 
 export default function BeerCard(props: BeerCardProps) {
   const { beer } = props;
+  const theme = useMantineTheme();
 
   return (
     <Box
@@ -88,15 +90,24 @@ export default function BeerCard(props: BeerCardProps) {
             </Group>
 
             <Group gap="xs" style={{ marginTop: "auto" }}>
-              <Badge color="accent" size="sm">
+              <Badge
+                size="sm"
+                style={{
+                  backgroundColor: theme.colors.accent[5],
+                  color: "#333",
+                }}
+              >
                 {beer.styleDisplay}
               </Badge>
               {beer.tags.map((tag) => (
                 <Badge
                   key={tag.name}
                   variant="outline"
-                  color="accent"
                   size="sm"
+                  style={{
+                    borderColor: theme.colors.accent[5],
+                    color: theme.colors.accent[5],
+                  }}
                 >
                   {tag.name}
                 </Badge>

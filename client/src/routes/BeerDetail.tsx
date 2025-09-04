@@ -17,6 +17,7 @@ import {
   Button,
   Center,
   Stack,
+  useMantineTheme,
 } from "@mantine/core";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types/beer";
@@ -27,6 +28,7 @@ type GetBeerResult = {
 
 export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
+  const theme = useMantineTheme();
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
     skip: !id,
@@ -123,7 +125,15 @@ export default function BeerDetail() {
               </Title>
               <Group gap="xs">
                 {beer.tags.map((tag) => (
-                  <Badge key={tag.name} variant="outline" size="lg">
+                  <Badge
+                    key={tag.name}
+                    variant="outline"
+                    size="lg"
+                    style={{
+                      borderColor: theme.colors.accent[5],
+                      color: theme.colors.accent[5],
+                    }}
+                  >
                     {tag.name}
                   </Badge>
                 ))}
@@ -141,14 +151,22 @@ export default function BeerDetail() {
             <Stack gap="md">
               <Group justify="space-between" align="center">
                 <Text fw={500}>Alcohol by Volume</Text>
-                <Text size="xl" fw={700} c="blue">
+                <Text
+                  size="xl"
+                  fw={700}
+                  style={{ color: theme.colors.accent[5] }}
+                >
                   {beer.abv}%
                 </Text>
               </Group>
               {beer.ibu && (
                 <Group justify="space-between" align="center">
                   <Text fw={500}>Bitterness (IBU)</Text>
-                  <Text size="xl" fw={700} c="orange">
+                  <Text
+                    size="xl"
+                    fw={700}
+                    style={{ color: theme.colors.accent[5] }}
+                  >
                     {beer.ibu}
                   </Text>
                 </Group>
