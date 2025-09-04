@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "./App";
 import Home from "./routes/Home";
 import Search from "./routes/Search";
+import BeerDetail from "./routes/BeerDetail";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 
@@ -25,6 +26,7 @@ root.render(
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
           <Route path="search" element={<Search />} />
+          <Route path="beer/:id" element={<BeerDetail />} />
         </Route>
 
         <Route path="*" element={<Navigate to="home" replace />} />
