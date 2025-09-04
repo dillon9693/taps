@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import {
   Container,
@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Alert,
   Paper,
+  Button,
 } from "@mui/material";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types/beer";
@@ -48,7 +49,12 @@ export default function BeerDetail() {
   if (!data?.beerById) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Alert severity="error">Beer not found</Alert>
+        <Alert severity="error" sx={{ mb: 3 }}>
+          Beer not found
+        </Alert>
+        <Button component={Link} to="/home" variant="contained" color="primary">
+          Return to Home
+        </Button>
       </Container>
     );
   }
