@@ -2,13 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import {
   Card,
-  CardContent,
-  CardMedia,
-  Typography,
+  Text,
   Rating,
-  Chip,
+  Badge,
+  Group,
+  Stack,
+  Image,
   Box,
-} from "@mui/material";
+} from "@mantine/core";
 import type { Beer } from "../types/beer";
 
 interface BeerCardProps {
@@ -19,64 +20,93 @@ export default function BeerCard(props: BeerCardProps) {
   const { beer } = props;
 
   return (
-    <Card
+    <Box
       component={Link}
       to={`/beer/${beer.id}`}
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
+      style={{
         textDecoration: "none",
         color: "inherit",
-        transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: 4,
-        },
+        height: "100%",
+        display: "block",
       }}
     >
-      <CardMedia
-        component="img"
-        height="200"
-        image={beer.imageUrl || "/beer-placeholder.jpg"}
-        alt={beer.name}
-        sx={{ objectFit: "cover" }}
-      />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
-          {beer.name}
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          {beer.brewery.name} • {beer.brewery.location}
-        </Typography>
-        <Box sx={{ mb: 2 }}>
-          <Rating value={Number(beer.averageRating)} precision={0.1} readOnly />
-        </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {beer.description}
-        </Typography>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="body2" component="span" sx={{ mr: 2 }}>
-            ABV: {beer.abv}%
-          </Typography>
-          {beer.ibu && (
-            <Typography variant="body2" component="span">
-              IBU: {beer.ibu}
-            </Typography>
-          )}
-        </Box>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-          <Chip label={beer.styleDisplay} color="primary" size="small" />
-          {beer.tags.map((tag) => (
-            <Chip
-              key={tag.name}
-              label={tag.name}
-              size="small"
-              variant="outlined"
+      <Card
+        h="100%"
+        withBorder
+        shadow="sm"
+        style={{
+          transition: "all 0.2s ease-in-out",
+          display: "flex",
+          flexDirection: "column",
+          cursor: "pointer",
+        }}
+        onMouseEnter={(e: any) => {
+          e.currentTarget.style.transform = "translateY(-6px)";
+          e.currentTarget.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.15)";
+        }}
+        onMouseLeave={(e: any) => {
+          e.currentTarget.style.transform = "translateY(0px)";
+          e.currentTarget.style.boxShadow = "";
+        }}
+      >
+        <Card.Section>
+          <Image
+            src={beer.imageUrl || "/beer-placeholder.jpg"}
+            alt={beer.name}
+            height={200}
+            fit="cover"
+          />
+        </Card.Section>
+
+        <Card.Section
+          p="md"
+          style={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
+        >
+          <Stack gap="sm" style={{ flexGrow: 1 }}>
+            <Text size="xl" fw={500} component="h2">
+              {beer.name}
+            </Text>
+
+            <Text size="sm" c="dimmed">
+              {beer.brewery.name} • {beer.brewery.location}
+            </Text>
+
+            <Rating
+              value={Number(beer.averageRating)}
+              fractions={10}
+              readOnly
             />
-          ))}
-        </Box>
-      </CardContent>
-    </Card>
+
+            <Text size="sm" c="dimmed" lineClamp={3}>
+              {beer.description}
+            </Text>
+
+            <Group gap="md">
+              <Text size="sm">ABV: {beer.abv}%</Text>
+              {beer.ibu && <Text size="sm">IBU: {beer.ibu}</Text>}
+            </Group>
+
+            <Group gap="xs" style={{ marginTop: "auto" }}>
+              <Badge
+                size="sm"
+                style={{ backgroundColor: "#9FC5E8", color: "#333" }}
+              >
+                {beer.styleDisplay}
+              </Badge>
+              {beer.tags.map((tag) => (
+                <Badge
+                  key={tag.name}
+                  variant="outline"
+                  size="sm"
+                  style={{ borderColor: "#9FC5E8", color: "#9FC5E8" }}
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            </Group>
+          </Stack>
+        </Card.Section>
+      </Card>
+    </Box>
   );
 }

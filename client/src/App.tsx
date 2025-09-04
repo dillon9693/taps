@@ -1,14 +1,7 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import {
-  AppBar,
-  Toolbar,
-  Button,
-  Container,
-  Box,
-  Typography,
-} from "@mui/material";
+import { AppShell, Container, Group, Button, Text, Box } from "@mantine/core";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
@@ -16,35 +9,43 @@ import "./App.css";
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="App">
-        <AppBar position="static">
-          <Toolbar>
-            <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
-              <Box sx={{ mr: 1 }}>
+      <AppShell header={{ height: 64 }} padding="md">
+        <AppShell.Header style={{ backgroundColor: "#9FC5E8" }}>
+          <Group h="100%" px="md" justify="space-between">
+            <Group>
+              <Box>
                 <TapsLogo width={32} height={32} />
               </Box>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1, fontWeight: "bold" }}
-              >
+              <Text size="xl" fw={700} style={{ color: "white" }}>
                 TAPS
-              </Typography>
-            </Box>
-            <Box sx={{ flexGrow: 1, display: "flex", gap: 2 }}>
-              <Button color="inherit" component={Link} to="/home">
+              </Text>
+            </Group>
+            <Group gap="xs">
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/home"
+                style={{ color: "white" }}
+              >
                 Home
               </Button>
-              <Button color="inherit" component={Link} to="/search">
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/search"
+                style={{ color: "white" }}
+              >
                 Search
               </Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Container>
-          <Outlet />
-        </Container>
-      </div>
+            </Group>
+          </Group>
+        </AppShell.Header>
+        <AppShell.Main>
+          <Container>
+            <Outlet />
+          </Container>
+        </AppShell.Main>
+      </AppShell>
     </ApolloProvider>
   );
 }

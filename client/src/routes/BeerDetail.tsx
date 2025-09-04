@@ -3,19 +3,21 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import {
   Container,
-  Grid2,
-  Typography,
+  Grid,
+  Title,
   Card,
-  CardContent,
-  CardMedia,
-  Box,
-  Chip,
+  Text,
+  Image,
+  Group,
+  Badge,
   Rating,
-  CircularProgress,
+  Loader,
   Alert,
   Paper,
   Button,
-} from "@mui/material";
+  Center,
+  Stack,
+} from "@mantine/core";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types/beer";
 
@@ -32,29 +34,35 @@ export default function BeerDetail() {
 
   if (loading) {
     return (
-      <Container sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
+      <Container mt="xl">
+        <Center>
+          <Loader />
+        </Center>
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error">Error loading beer: {error.message}</Alert>
+      <Container mt="xl">
+        <Alert color="red" title="Error">
+          Error loading beer: {error.message}
+        </Alert>
       </Container>
     );
   }
 
   if (!data?.beerById) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error" sx={{ mb: 3 }}>
-          Beer not found
-        </Alert>
-        <Button component={Link} to="/home" variant="contained" color="primary">
-          Return to Home
-        </Button>
+      <Container mt="xl">
+        <Stack gap="md">
+          <Alert color="red" title="Error">
+            Beer not found
+          </Alert>
+          <Button component={Link} to="/home">
+            Return to Home
+          </Button>
+        </Stack>
       </Container>
     );
   }
@@ -62,151 +70,109 @@ export default function BeerDetail() {
   const { beerById: beer } = data;
 
   return (
-    <Container sx={{ mt: 4, mb: 4 }}>
+    <Container mt="xl" mb="xl">
       {/* Hero Section */}
-      <Card sx={{ mb: 4 }}>
-        <Grid2 container>
-          <Grid2 size={{ xs: 12, md: 4 }}>
-            <CardMedia
-              component="img"
-              sx={{ height: 400, objectFit: "cover" }}
-              image={beer.imageUrl || "/beer-placeholder.jpg"}
+      <Card mb="lg" withBorder shadow="md">
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Image
+              src={beer.imageUrl || "/beer-placeholder.jpg"}
               alt={beer.name}
+              height={400}
+              fit="cover"
+              radius="md"
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 8 }}>
-            <CardContent sx={{ height: "100%", p: 4 }}>
-              <Typography variant="h3" component="h1" gutterBottom>
-                {beer.name}
-              </Typography>
-              <Typography
-                variant="h5"
-                color="text.secondary"
-                gutterBottom
-                sx={{ mb: 2 }}
-              >
-                {beer.brewery.name} • {beer.brewery.location}
-              </Typography>
-              <Box sx={{ mb: 3 }}>
-                <Rating
-                  value={Number(beer.averageRating)}
-                  precision={0.1}
-                  readOnly
-                  size="large"
-                  sx={{ verticalAlign: "middle" }}
-                />
-                <Typography
-                  variant="body1"
-                  component="span"
-                  sx={{ ml: 1, verticalAlign: "middle" }}
-                >
-                  {beer.averageRating}/5
-                </Typography>
-              </Box>
-            </CardContent>
-          </Grid2>
-        </Grid2>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 8 }}>
+            <Card.Section p="xl" h="100%">
+              <Stack justify="flex-start" h="100%">
+                <Title order={1}>{beer.name}</Title>
+                <Text size="xl" c="dimmed" mb="md">
+                  {beer.brewery.name} • {beer.brewery.location}
+                </Text>
+                <Group align="center" mb="lg">
+                  <Rating
+                    value={Number(beer.averageRating)}
+                    fractions={10}
+                    readOnly
+                    size="lg"
+                  />
+                  <Text size="lg">{beer.averageRating}/5</Text>
+                </Group>
+              </Stack>
+            </Card.Section>
+          </Grid.Col>
+        </Grid>
       </Card>
 
       {/* Main Content */}
-      <Grid2 container spacing={4}>
+      <Grid>
         {/* Left Column - Description and Tags */}
-        <Grid2 size={{ xs: 12, md: 8 }}>
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h5" gutterBottom>
+        <Grid.Col span={{ base: 12, md: 8 }}>
+          <Paper p="lg" mb="md" withBorder shadow="sm">
+            <Title order={3} mb="md">
               About This Beer
-            </Typography>
-            <Typography variant="body1" sx={{ lineHeight: 1.7, mb: 2 }}>
-              {beer.description}
-            </Typography>
+            </Title>
+            <Text lh={1.7}>{beer.description}</Text>
           </Paper>
 
           {beer.tags.length > 0 && (
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom>
+            <Paper p="lg" withBorder shadow="sm">
+              <Title order={4} mb="md">
                 Tags
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+              </Title>
+              <Group gap="xs">
                 {beer.tags.map((tag) => (
-                  <Chip
-                    key={tag.name}
-                    label={tag.name}
-                    variant="outlined"
-                    size="medium"
-                  />
+                  <Badge key={tag.name} variant="outline" size="lg">
+                    {tag.name}
+                  </Badge>
                 ))}
-              </Box>
+              </Group>
             </Paper>
           )}
-        </Grid2>
+        </Grid.Col>
 
         {/* Right Column - Technical Specs */}
-        <Grid2 size={{ xs: 12, md: 4 }}>
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>
+        <Grid.Col span={{ base: 12, md: 4 }}>
+          <Paper p="lg" mb="md" withBorder shadow="sm">
+            <Title order={4} mb="md">
               Technical Details
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="body1" fontWeight="medium">
-                  Alcohol by Volume
-                </Typography>
-                <Typography variant="h6" color="primary.main">
+            </Title>
+            <Stack gap="md">
+              <Group justify="space-between" align="center">
+                <Text fw={500}>Alcohol by Volume</Text>
+                <Text size="xl" fw={700} c="blue">
                   {beer.abv}%
-                </Typography>
-              </Box>
+                </Text>
+              </Group>
               {beer.ibu && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body1" fontWeight="medium">
-                    Bitterness (IBU)
-                  </Typography>
-                  <Typography variant="h6" color="secondary.main">
+                <Group justify="space-between" align="center">
+                  <Text fw={500}>Bitterness (IBU)</Text>
+                  <Text size="xl" fw={700} c="orange">
                     {beer.ibu}
-                  </Typography>
-                </Box>
+                  </Text>
+                </Group>
               )}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="body1" fontWeight="medium">
-                  Style
-                </Typography>
-                <Typography variant="body1">{beer.style}</Typography>
-              </Box>
-            </Box>
+              <Group justify="space-between" align="center">
+                <Text fw={500}>Style</Text>
+                <Text>{beer.style}</Text>
+              </Group>
+            </Stack>
           </Paper>
 
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
+          <Paper p="lg" withBorder shadow="sm">
+            <Title order={4} mb="md">
               Brewery Information
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <Typography variant="body1" fontWeight="medium">
-                {beer.brewery.name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
+            </Title>
+            <Stack gap="xs">
+              <Text fw={500}>{beer.brewery.name}</Text>
+              <Text size="sm" c="dimmed">
                 {beer.brewery.location}
-              </Typography>
-            </Box>
+              </Text>
+            </Stack>
           </Paper>
-        </Grid2>
-      </Grid2>
+        </Grid.Col>
+      </Grid>
     </Container>
   );
 }
