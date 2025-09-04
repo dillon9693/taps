@@ -12,7 +12,7 @@ Taps is a beer discovery application with a React frontend, Django/GraphQL backe
 
 - **React 18** with TypeScript using Create React App
 - **Apollo Client** for GraphQL data fetching and caching
-- **Material UI** for components and styling
+- **Mantine** for components, styling, and theming system
 - **React Router** for client-side routing
 - Main routes: Home (`/home`) and Search (`/search`)
 - GraphQL queries defined in `src/graphql/queries.ts`
