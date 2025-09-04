@@ -98,7 +98,8 @@ export default function Search() {
                 onChange={setAbvRange}
                 min={0}
                 max={15}
-                step={0.5}
+                step={0.1}
+                minRange={0}
                 marks={[
                   { value: 0, label: "0%" },
                   { value: 7.5, label: "7.5%" },
