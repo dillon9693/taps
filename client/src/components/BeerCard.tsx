@@ -55,6 +55,7 @@ export default function BeerCard(props: BeerCardProps) {
             alt={beer.name}
             height={200}
             fit="cover"
+            Do
           />
         </Card.Section>
 
@@ -87,18 +88,15 @@ export default function BeerCard(props: BeerCardProps) {
             </Group>
 
             <Group gap="xs" style={{ marginTop: "auto" }}>
-              <Badge
-                size="sm"
-                style={{ backgroundColor: "#9FC5E8", color: "#333" }}
-              >
+              <Badge color="accent" size="sm">
                 {beer.styleDisplay}
               </Badge>
               {beer.tags.map((tag) => (
                 <Badge
                   key={tag.name}
                   variant="outline"
+                  color="accent"
                   size="sm"
-                  style={{ borderColor: "#9FC5E8", color: "#9FC5E8" }}
                 >
                   {tag.name}
                 </Badge>

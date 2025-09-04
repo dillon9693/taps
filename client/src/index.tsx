@@ -7,6 +7,7 @@ import Home from "./routes/Home";
 import Search from "./routes/Search";
 import BeerDetail from "./routes/BeerDetail";
 import reportWebVitals from "./reportWebVitals";
+import { theme } from "./theme/theme";
 import "@mantine/core/styles.css";
 import "./index.css";
 
@@ -22,7 +23,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <MantineProvider>
+    <MantineProvider theme={theme}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>

@@ -1,16 +1,26 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
-import { AppShell, Container, Group, Button, Text, Box } from "@mantine/core";
+import {
+  AppShell,
+  Container,
+  Group,
+  Button,
+  Text,
+  Box,
+  useMantineTheme,
+} from "@mantine/core";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
 
 function App() {
+  const theme = useMantineTheme();
+
   return (
     <ApolloProvider client={client}>
       <AppShell header={{ height: 64 }} padding="md">
-        <AppShell.Header style={{ backgroundColor: "#9FC5E8" }}>
+        <AppShell.Header style={{ backgroundColor: theme.colors.accent[5] }}>
           <Group h="100%" px="md" justify="space-between">
             <Group>
               <Box>
