@@ -73,7 +73,7 @@ docker compose exec backend poetry run python manage.py createsuperuser
 
 #### Front-End
 
-The front-end uses React and [Apollo](https://www.apollographql.com/docs/react) (as a GraphQL client). It uses [Material UI](https://mui.com/material-ui/) as the component library.
+The front-end uses React and [Apollo](https://www.apollographql.com/docs/react) (as a GraphQL client). It uses [Mantine](https://mantine.dev/) as the component library and design system.
 
 All commands below need to be run from the `client` folder.
 

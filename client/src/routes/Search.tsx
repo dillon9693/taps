@@ -2,21 +2,23 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Container,
-  Grid2,
-  Typography,
-  Box,
-  CircularProgress,
+  Grid,
+  Title,
+  Center,
+  Loader,
   Alert,
-  TextField,
-  MenuItem,
-  Slider,
+  TextInput,
+  Select,
+  RangeSlider,
   Paper,
-} from "@mui/material";
+  Stack,
+} from "@mantine/core";
 import { SEARCH_BEERS } from "../graphql/queries";
 import { Beer } from "../types/beer";
 import BeerCard from "../components/BeerCard";
 
 const BEER_STYLES = [
+  { value: "", label: "All Styles" },
   { value: "IPA", label: "India Pale Ale" },
   { value: "DIPA", label: "Double IPA" },
   { value: "STOUT", label: "Stout" },
@@ -35,7 +37,7 @@ type SearchBeersResult = {
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStyle, setSelectedStyle] = useState("");
-  const [abvRange, setAbvRange] = useState<number[]>([0, 15]);
+  const [abvRange, setAbvRange] = useState<[number, number]>([0, 15]);
 
   const { loading, error, data } = useQuery<SearchBeersResult>(SEARCH_BEERS, {
     variables: {
@@ -46,70 +48,67 @@ export default function Search() {
     },
   });
 
-  const handleAbvChange = (_event: Event, newValue: number | number[]) => {
-    setAbvRange(newValue as number[]);
-  };
-
   return (
-    <Container sx={{ mt: 4 }}>
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Grid2 container spacing={3}>
-          <Grid2 size={{ xs: 12, md: 4 }}>
-            <TextField
-              fullWidth
+    <Container mt="xl">
+      <Paper p="md" mb="lg">
+        <Grid>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <TextInput
               label="Search beers"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              variant="outlined"
+              onChange={(e) => setSearchTerm(e.currentTarget.value)}
+              placeholder="Enter beer name..."
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 4 }}>
-            <TextField
-              fullWidth
-              select
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Select
               label="Beer Style"
               value={selectedStyle}
-              onChange={(e) => setSelectedStyle(e.target.value)}
-              variant="outlined"
-            >
-              <MenuItem value="">All Styles</MenuItem>
-              {BEER_STYLES.map((style) => (
-                <MenuItem key={style.value} value={style.value}>
-                  {style.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 4 }}>
-            <Typography gutterBottom>ABV Range (%)</Typography>
-            <Slider
-              value={abvRange}
-              onChange={handleAbvChange}
-              valueLabelDisplay="auto"
-              min={0}
-              max={15}
-              step={0.5}
+              onChange={(value) => setSelectedStyle(value || "")}
+              data={BEER_STYLES}
+              placeholder="Select beer style"
+              clearable
             />
-          </Grid2>
-        </Grid2>
+          </Grid.Col>
+          <Grid.Col span={{ base: 12, md: 4 }}>
+            <Stack gap="xs">
+              <Title order={6}>ABV Range (%)</Title>
+              <RangeSlider
+                value={abvRange}
+                onChange={setAbvRange}
+                min={0}
+                max={15}
+                step={0.5}
+                marks={[
+                  { value: 0, label: "0%" },
+                  { value: 7.5, label: "7.5%" },
+                  { value: 15, label: "15%" },
+                ]}
+                label={(value) => `${value}%`}
+              />
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </Paper>
 
       {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <CircularProgress />
-        </Box>
+        <Center mt="xl">
+          <Loader />
+        </Center>
       )}
       {error && (
-        <Alert severity="error">Error loading beers: {error.message}</Alert>
+        <Alert color="red" title="Error" mt="md">
+          Error loading beers: {error.message}
+        </Alert>
       )}
       {!loading && !error && (
-        <Grid2 container spacing={4}>
+        <Grid gutter="lg">
           {data?.allBeers?.map((beer) => (
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={beer.id}>
+            <Grid.Col key={beer.id} span={{ base: 12, sm: 6, md: 4 }}>
               <BeerCard beer={beer} />
-            </Grid2>
+            </Grid.Col>
           ))}
-        </Grid2>
+        </Grid>
       )}
     </Container>
   );

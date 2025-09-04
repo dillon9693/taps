@@ -2,49 +2,64 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { ApolloProvider } from "@apollo/client";
 import {
-  AppBar,
-  Toolbar,
-  Button,
+  AppShell,
   Container,
+  Group,
+  Button,
+  Text,
   Box,
-  Typography,
-} from "@mui/material";
+  useMantineTheme,
+} from "@mantine/core";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
 
 function App() {
+  const theme = useMantineTheme();
+
   return (
     <ApolloProvider client={client}>
-      <div className="App">
-        <AppBar position="static">
-          <Toolbar>
-            <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
-              <Box sx={{ mr: 1 }}>
+      <AppShell header={{ height: 64 }} padding="md">
+        <AppShell.Header style={{ backgroundColor: theme.colors.accent[5] }}>
+          <Group h="100%" px="md" justify="space-between">
+            <Box
+              component={Link}
+              to="/home"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <Group gap="xs">
                 <TapsLogo width={32} height={32} />
-              </Box>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ flexGrow: 1, fontWeight: "bold" }}
-              >
-                TAPS
-              </Typography>
+                <Text size="xl" fw={700} style={{ color: "white" }}>
+                  Taps
+                </Text>
+              </Group>
             </Box>
-            <Box sx={{ flexGrow: 1, display: "flex", gap: 2 }}>
-              <Button color="inherit" component={Link} to="/home">
+            <Group gap="xs">
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/home"
+                style={{ color: "white" }}
+              >
                 Home
               </Button>
-              <Button color="inherit" component={Link} to="/search">
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/search"
+                style={{ color: "white" }}
+              >
                 Search
               </Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <Container>
-          <Outlet />
-        </Container>
-      </div>
+            </Group>
+          </Group>
+        </AppShell.Header>
+        <AppShell.Main>
+          <Container>
+            <Outlet />
+          </Container>
+        </AppShell.Main>
+      </AppShell>
     </ApolloProvider>
   );
 }

@@ -1,12 +1,6 @@
 import React from "react";
 import { useQuery } from "@apollo/client";
-import {
-  Container,
-  Grid2,
-  Typography,
-  CircularProgress,
-  Alert,
-} from "@mui/material";
+import { Container, Grid, Title, Loader, Alert, Center } from "@mantine/core";
 import { FEATURED_BEERS } from "../graphql/queries";
 import { Beer } from "../types/beer";
 import BeerCard from "../components/BeerCard";
@@ -21,32 +15,36 @@ export default function Home() {
 
   if (loading) {
     return (
-      <Container sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
-        <CircularProgress />
+      <Container mt="xl">
+        <Center>
+          <Loader />
+        </Center>
       </Container>
     );
   }
 
   if (error) {
     return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error">Error loading beers: {error.message}</Alert>
+      <Container mt="xl">
+        <Alert color="red" title="Error">
+          Error loading beers: {error.message}
+        </Alert>
       </Container>
     );
   }
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container mt="xl">
+      <Title order={1} mb="lg">
         Featured Beers
-      </Typography>
-      <Grid2 container spacing={4}>
+      </Title>
+      <Grid gutter="lg">
         {data?.featuredBeers?.map((beer) => (
-          <Grid2 key={beer.id} size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid.Col key={beer.id} span={{ base: 12, sm: 6, md: 4 }}>
             <BeerCard beer={beer} />
-          </Grid2>
+          </Grid.Col>
         ))}
-      </Grid2>
+      </Grid>
     </Container>
   );
 }
