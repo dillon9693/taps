@@ -12,6 +12,8 @@ import {
   RangeSlider,
   Paper,
   Stack,
+  Button,
+  Group,
 } from "@mantine/core";
 import { SEARCH_BEERS } from "../graphql/queries";
 import { Beer } from "../types/beer";
@@ -31,14 +33,26 @@ const BEER_STYLES = [
   { value: "OTHER", label: "Other" },
 ];
 
+// Default filter values
+const DEFAULT_SEARCH_TERM = "";
+const DEFAULT_STYLE = "";
+const DEFAULT_ABV_RANGE: [number, number] = [0, 15];
+
 type SearchBeersResult = {
   allBeers: Beer[];
 };
 
 export default function Search() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStyle, setSelectedStyle] = useState("");
-  const [abvRange, setAbvRange] = useState<[number, number]>([0, 15]);
+  const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+  const [selectedStyle, setSelectedStyle] = useState(DEFAULT_STYLE);
+  const [abvRange, setAbvRange] = useState(DEFAULT_ABV_RANGE);
+
+  // Reset filters to default values
+  const handleResetFilters = () => {
+    setSearchTerm(DEFAULT_SEARCH_TERM);
+    setSelectedStyle(DEFAULT_STYLE);
+    setAbvRange(DEFAULT_ABV_RANGE);
+  };
 
   // Debounced search parameters
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -95,6 +109,11 @@ export default function Search() {
             </Stack>
           </Grid.Col>
         </Grid>
+        <Group justify="flex-end" mt="md">
+          <Button variant="outline" onClick={handleResetFilters}>
+            Reset Filters
+          </Button>
+        </Group>
       </Paper>
 
       {loading && (
