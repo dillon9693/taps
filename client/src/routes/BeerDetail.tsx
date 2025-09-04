@@ -119,7 +119,7 @@ export default function BeerDetail() {
           {beer.tags.length > 0 && (
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Characteristics
+                Tags
               </Typography>
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                 {beer.tags.map((tag) => (
