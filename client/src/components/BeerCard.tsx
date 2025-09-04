@@ -52,7 +52,7 @@ export default function BeerCard(props: BeerCardProps) {
         <Box sx={{ mb: 2 }}>
           <Rating value={Number(beer.averageRating)} precision={0.1} readOnly />
         </Box>
-        <Typography variant="body2" color="text.secondary" paragraph>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {beer.description}
         </Typography>
         <Box sx={{ mb: 2 }}>

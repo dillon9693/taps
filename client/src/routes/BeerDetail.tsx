@@ -111,7 +111,7 @@ export default function BeerDetail() {
             <Typography variant="h5" gutterBottom>
               About This Beer
             </Typography>
-            <Typography variant="body1" paragraph sx={{ lineHeight: 1.7 }}>
+            <Typography variant="body1" sx={{ lineHeight: 1.7, mb: 2 }}>
               {beer.description}
             </Typography>
           </Paper>
