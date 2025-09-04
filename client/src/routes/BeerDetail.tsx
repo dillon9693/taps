@@ -95,7 +95,7 @@ export default function BeerDetail() {
               <Chip
                 label={beer.styleDisplay}
                 color="primary"
-                size="large"
+                size="medium"
                 sx={{ fontSize: "1rem", py: 1 }}
               />
             </CardContent>
