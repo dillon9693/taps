@@ -13,6 +13,8 @@ Instructions for AI agents:
 
 <brief description of the change>
 
+**Github issue:** <link to Github issue if present>
+
 # Changes required
 
 <list of changes required>
