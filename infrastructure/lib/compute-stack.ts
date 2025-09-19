@@ -101,8 +101,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsTaskDefinition",
       {
-        memoryLimitMiB: 256, // Reduced from 512 to save costs
-        cpu: 128, // Reduced from 256 to minimum Fargate CPU
+        memoryLimitMiB: 512, // Minimum valid memory for 256 CPU in Fargate
+        cpu: 256, // Minimum valid CPU for cost optimization
         executionRole: executionRole,
         taskRole: taskRole,
       },
@@ -241,8 +241,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsMigrationTaskDefinition",
       {
-        memoryLimitMiB: 256, // Reduced from 512 to match main task
-        cpu: 128, // Reduced from 256 to match main task
+        memoryLimitMiB: 512, // Minimum valid memory for 256 CPU in Fargate
+        cpu: 256, // Minimum valid CPU for cost optimization
         executionRole: executionRole,
         taskRole: taskRole,
       },
