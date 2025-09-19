@@ -95,7 +95,7 @@ export class DatabaseStack extends cdk.Stack {
       securityGroups: [props.securityGroup],
       subnetGroup: subnetGroup,
       parameterGroup: parameterGroup,
-      allocatedStorage: 10, // Reduced from 20GB to minimize costs
+      allocatedStorage: 20, // GP3 minimum storage requirement for PostgreSQL
       storageType: rds.StorageType.GP3, // GP3 is more cost-effective than GP2
       backupRetention: cdk.Duration.days(1),
       deleteAutomatedBackups: true,
