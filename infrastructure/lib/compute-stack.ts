@@ -92,7 +92,7 @@ export class ComputeStack extends cdk.Stack {
     // Create CloudWatch Log Group
     const logGroup = new logs.LogGroup(this, "TapsLogGroup", {
       logGroupName: `/ecs/taps-backend-${envLowercase}`,
-      retention: logs.RetentionDays.ONE_WEEK,
+      retention: logs.RetentionDays.THREE_DAYS, // Reduced from ONE_WEEK to save costs
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
