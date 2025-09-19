@@ -211,7 +211,7 @@ export class ComputeStack extends cdk.Stack {
       desiredCount: 0,
       securityGroups: [props.ecsSecurityGroup],
       assignPublicIp: false,
-      vpcSubnets: { subnetName: "private" }, // Use existing private subnets (now isolated)
+      vpcSubnets: { subnetGroupName: "private" }, // Use existing private subnets (now isolated)
       healthCheckGracePeriod: cdk.Duration.seconds(60),
     });
 
