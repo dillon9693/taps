@@ -283,10 +283,13 @@ export class ComputeStack extends cdk.Stack {
     });
 
     // Output network configuration for migration tasks
+    // Use the same subnet selection as the ECS service
+    const migrationSubnets = props.vpc.selectSubnets({
+      subnetGroupName: "private",
+    });
+
     new cdk.CfnOutput(this, "ECSSubnets", {
-      value: props.vpc.privateSubnets
-        .map((subnet) => subnet.subnetId)
-        .join(","),
+      value: migrationSubnets.subnetIds.join(","),
       description: "Private subnet IDs for ECS tasks",
     });
 
