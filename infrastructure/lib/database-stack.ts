@@ -95,9 +95,8 @@ export class DatabaseStack extends cdk.Stack {
       securityGroups: [props.securityGroup],
       subnetGroup: subnetGroup,
       parameterGroup: parameterGroup,
-      allocatedStorage: 20,
-      maxAllocatedStorage: 100,
-      storageType: rds.StorageType.GP2,
+      allocatedStorage: 10, // Reduced from 20GB to minimize costs
+      storageType: rds.StorageType.GP3, // GP3 is more cost-effective than GP2
       backupRetention: cdk.Duration.days(1),
       deleteAutomatedBackups: true,
       deletionProtection: true, // Enable for production data safety
