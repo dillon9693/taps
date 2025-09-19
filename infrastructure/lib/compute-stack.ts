@@ -101,8 +101,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsTaskDefinition",
       {
-        memoryLimitMiB: 512,
-        cpu: 256,
+        memoryLimitMiB: 256, // Reduced from 512 to save costs
+        cpu: 128, // Reduced from 256 to minimum Fargate CPU
         executionRole: executionRole,
         taskRole: taskRole,
       },
@@ -215,10 +215,10 @@ export class ComputeStack extends cdk.Stack {
       healthCheckGracePeriod: cdk.Duration.seconds(60),
     });
 
-    // Add Auto Scaling
+    // Add Auto Scaling - reduced capacity for cost optimization
     const scaling = service.autoScaleTaskCount({
-      minCapacity: 1,
-      maxCapacity: 2,
+      minCapacity: 0, // Allow scaling to zero during low traffic
+      maxCapacity: 1, // Reduced max capacity to control costs
     });
 
     scaling.scaleOnCpuUtilization("CpuScaling", {
@@ -241,8 +241,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsMigrationTaskDefinition",
       {
-        memoryLimitMiB: 512,
-        cpu: 256,
+        memoryLimitMiB: 256, // Reduced from 512 to match main task
+        cpu: 128, // Reduced from 256 to match main task
         executionRole: executionRole,
         taskRole: taskRole,
       },
