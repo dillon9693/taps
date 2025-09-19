@@ -14,7 +14,7 @@ export class NetworkStack extends cdk.Stack {
     // Create a VPC with public and private subnets across 2 AZs
     this.vpc = new ec2.Vpc(this, "TapsVPC", {
       maxAzs: 2,
-      natGateways: 1, // Use 1 NAT Gateway to save costs
+      natGateways: 0, // Remove NAT Gateway to save ~$45-60/month
       subnetConfiguration: [
         {
           name: "public",
@@ -23,11 +23,6 @@ export class NetworkStack extends cdk.Stack {
         },
         {
           name: "private",
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-          cidrMask: 24,
-        },
-        {
-          name: "isolated",
           subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
           cidrMask: 24,
         },
@@ -80,5 +75,40 @@ export class NetworkStack extends cdk.Stack {
       ec2.Port.tcp(5432),
       "Allow traffic from ECS to RDS on port 5432",
     );
+
+    // Add VPC Endpoints to replace NAT Gateway functionality
+    // ECR API endpoint for pulling container images
+    this.vpc.addInterfaceEndpoint("ECREndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.ECR,
+      subnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      securityGroups: [this.ecsSecurityGroup],
+    });
+
+    // ECR Docker endpoint for pulling container layers
+    this.vpc.addInterfaceEndpoint("ECRDockerEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+      subnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      securityGroups: [this.ecsSecurityGroup],
+    });
+
+    // CloudWatch Logs endpoint for logging
+    this.vpc.addInterfaceEndpoint("CloudWatchLogsEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+      subnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      securityGroups: [this.ecsSecurityGroup],
+    });
+
+    // Secrets Manager endpoint for accessing database credentials
+    this.vpc.addInterfaceEndpoint("SecretsManagerEndpoint", {
+      service: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
+      subnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
+      securityGroups: [this.ecsSecurityGroup],
+    });
+
+    // S3 Gateway endpoint for ECR image layers (more cost-effective than interface endpoint)
+    this.vpc.addGatewayEndpoint("S3Endpoint", {
+      service: ec2.GatewayVpcEndpointAwsService.S3,
+      subnets: [{ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }],
+    });
   }
 }

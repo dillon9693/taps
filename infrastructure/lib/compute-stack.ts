@@ -65,7 +65,7 @@ export class ComputeStack extends cdk.Stack {
     const cluster = new ecs.Cluster(this, "TapsCluster", {
       clusterName: clusterName,
       vpc: props.vpc,
-      containerInsights: true,
+      containerInsights: false, // Disabled to reduce CloudWatch costs
     });
 
     // Create Task Execution Role
@@ -92,7 +92,7 @@ export class ComputeStack extends cdk.Stack {
     // Create CloudWatch Log Group
     const logGroup = new logs.LogGroup(this, "TapsLogGroup", {
       logGroupName: `/ecs/taps-backend-${envLowercase}`,
-      retention: logs.RetentionDays.ONE_WEEK,
+      retention: logs.RetentionDays.THREE_DAYS, // Reduced from ONE_WEEK to save costs
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
@@ -101,8 +101,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsTaskDefinition",
       {
-        memoryLimitMiB: 512,
-        cpu: 256,
+        memoryLimitMiB: 256, // Reduced from 512 to save costs
+        cpu: 128, // Reduced from 256 to minimum Fargate CPU
         executionRole: executionRole,
         taskRole: taskRole,
       },
@@ -211,14 +211,14 @@ export class ComputeStack extends cdk.Stack {
       desiredCount: 0,
       securityGroups: [props.ecsSecurityGroup],
       assignPublicIp: false,
-      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
       healthCheckGracePeriod: cdk.Duration.seconds(60),
     });
 
-    // Add Auto Scaling
+    // Add Auto Scaling - reduced capacity for cost optimization
     const scaling = service.autoScaleTaskCount({
-      minCapacity: 1,
-      maxCapacity: 2,
+      minCapacity: 0, // Allow scaling to zero during low traffic
+      maxCapacity: 1, // Reduced max capacity to control costs
     });
 
     scaling.scaleOnCpuUtilization("CpuScaling", {
@@ -241,8 +241,8 @@ export class ComputeStack extends cdk.Stack {
       this,
       "TapsMigrationTaskDefinition",
       {
-        memoryLimitMiB: 512,
-        cpu: 256,
+        memoryLimitMiB: 256, // Reduced from 512 to match main task
+        cpu: 128, // Reduced from 256 to match main task
         executionRole: executionRole,
         taskRole: taskRole,
       },
