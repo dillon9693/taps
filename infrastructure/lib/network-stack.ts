@@ -89,7 +89,7 @@ export class NetworkStack extends cdk.Stack {
       {
         vpc: this.vpc,
         description: "Security group for VPC endpoints",
-        allowAllOutbound: false,
+        allowAllOutbound: true, // Allow outbound traffic for responses
       },
     );
 
