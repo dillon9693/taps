@@ -83,11 +83,15 @@ export class NetworkStack extends cdk.Stack {
 
     // Add VPC Endpoints to replace NAT Gateway functionality
     // Create a security group specifically for VPC endpoints
-    const vpcEndpointSecurityGroup = new ec2.SecurityGroup(this, "VPCEndpointSecurityGroup", {
-      vpc: this.vpc,
-      description: "Security group for VPC endpoints",
-      allowAllOutbound: false,
-    });
+    const vpcEndpointSecurityGroup = new ec2.SecurityGroup(
+      this,
+      "VPCEndpointSecurityGroup",
+      {
+        vpc: this.vpc,
+        description: "Security group for VPC endpoints",
+        allowAllOutbound: false,
+      },
+    );
 
     // Allow HTTPS traffic from ECS to VPC endpoints
     vpcEndpointSecurityGroup.addIngressRule(
