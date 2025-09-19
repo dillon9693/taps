@@ -65,7 +65,7 @@ export class ComputeStack extends cdk.Stack {
     const cluster = new ecs.Cluster(this, "TapsCluster", {
       clusterName: clusterName,
       vpc: props.vpc,
-      containerInsights: true,
+      containerInsights: false, // Disabled to reduce CloudWatch costs
     });
 
     // Create Task Execution Role
