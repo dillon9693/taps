@@ -108,11 +108,8 @@ export class ComputeStack extends cdk.Stack {
       },
     );
 
-    // Determine image tag based on environment
-    const imageTag =
-      props.environment === Environment.PRODUCTION
-        ? "latest"
-        : `${envLowercase}-latest`;
+    // Use latest tag since each environment has its own ECR repository
+    const imageTag = "latest";
     // Add Container to Task Definition
     const container = taskDefinition.addContainer("TapsContainer", {
       image: ecs.ContainerImage.fromEcrRepository(ecrRepository, imageTag),
