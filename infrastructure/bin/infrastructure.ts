@@ -115,7 +115,7 @@ createEnvironment(app, {
   account,
   region,
   domainName: "dillonkerr.com",
-  apiSubDomain: "api-staging.taps",
+  apiSubDomain: "api.staging.taps",
 });
 
 // Create the production environment

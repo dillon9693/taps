@@ -29,7 +29,7 @@ TEMPLATE_DEBUG = False
 # Allow the domain where the app will be hosted
 ALLOWED_HOSTS = [
     "api.taps.dillonkerr.com",
-    "api-staging.taps.dillonkerr.com",  # Staging API domain
+    "api.staging.taps.dillonkerr.com",  # Staging API domain
     "localhost",  # For Dockerfile health check
 ]
 
