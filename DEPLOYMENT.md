@@ -7,7 +7,7 @@ This document outlines the deployment process for the Taps beer discovery applic
 The Taps application is deployed using the following architecture:
 
 - **Frontend**: React application deployed to Vercel at `taps.dillonkerr.com`
-- **Backend**: Django application deployed to AWS ECS Fargate at `api.taps.dillonkerr.com`
+- **Backend**: Django application deployed to AWS ECS Fargate at `tapsapi.dillonkerr.com`
 - **Database**: PostgreSQL database on AWS RDS
 - **Infrastructure**: AWS CDK for infrastructure as code
 

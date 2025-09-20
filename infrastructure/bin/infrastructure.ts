@@ -115,7 +115,7 @@ createEnvironment(app, {
   account,
   region,
   domainName: "dillonkerr.com",
-  apiSubDomain: "api.staging.taps",
+  apiSubDomain: "tapsapi-staging",
 });
 
 // Create the production environment
@@ -124,7 +124,7 @@ createEnvironment(app, {
   account,
   region,
   domainName: "dillonkerr.com",
-  apiSubDomain: "api.taps",
+  apiSubDomain: "tapsapi",
 });
 
 // Synthesize the CloudFormation template

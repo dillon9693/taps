@@ -28,8 +28,8 @@ TEMPLATE_DEBUG = False
 # TODO set these based on staging vs. prod
 # Allow the domain where the app will be hosted
 ALLOWED_HOSTS = [
-    "api.taps.dillonkerr.com",
-    "api.staging.taps.dillonkerr.com",  # Staging API domain
+    "tapsapi.dillonkerr.com",
+    "tapsapi-staging.dillonkerr.com",  # Staging API domain
     "localhost",  # For Dockerfile health check
 ]
 
@@ -64,8 +64,8 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Static and media files
 # TODO set these based on staging vs. prod
-STATIC_URL = "https://api.taps.dillonkerr.com/static/"
-MEDIA_URL = "https://api.taps.dillonkerr.com/media/"
+STATIC_URL = "https://tapsapi.dillonkerr.com/static/"
+MEDIA_URL = "https://tapsapi.dillonkerr.com/media/"
 
 # Logging configuration
 LOGGING = {
