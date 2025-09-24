@@ -6,6 +6,7 @@ import App from "./App";
 import Home from "./routes/Home";
 import Search from "./routes/Search";
 import BeerDetail from "./routes/BeerDetail";
+import BreweryDetail from "./routes/BreweryDetail";
 import reportWebVitals from "./reportWebVitals";
 import { theme } from "./theme/theme";
 import "@mantine/core/styles.css";
@@ -31,6 +32,7 @@ root.render(
             <Route path="home" element={<Home />} />
             <Route path="search" element={<Search />} />
             <Route path="beer/:id" element={<BeerDetail />} />
+            <Route path="brewery/:id" element={<BreweryDetail />} />
           </Route>
 
           <Route path="*" element={<Navigate to="home" replace />} />

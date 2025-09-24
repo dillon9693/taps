@@ -6,7 +6,7 @@ export interface Brewery {
   yearFounded?: number;
   website?: string;
   beerCount?: number;
-  beers?: Beer[];
+  beers?: Beer[]; // eslint-disable-line no-use-before-define
 }
 
 export interface Beer {

@@ -9,6 +9,7 @@ import {
   Stack,
   Image,
   Box,
+  Anchor,
   useMantineTheme,
 } from "@mantine/core";
 import type { Beer } from "../types/beer";
@@ -70,7 +71,18 @@ export default function BeerCard(props: BeerCardProps) {
             </Text>
 
             <Text size="sm" c="dimmed">
-              {beer.brewery.name} • {beer.brewery.location}
+              <Anchor
+                component={Link}
+                to={`/brewery/${beer.brewery.id}`}
+                style={{ color: "inherit" }}
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                }}
+              >
+                {beer.brewery.name}
+              </Anchor>
+              {" • "}
+              {beer.brewery.location}
             </Text>
 
             <Rating
