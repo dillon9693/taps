@@ -76,6 +76,7 @@ class Query(graphene.ObjectType):
         search=graphene.String(required=False),
     )
     brewery_by_name = graphene.Field(BreweryType, name=graphene.String(required=True))
+    brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
 
@@ -109,7 +110,7 @@ class Query(graphene.ObjectType):
         try:
             return (
                 Beer.objects.select_related("brewery")
-                .prefetch_related("tags")
+                .prefetch_related("tags")Be
                 .get(id=id)
             )
         except Beer.DoesNotExist:
@@ -130,6 +131,12 @@ class Query(graphene.ObjectType):
     def resolve_brewery_by_name(self, info, name):
         try:
             return Brewery.objects.prefetch_related("beers").get(name=name)
+        except Brewery.DoesNotExist:
+            return None
+
+    def resolve_brewery_by_id(self, info, id):
+        try:
+            return Brewery.objects.prefetch_related("beers").get(id=id)
         except Brewery.DoesNotExist:
             return None
 
