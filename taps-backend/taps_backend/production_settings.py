@@ -9,18 +9,6 @@ from .settings import *  # noqa: F403
 
 env = environ.Env()
 
-# Construct database URL from individual components and override DATABASES setting
-database_host = env.str("DATABASE_HOST", default="")
-database_port = env.str("DATABASE_PORT", default="")
-database_name = env.str("DATABASE_NAME", default="")
-database_user = env.str("DATABASE_USER", default="")
-
-if all([database_host, database_port, database_name, database_user]):
-    database_password = env.str("DATABASE_PASSWORD", default="")
-    database_url = f"postgres://{database_user}:{database_password}@{database_host}:{database_port}/{database_name}"
-    # Override the DATABASES setting with the constructed URL
-    DATABASES = {"default": env.db_url_config(database_url)}
-
 # Security settings
 DEBUG = False
 TEMPLATE_DEBUG = False
@@ -31,6 +19,7 @@ ALLOWED_HOSTS = [
     "tapsapi.dillonkerr.com",
     "tapsapi-staging.dillonkerr.com",  # Staging API domain
     "localhost",  # For Dockerfile health check
+    "taps-production.up.railway.app",  # Railway production domain
 ]
 
 MIDDLEWARE = [
@@ -96,3 +85,5 @@ LOGGING = {
         },
     },
 }
+
+DATABASES = {"default": env.db("DATABASE_URL")}  # noqa: F405
