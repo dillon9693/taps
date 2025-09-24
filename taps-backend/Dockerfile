@@ -6,8 +6,11 @@ ENV PYTHONUNBUFFERED=1
 
 # Below values only used for when running collectstatic during Docker build
 # TODO figure out how to get rid of below? Might cause issues if we use static files
-ENV SECRET_KEY=fake
-ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
+# ENV SECRET_KEY=fake
+# ENV DJANGO_SETTINGS_MODULE=taps_backend.production_settings
+ARG SECRET_KEY
+ARG DJANGO_SETTINGS_MODULE
+ARG DATABASE_URL
 
 # Set work directory
 WORKDIR /app
