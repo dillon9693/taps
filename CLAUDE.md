@@ -192,3 +192,4 @@ These rules ensure maintainability, safety, and developer velocity.
 - **GH-2 (SHOULD NOT**) Refer to Claude or Anthropic in commit messages.
 - **GH-3 (MUST**) When implementing a change, create a feature branch off of `main` with the name format `feature/<description>`, replacing `<description>` with a brief description of the feature
 - **GH-4 (MUST)** Run front-end, infrastructure, and back-end checks locally before pushing to remote.
+- **GH-5 (SHOULD)** Unless otherwise specified, open PRs against the `main` branch
