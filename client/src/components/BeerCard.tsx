@@ -57,7 +57,6 @@ export default function BeerCard(props: BeerCardProps) {
             alt={beer.name}
             height={200}
             fit="cover"
-            Do
           />
         </Card.Section>
 
