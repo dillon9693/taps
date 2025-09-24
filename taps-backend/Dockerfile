@@ -37,4 +37,5 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+# Run migrations and web server
 CMD python manage.py migrate && gunicorn taps_backend.wsgi:application --bind 0.0.0.0:8000
