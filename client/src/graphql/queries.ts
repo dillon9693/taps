@@ -6,6 +6,7 @@ export const FEATURED_BEERS = gql`
       id
       name
       brewery {
+        id
         name
         location
       }
@@ -34,6 +35,7 @@ export const SEARCH_BEERS = gql`
       id
       name
       brewery {
+        id
         name
         location
       }
@@ -57,6 +59,7 @@ export const GET_BEER = gql`
       id
       name
       brewery {
+        id
         name
         location
       }
@@ -69,6 +72,30 @@ export const GET_BEER = gql`
       imageUrl
       tags {
         name
+      }
+    }
+  }
+`;
+
+export const GET_BREWERY_BY_ID = gql`
+  query GetBreweryById($id: ID!) {
+    breweryById(id: $id) {
+      id
+      name
+      location
+      description
+      yearFounded
+      website
+      beerCount
+      beers {
+        id
+        name
+        style
+        styleDisplay
+        abv
+        ibu
+        averageRating
+        imageUrl
       }
     }
   }
