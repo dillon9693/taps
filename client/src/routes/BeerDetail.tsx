@@ -17,10 +17,11 @@ import {
   Button,
   Center,
   Stack,
+  Anchor,
   useMantineTheme,
 } from "@mantine/core";
 import { GET_BEER } from "../graphql/queries";
-import type { Beer } from "../types/beer";
+import type { Beer } from "../types";
 
 type GetBeerResult = {
   beerById: Beer;
@@ -90,7 +91,15 @@ export default function BeerDetail() {
               <Stack justify="flex-start" h="100%">
                 <Title order={1}>{beer.name}</Title>
                 <Text size="xl" c="dimmed" mb="md">
-                  {beer.brewery.name} • {beer.brewery.location}
+                  <Anchor
+                    component={Link}
+                    to={`/brewery/${beer.brewery.id}`}
+                    style={{ color: "inherit" }}
+                  >
+                    {beer.brewery.name}
+                  </Anchor>
+                  {" • "}
+                  {beer.brewery.location}
                 </Text>
                 <Group align="center" mb="lg">
                   <Rating
@@ -183,7 +192,14 @@ export default function BeerDetail() {
               Brewery Information
             </Title>
             <Stack gap="xs">
-              <Text fw={500}>{beer.brewery.name}</Text>
+              <Anchor
+                component={Link}
+                to={`/brewery/${beer.brewery.id}`}
+                fw={500}
+                style={{ color: "inherit", textDecoration: "none" }}
+              >
+                {beer.brewery.name}
+              </Anchor>
               <Text size="sm" c="dimmed">
                 {beer.brewery.location}
               </Text>
