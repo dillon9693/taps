@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     "tapsapi.dillonkerr.com",
     "tapsapi-staging.dillonkerr.com",  # Staging API domain
     "localhost",  # For Dockerfile health check
+    "taps-production.up.railway.app",  # Railway production domain
 ]
 
 MIDDLEWARE = [
