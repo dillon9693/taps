@@ -12,7 +12,7 @@ import {
   Anchor,
   useMantineTheme,
 } from "@mantine/core";
-import type { Beer } from "../types/beer";
+import type { Beer } from "../types";
 
 interface BeerCardProps {
   beer: Beer;

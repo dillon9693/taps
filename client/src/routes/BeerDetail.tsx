@@ -21,7 +21,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { GET_BEER } from "../graphql/queries";
-import type { Beer } from "../types/beer";
+import type { Beer } from "../types";
 
 type GetBeerResult = {
   beerById: Beer;

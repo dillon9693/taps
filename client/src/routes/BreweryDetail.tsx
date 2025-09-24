@@ -21,7 +21,7 @@ import {
   Anchor,
 } from "@mantine/core";
 import { GET_BREWERY_BY_ID } from "../graphql/queries";
-import type { Brewery } from "../types/beer";
+import type { Brewery } from "../types";
 
 type GetBreweryResult = {
   breweryById: Brewery;
@@ -130,7 +130,21 @@ export default function BreweryDetail() {
                     to={`/beer/${beer.id}`}
                     withBorder
                     shadow="sm"
-                    style={{ textDecoration: "none", color: "inherit" }}
+                    style={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      transition: "all 0.2s ease-in-out",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e: any) => {
+                      e.currentTarget.style.transform = "translateY(-6px)";
+                      e.currentTarget.style.boxShadow =
+                        "0 8px 25px rgba(0, 0, 0, 0.15)";
+                    }}
+                    onMouseLeave={(e: any) => {
+                      e.currentTarget.style.transform = "translateY(0px)";
+                      e.currentTarget.style.boxShadow = "";
+                    }}
                   >
                     <Stack gap="xs">
                       <Group justify="space-between" align="flex-start">

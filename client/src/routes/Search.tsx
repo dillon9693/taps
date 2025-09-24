@@ -16,7 +16,7 @@ import {
   Group,
 } from "@mantine/core";
 import { SEARCH_BEERS } from "../graphql/queries";
-import { Beer } from "../types/beer";
+import { Beer } from "../types";
 import BeerCard from "../components/BeerCard";
 import useDebounce from "../hooks/useDebounce";
 
