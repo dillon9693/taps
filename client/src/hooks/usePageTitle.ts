@@ -10,13 +10,14 @@ export const usePageTitle = ({
   defaultTitle = "Discover Great Beer",
 }: UsePageTitleOptions) => {
   useEffect(() => {
-    const fullTitle = `Taps - ${title}`;
+    const titlePrefix = `Taps -`;
+    const fullTitle = `${titlePrefix} ${title}`;
     document.title = fullTitle;
 
     // Cleanup function to restore default title if needed
     return () => {
       if (defaultTitle) {
-        document.title = `Taps - ${defaultTitle}`;
+        document.title = `${titlePrefix} ${defaultTitle}`;
       }
     };
   }, [title, defaultTitle]);
