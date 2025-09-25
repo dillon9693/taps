@@ -47,7 +47,7 @@ export default function Search() {
   const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
 
   usePageTitle({
-    title: searchTerm ? `Search: ${searchTerm}` : "Search Beers",
+    title: "Search Beers",
   });
   const [selectedStyle, setSelectedStyle] = useState(DEFAULT_STYLE);
   const [abvRange, setAbvRange] = useState(DEFAULT_ABV_RANGE);
