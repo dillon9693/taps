@@ -4,12 +4,15 @@ import { Container, Grid, Title, Loader, Alert, Center } from "@mantine/core";
 import { FEATURED_BEERS } from "../graphql/queries";
 import { Beer } from "../types";
 import BeerCard from "../components/BeerCard";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 type FeaturedBeersResult = {
   featuredBeers: Beer[];
 };
 
 export default function Home() {
+  usePageTitle({ title: "Discover Great Beer" });
+
   const { loading, error, data } =
     useQuery<FeaturedBeersResult>(FEATURED_BEERS);
 

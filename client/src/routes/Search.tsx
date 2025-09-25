@@ -19,6 +19,7 @@ import { SEARCH_BEERS } from "../graphql/queries";
 import { Beer } from "../types";
 import BeerCard from "../components/BeerCard";
 import useDebounce from "../hooks/useDebounce";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 const BEER_STYLES = [
   { value: "", label: "All Styles" },
@@ -44,6 +45,10 @@ type SearchBeersResult = {
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState(DEFAULT_SEARCH_TERM);
+
+  usePageTitle({
+    title: searchTerm ? `Search: ${searchTerm}` : "Search Beers",
+  });
   const [selectedStyle, setSelectedStyle] = useState(DEFAULT_STYLE);
   const [abvRange, setAbvRange] = useState(DEFAULT_ABV_RANGE);
 

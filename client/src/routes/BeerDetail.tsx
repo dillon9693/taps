@@ -22,6 +22,7 @@ import {
 } from "@mantine/core";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
+import { usePageTitle } from "../hooks/usePageTitle";
 
 type GetBeerResult = {
   beerById: Beer;
@@ -33,6 +34,12 @@ export default function BeerDetail() {
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
     skip: !id,
+  });
+
+  usePageTitle({
+    title: data?.beerById
+      ? `${data.beerById.name} by ${data.beerById.brewery.name}`
+      : "Beer Details",
   });
 
   if (loading) {
