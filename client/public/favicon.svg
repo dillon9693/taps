@@ -1,0 +1,56 @@
+<svg
+  width="32"
+  height="32"
+  viewBox="0 0 32 32"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient
+      id="beerGradient"
+      x1="0%"
+      y1="0%"
+      x2="0%"
+      y2="100%"
+    >
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA000;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient
+      id="glassGradient"
+      x1="0%"
+      y1="0%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0.1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <!-- Glass body -->
+  <path
+    d="M8 4h16v4c0 0-3 20-3 20H11c0 0-3-20-3-20z"
+    fill="#ECEFF1"
+    stroke="#B0BEC5"
+    stroke-width="0.5"
+    opacity="0.7"
+    filter="url(#shadow)"
+  />
+  <!-- Beer liquid -->
+  <path d="M10 10h12v14H10z" fill="url(#beerGradient)" />
+  <!-- Foam -->
+  <path d="M10 6h12v4H10z" fill="#FFF9C4" opacity="0.9" />
+  <!-- Glass highlight -->
+  <path
+    d="M11 6c0 0 2 0 2 0v16c0 0-2 0-2 0z"
+    fill="url(#glassGradient)"
+  />
+  <!-- Static bubbles -->
+  <g fill="#FFE082" opacity="0.8">
+    <circle cx="14" cy="13" r="0.8" />
+    <circle cx="18" cy="15" r="0.8" />
+    <circle cx="16" cy="17" r="0.8" />
+  </g>
+</svg>
