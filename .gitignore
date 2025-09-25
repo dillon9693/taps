@@ -114,3 +114,5 @@ dmypy.json
 
 # Claude Code
 .claude/settings.local.json
+
+.DS_Store
