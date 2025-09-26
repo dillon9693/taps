@@ -1,7 +1,10 @@
+import uuid
+
 from django.db import models
 
 
 class Brewery(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -16,6 +19,7 @@ class Brewery(models.Model):
 
 
 class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30)
 
     def __str__(self):
@@ -23,6 +27,7 @@ class Tag(models.Model):
 
 
 class Beer(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     STYLE_CHOICES = [
         ("IPA", "India Pale Ale"),
         ("DIPA", "Double IPA"),
