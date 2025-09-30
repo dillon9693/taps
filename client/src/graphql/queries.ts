@@ -85,3 +85,14 @@ export const GET_BREWERY_BY_ID = gql`
     }
   }
 `;
+
+export const GET_CURRENT_USER = gql`
+  query GetCurrentUser {
+    currentUser {
+      id
+      email
+      firstName
+      lastName
+    }
+  }
+`;
