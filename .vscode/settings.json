@@ -11,12 +11,6 @@
   "eslint.validate": ["javascript", "typescript"],
 
   // Python settings
-  "python.formatting.provider": "black",
-  "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": true,
-  "python.linting.pylintEnabled": false,
-  "python.linting.pydocstyleEnabled": true,
-  "python.pythonPath": "~/.cache/pypoetry/virtualenvs/taps-backend-wRyTPorY-py3.8/bin/python",
   "python.testing.pytestEnabled": true,
   "files.exclude": {
     "**/__pycache__": true,
