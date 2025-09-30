@@ -1,16 +1,8 @@
 import React from "react";
-import { Button, Modal, PasswordInput, TextInput } from "@mantine/core";
+import { Button, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-interface LoginRegisterModalProps {
-  opened: boolean;
-  onClose: () => void;
-}
-
-export default function LoginRegisterModal({
-  opened,
-  onClose,
-}: LoginRegisterModalProps) {
+function RegisterForm() {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -41,59 +33,87 @@ export default function LoginRegisterModal({
   };
 
   return (
+    <form onSubmit={form.onSubmit((values) => register(values))}>
+      <TextInput
+        label="First Name"
+        placeholder="First Name"
+        required
+        withAsterisk
+        key={form.key("firstName")}
+        {...form.getInputProps("firstName")}
+      />
+      <TextInput
+        label="Last Name"
+        placeholder="Last Name"
+        required
+        withAsterisk
+        key={form.key("lastName")}
+        {...form.getInputProps("lastName")}
+      />
+      <TextInput
+        label="Email"
+        placeholder="Email"
+        required
+        withAsterisk
+        key={form.key("email")}
+        {...form.getInputProps("email")}
+      />
+      <PasswordInput
+        label="Password"
+        placeholder="Password"
+        description="Must be at least 8 characters"
+        required
+        withAsterisk
+        key={form.key("password")}
+        {...form.getInputProps("password")}
+      />
+      <PasswordInput
+        label="Confirm Password"
+        placeholder="Confirm Password"
+        required
+        withAsterisk
+        key={form.key("confirmPassword")}
+        {...form.getInputProps("confirmPassword")}
+      />
+
+      <Button type="submit" mt="md" fullWidth>
+        Register
+      </Button>
+    </form>
+  );
+}
+
+function LoginForm() {
+  return <Text>Login Form</Text>;
+}
+
+interface LoginRegisterModalProps {
+  opened: boolean;
+  onClose: () => void;
+}
+
+export default function LoginRegisterModal({
+  opened,
+  onClose,
+}: LoginRegisterModalProps) {
+  const [isRegistering, setIsRegistering] = React.useState(true);
+
+  const modalTitle = isRegistering ? "Register" : "Login";
+  return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Login / Register"
+      title={modalTitle}
       transitionProps={{ transition: "fade", duration: 200 }}
     >
-      <form onSubmit={form.onSubmit((values) => register(values))}>
-        <TextInput
-          label="First Name"
-          placeholder="First Name"
-          required
-          withAsterisk
-          key={form.key("firstName")}
-          {...form.getInputProps("firstName")}
-        />
-        <TextInput
-          label="Last Name"
-          placeholder="Last Name"
-          required
-          withAsterisk
-          key={form.key("lastName")}
-          {...form.getInputProps("lastName")}
-        />
-        <TextInput
-          label="Email"
-          placeholder="Email"
-          required
-          withAsterisk
-          key={form.key("email")}
-          {...form.getInputProps("email")}
-        />
-        <PasswordInput
-          label="Password"
-          placeholder="Password"
-          description="Must be at least 8 characters"
-          required
-          withAsterisk
-          key={form.key("password")}
-          {...form.getInputProps("password")}
-        />
-        <PasswordInput
-          label="Confirm Password"
-          placeholder="Confirm Password"
-          required
-          withAsterisk
-          key={form.key("confirmPassword")}
-          {...form.getInputProps("confirmPassword")}
-        />
-
-        <Button type="submit" mt="md" fullWidth>
-          Register
-        </Button>
-      </form>
+      {isRegistering ? <RegisterForm /> : <LoginForm />}
+      <Button
+        variant="transparent"
+        fullWidth
+        onClick={() => setIsRegistering(!isRegistering)}
+      >
+        {isRegistering ? "Have an account? Login" : "No account? Register"}
+      </Button>
     </Modal>
   );
 }
