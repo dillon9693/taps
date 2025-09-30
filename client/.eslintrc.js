@@ -41,5 +41,6 @@ module.exports = {
         tsx: "never",
       },
     ],
+    "react/jsx-props-no-spreading": 0, // TODO temp
   },
 };
