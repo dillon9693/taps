@@ -38,3 +38,4 @@ jobs:
         env:
           SECRET_KEY: test-secret-key-for-ci
           DJANGO_SETTINGS_MODULE: taps_backend.development_settings
+          DATABASE_URL: sqlite:///test.db
