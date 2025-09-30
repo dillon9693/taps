@@ -37,4 +37,4 @@ jobs:
         run: poetry run python manage.py test
         env:
           SECRET_KEY: test-secret-key-for-ci
-          DATABASE_URL: sqlite:///test.db
+          DJANGO_SETTINGS_MODULE: taps_backend.test_settings
