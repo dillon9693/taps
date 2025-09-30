@@ -1,4 +1,7 @@
+import logging
+
 import graphene
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -11,6 +14,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
 from taps.models import Beer, Brewery, Tag
+
+logger = logging.getLogger(__name__)
 
 
 class BreweryType(DjangoObjectType):
@@ -177,17 +182,26 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password, first_name, last_name):
         errors = []
 
-        if User.objects.filter(email=email).exists():
-            errors.append("Unable to register with the provided email address")
-            return RegisterUser(success=False, errors=errors, user=None)
+        # Check for duplicate email
+        email_exists = User.objects.filter(email=email).exists()
 
+        # Always validate password to maintain consistent timing
+        password_valid = True
         try:
             validate_password(password)
         except ValidationError:
+            password_valid = False
             errors.append(
                 "Password does not meet security requirements. "
                 "Please choose a stronger password."
             )
+
+        # Return error after both checks to prevent timing-based user enumeration
+        if email_exists:
+            errors.append("Unable to register with the provided email address")
+            return RegisterUser(success=False, errors=errors, user=None)
+
+        if not password_valid:
             return RegisterUser(success=False, errors=errors, user=None)
 
         try:
@@ -198,17 +212,23 @@ class RegisterUser(graphene.Mutation):
                 first_name=first_name,
                 last_name=last_name,
             )
-            # For social auth, allauth will use its own backend
-            # For email/password, we explicitly use ModelBackend
-            login(
-                info.context,
-                user,
-                backend="django.contrib.auth.backends.ModelBackend",
-            )
-            return RegisterUser(success=True, errors=[], user=user)
-        except Exception:
+        except ValueError as e:
+            logger.warning(f"User registration validation error: {str(e)}")
+            errors.append("Invalid input provided. Please check your information.")
+            return RegisterUser(success=False, errors=errors, user=None)
+        except Exception as e:
+            logger.error(f"User registration failed: {str(e)}", exc_info=True)
             errors.append("Unable to create account. Please try again.")
             return RegisterUser(success=False, errors=errors, user=None)
+
+        # For social auth, allauth will use its own backend
+        # For email/password, we explicitly use ModelBackend
+        login(
+            info.context,
+            user,
+            backend="django.contrib.auth.backends.ModelBackend",
+        )
+        return RegisterUser(success=True, errors=[], user=user)
 
 
 class LoginUser(graphene.Mutation):
@@ -223,14 +243,8 @@ class LoginUser(graphene.Mutation):
     def mutate(self, info, email, password):
         errors = []
 
-        try:
-            user = User.objects.get(email=email)
-            username = user.username
-        except User.DoesNotExist:
-            errors.append("Invalid email or password")
-            return LoginUser(success=False, errors=errors, user=None)
-
-        user = authenticate(info.context, username=username, password=password)
+        # Authenticate using email as username (prevents timing attacks)
+        user = authenticate(info.context, username=email, password=password)
 
         if user is not None:
             login(
@@ -265,7 +279,8 @@ class RequestPasswordReset(graphene.Mutation):
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-            reset_url = f"http://localhost:3000/reset-password?uid={uid}&token={token}"
+            frontend_url = settings.FRONTEND_URL
+            reset_url = f"{frontend_url}/reset-password?uid={uid}&token={token}"
 
             send_mail(
                 subject="Password Reset Request",
@@ -284,7 +299,8 @@ class RequestPasswordReset(graphene.Mutation):
                 success=True,
                 message="If the email exists, a password reset email has been sent",
             )
-        except Exception:
+        except Exception as e:
+            logger.error(f"Password reset request failed: {str(e)}", exc_info=True)
             return RequestPasswordReset(
                 success=True,
                 message="If the email exists, a password reset email has been sent",

@@ -38,7 +38,6 @@ if len(vpc_cidr) > 0:
 CORS_ALLOWED_ORIGINS = [
     "https://taps.dillonkerr.com",
     "https://taps-staging.dillonkerr.com",  # Staging frontend custom domain
-    "http://localhost:3000",  # Needed for health check
 ]
 CORS_ALLOW_CREDENTIALS = True
 

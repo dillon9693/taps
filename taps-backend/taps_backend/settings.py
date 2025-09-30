@@ -25,8 +25,6 @@ env = environ.Env()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env.str("SECRET_KEY")
-print(len(SECRET_KEY))
-print(env.str("DJANGO_SETTINGS_MODULE", default="NOT SET"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
@@ -143,6 +141,9 @@ STATIC_URL = env.str("STATIC_URL", default="static/")
 
 GRAPHENE = {"SCHEMA": "taps.schema.schema"}
 
+# Frontend URL for password reset emails and redirects
+FRONTEND_URL = env.str("FRONTEND_URL", default="http://localhost:3000")
+
 # Django Sites Framework (required by allauth)
 SITE_ID = 1
 
@@ -163,6 +164,6 @@ SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_REQUIRED = True
 
 # Session settings
-SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_AGE = 604800  # 1 week (reduced from 2 weeks for security)
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Strict"  # Strict for better CSRF protection
