@@ -15,13 +15,20 @@ class RegisterUserTestCase(TestCase):
     def test_register_user_success(self):
         mutation = """
             mutation {
-                registerUser(email: "test@example.com", password: "securePassword123!") {
+                registerUser(
+                    email: "test@example.com",
+                    password: "securePassword123!",
+                    firstName: "John",
+                    lastName: "Doe"
+                ) {
                     success
                     errors
                     user {
                         id
                         email
                         username
+                        firstName
+                        lastName
                     }
                 }
             }
@@ -39,6 +46,8 @@ class RegisterUserTestCase(TestCase):
         self.assertEqual(data["errors"], [])
         self.assertEqual(data["user"]["email"], "test@example.com")
         self.assertEqual(data["user"]["username"], "test@example.com")
+        self.assertEqual(data["user"]["firstName"], "John")
+        self.assertEqual(data["user"]["lastName"], "Doe")
 
         self.assertTrue(User.objects.filter(email="test@example.com").exists())
 
@@ -51,7 +60,12 @@ class RegisterUserTestCase(TestCase):
 
         mutation = """
             mutation {
-                registerUser(email: "test@example.com", password: "securePassword123!") {
+                registerUser(
+                    email: "test@example.com",
+                    password: "securePassword123!",
+                    firstName: "John",
+                    lastName: "Doe"
+                ) {
                     success
                     errors
                     user {
@@ -76,7 +90,12 @@ class RegisterUserTestCase(TestCase):
     def test_register_user_weak_password(self):
         mutation = """
             mutation {
-                registerUser(email: "test@example.com", password: "123") {
+                registerUser(
+                    email: "test@example.com",
+                    password: "123",
+                    firstName: "John",
+                    lastName: "Doe"
+                ) {
                     success
                     errors
                     user {

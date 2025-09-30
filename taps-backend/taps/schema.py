@@ -70,7 +70,7 @@ class TagType(DjangoObjectType):
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "date_joined")
+        fields = ("id", "username", "email", "first_name", "last_name", "date_joined")
 
 
 class Query(graphene.ObjectType):
@@ -167,12 +167,14 @@ class RegisterUser(graphene.Mutation):
     class Arguments:
         email = graphene.String(required=True)
         password = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
 
     user = graphene.Field(UserType)
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info, email, password):
+    def mutate(self, info, email, password, first_name, last_name):
         errors = []
 
         if User.objects.filter(email=email).exists():
@@ -190,6 +192,8 @@ class RegisterUser(graphene.Mutation):
                 username=email,
                 email=email,
                 password=password,
+                first_name=first_name,
+                last_name=last_name,
             )
             login(
                 info.context,
