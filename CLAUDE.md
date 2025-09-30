@@ -179,3 +179,7 @@ These rules ensure maintainability, safety, and developer velocity.
 #### 4 - Local Development
 
 - **LD-1 (MUST)** Test locally using docker-compose, not Python or Node on the local machine
+
+##### 5 - Python
+
+- **PY-1 (MUST)** Install dependencies using poetry CLI commands (e.g. `poetry add`), not by adding to pyproject.toml directly
