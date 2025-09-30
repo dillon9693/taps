@@ -1,8 +1,21 @@
+import logging
+
 import graphene
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.tokens import default_token_generator
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.db.models import Count
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
 from taps.models import Beer, Brewery, Tag
+
+logger = logging.getLogger(__name__)
 
 
 class BreweryType(DjangoObjectType):
@@ -59,6 +72,12 @@ class TagType(DjangoObjectType):
         return self.beers.count()
 
 
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "first_name", "last_name", "date_joined")
+
+
 class Query(graphene.ObjectType):
     all_beers = graphene.List(
         BeerType,
@@ -78,6 +97,8 @@ class Query(graphene.ObjectType):
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
+
+    current_user = graphene.Field(UserType)
 
     def resolve_all_beers(
         self, info, style=None, min_abv=None, max_abv=None, search=None
@@ -140,5 +161,195 @@ class Query(graphene.ObjectType):
             .order_by("-beer_count", "name")[:count]
         )
 
+    def resolve_current_user(self, info):
+        user = info.context.user
+        if user.is_authenticated:
+            return user
+        return None
 
-schema = graphene.Schema(query=Query)
+
+class RegisterUser(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+
+    user = graphene.Field(UserType)
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, email, password, first_name, last_name):
+        errors = []
+
+        # Check for duplicate email
+        email_exists = User.objects.filter(email=email).exists()
+
+        # Always validate password to maintain consistent timing
+        password_valid = True
+        try:
+            validate_password(password)
+        except ValidationError:
+            password_valid = False
+            errors.append(
+                "Password does not meet security requirements. "
+                "Please choose a stronger password."
+            )
+
+        # Return error after both checks to prevent timing-based user enumeration
+        if email_exists:
+            errors.append("Unable to register with the provided email address")
+            return RegisterUser(success=False, errors=errors, user=None)
+
+        if not password_valid:
+            return RegisterUser(success=False, errors=errors, user=None)
+
+        try:
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        except ValueError as e:
+            logger.warning(f"User registration validation error: {str(e)}")
+            errors.append("Invalid input provided. Please check your information.")
+            return RegisterUser(success=False, errors=errors, user=None)
+        except Exception as e:
+            logger.error(f"User registration failed: {str(e)}", exc_info=True)
+            errors.append("Unable to create account. Please try again.")
+            return RegisterUser(success=False, errors=errors, user=None)
+
+        # For social auth, allauth will use its own backend
+        # For email/password, we explicitly use ModelBackend
+        login(
+            info.context,
+            user,
+            backend="django.contrib.auth.backends.ModelBackend",
+        )
+        return RegisterUser(success=True, errors=[], user=user)
+
+
+class LoginUser(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    user = graphene.Field(UserType)
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, email, password):
+        errors = []
+
+        # Authenticate using email as username (prevents timing attacks)
+        user = authenticate(info.context, username=email, password=password)
+
+        if user is not None:
+            login(
+                info.context,
+                user,
+                backend="django.contrib.auth.backends.ModelBackend",
+            )
+            return LoginUser(success=True, errors=[], user=user)
+        else:
+            errors.append("Invalid email or password")
+            return LoginUser(success=False, errors=errors, user=None)
+
+
+class LogoutUser(graphene.Mutation):
+    success = graphene.Boolean()
+
+    def mutate(self, info):
+        logout(info.context)
+        return LogoutUser(success=True)
+
+
+class RequestPasswordReset(graphene.Mutation):
+    class Arguments:
+        email = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    message = graphene.String()
+
+    def mutate(self, info, email):
+        try:
+            user = User.objects.get(email=email)
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+            frontend_url = settings.FRONTEND_URL
+            reset_url = f"{frontend_url}/reset-password?uid={uid}&token={token}"
+
+            send_mail(
+                subject="Password Reset Request",
+                message=f"Click the link below to reset your password:\n\n{reset_url}",
+                from_email="noreply@taps.com",
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+
+            return RequestPasswordReset(
+                success=True,
+                message="Password reset email sent",
+            )
+        except User.DoesNotExist:
+            return RequestPasswordReset(
+                success=True,
+                message="If the email exists, a password reset email has been sent",
+            )
+        except Exception as e:
+            logger.error(f"Password reset request failed: {str(e)}", exc_info=True)
+            return RequestPasswordReset(
+                success=True,
+                message="If the email exists, a password reset email has been sent",
+            )
+
+
+class ResetPassword(graphene.Mutation):
+    class Arguments:
+        uid = graphene.String(required=True)
+        token = graphene.String(required=True)
+        new_password = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, uid, token, new_password):
+        errors = []
+
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = User.objects.get(pk=user_id)
+        except Exception:
+            errors.append("Invalid or expired password reset link")
+            return ResetPassword(success=False, errors=errors)
+
+        if not default_token_generator.check_token(user, token):
+            errors.append("Invalid or expired password reset link")
+            return ResetPassword(success=False, errors=errors)
+
+        try:
+            validate_password(new_password, user=user)
+        except ValidationError:
+            errors.append(
+                "Password does not meet security requirements. "
+                "Please choose a stronger password."
+            )
+            return ResetPassword(success=False, errors=errors)
+
+        user.set_password(new_password)
+        user.save()
+        return ResetPassword(success=True, errors=[])
+
+
+class Mutation(graphene.ObjectType):
+    register_user = RegisterUser.Field()
+    login_user = LoginUser.Field()
+    logout_user = LogoutUser.Field()
+    request_password_reset = RequestPasswordReset.Field()
+    reset_password = ResetPassword.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

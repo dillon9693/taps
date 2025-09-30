@@ -23,4 +23,7 @@ urlpatterns = [
     path("taps/", include("taps.urls")),
     path("admin/", admin.site.urls),
     path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
+    path(
+        "accounts/", include("allauth.urls")
+    ),  # allauth URLs for social auth callbacks
 ]
