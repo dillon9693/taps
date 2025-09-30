@@ -64,7 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "allauth.account.middleware.AccountMiddleware",  # Required by allauth
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 # CORS settings
@@ -157,7 +157,7 @@ AUTHENTICATION_BACKENDS = [
 # Allauth configuration
 ACCOUNT_LOGIN_METHODS = {"email"}  # Use email instead of username
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
-ACCOUNT_EMAIL_VERIFICATION = "optional"  # Email verification not required
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # TODO: Consider requiring email verification
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_EMAIL_REQUIRED = True

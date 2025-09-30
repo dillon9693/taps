@@ -178,13 +178,16 @@ class RegisterUser(graphene.Mutation):
         errors = []
 
         if User.objects.filter(email=email).exists():
-            errors.append("A user with this email already exists")
+            errors.append("Unable to register with the provided email address")
             return RegisterUser(success=False, errors=errors, user=None)
 
         try:
             validate_password(password)
-        except ValidationError as e:
-            errors.extend(e.messages)
+        except ValidationError:
+            errors.append(
+                "Password does not meet security requirements. "
+                "Please choose a stronger password."
+            )
             return RegisterUser(success=False, errors=errors, user=None)
 
         try:
@@ -195,14 +198,16 @@ class RegisterUser(graphene.Mutation):
                 first_name=first_name,
                 last_name=last_name,
             )
+            # For social auth, allauth will use its own backend
+            # For email/password, we explicitly use ModelBackend
             login(
                 info.context,
                 user,
                 backend="django.contrib.auth.backends.ModelBackend",
             )
             return RegisterUser(success=True, errors=[], user=user)
-        except Exception as e:
-            errors.append(str(e))
+        except Exception:
+            errors.append("Unable to create account. Please try again.")
             return RegisterUser(success=False, errors=errors, user=None)
 
 
@@ -301,18 +306,21 @@ class ResetPassword(graphene.Mutation):
         try:
             user_id = urlsafe_base64_decode(uid).decode()
             user = User.objects.get(pk=user_id)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            errors.append("Invalid reset link")
+        except Exception:
+            errors.append("Invalid or expired password reset link")
             return ResetPassword(success=False, errors=errors)
 
         if not default_token_generator.check_token(user, token):
-            errors.append("Invalid or expired reset token")
+            errors.append("Invalid or expired password reset link")
             return ResetPassword(success=False, errors=errors)
 
         try:
             validate_password(new_password, user=user)
-        except ValidationError as e:
-            errors.extend(e.messages)
+        except ValidationError:
+            errors.append(
+                "Password does not meet security requirements. "
+                "Please choose a stronger password."
+            )
             return ResetPassword(success=False, errors=errors)
 
         user.set_password(new_password)

@@ -84,7 +84,7 @@ class RegisterUserTestCase(TestCase):
         data = result["data"]["registerUser"]
 
         self.assertFalse(data["success"])
-        self.assertIn("A user with this email already exists", data["errors"])
+        self.assertIn("Unable to register with the provided email address", data["errors"])
         self.assertIsNone(data["user"])
 
     def test_register_user_weak_password(self):
@@ -399,7 +399,7 @@ class ResetPasswordTestCase(TestCase):
         data = result["data"]["resetPassword"]
 
         self.assertFalse(data["success"])
-        self.assertIn("Invalid or expired reset token", data["errors"])
+        self.assertIn("Invalid or expired password reset link", data["errors"])
 
     def test_reset_password_weak_password(self):
         token = default_token_generator.make_token(self.user)
