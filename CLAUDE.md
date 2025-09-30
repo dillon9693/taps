@@ -180,6 +180,10 @@ These rules ensure maintainability, safety, and developer velocity.
 
 - **LD-1 (MUST)** Test locally using docker-compose, not Python or Node on the local machine
 
-##### 5 - Python
+#### 5 - Python
 
 - **PY-1 (MUST)** Install dependencies using poetry CLI commands (e.g. `poetry add`), not by adding to pyproject.toml directly
+
+#### 6 - Django
+
+- **DJ-1 (SHOULD)** Environment-specific settings should be set in the corresponding environment file (`production_settings.py` for production and `development_settings.py` for development), not conditionally in the shared `settings.py`
