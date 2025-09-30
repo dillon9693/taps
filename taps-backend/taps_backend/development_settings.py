@@ -65,3 +65,6 @@ LOGGING = {
 }
 
 DATABASES = {"default": env.db("DATABASE_URL")}  # noqa: F405
+
+# Email backend for development (prints to console)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

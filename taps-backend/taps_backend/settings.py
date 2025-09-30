@@ -43,9 +43,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",  # Required by allauth
     "taps.apps.TapsConfig",
     "graphene_django",
     "corsheaders",
+    # allauth apps
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
 ]
 
 MIDDLEWARE = [
@@ -57,6 +64,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",  # Required by allauth
 ]
 
 # CORS settings
@@ -134,3 +142,27 @@ STATIC_URL = env.str("STATIC_URL", default="static/")
 
 
 GRAPHENE = {"SCHEMA": "taps.schema.schema"}
+
+# Django Sites Framework (required by allauth)
+SITE_ID = 1
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    # Django backend for username/password
+    "django.contrib.auth.backends.ModelBackend",
+    # Allauth backend for social auth
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Allauth configuration
+ACCOUNT_LOGIN_METHODS = {"email"}  # Use email instead of username
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = "optional"  # Email verification not required
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+
+# Session settings
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
