@@ -84,7 +84,9 @@ class RegisterUserTestCase(TestCase):
         data = result["data"]["registerUser"]
 
         self.assertFalse(data["success"])
-        self.assertIn("Unable to register with the provided email address", data["errors"])
+        self.assertIn(
+            "Unable to register with the provided email address", data["errors"]
+        )
         self.assertIsNone(data["user"])
 
     def test_register_user_weak_password(self):
