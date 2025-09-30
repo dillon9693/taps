@@ -1,87 +1,60 @@
 # Taps Deployment Guide
 
-This document outlines the deployment process for the Taps beer discovery application. The application consists of a React frontend and a Django backend, deployed to Vercel and AWS respectively.
+This document outlines the deployment process for the Taps beer discovery application. The application consists of a React frontend and a Django backend, deployed to Vercel and Railway respectively.
 
 ## Architecture Overview
 
 The Taps application is deployed using the following architecture:
 
 - **Frontend**: React application deployed to Vercel at `taps.dillonkerr.com`
-- **Backend**: Django application deployed to AWS ECS Fargate at `tapsapi.dillonkerr.com`
-- **Database**: PostgreSQL database on AWS RDS
-- **Infrastructure**: AWS CDK for infrastructure as code
+- **Backend**: Django application deployed to Railway at `https://taps-production.up.railway.app`
+- **Database**: PostgreSQL database managed by Railway
 
 ## Infrastructure Components
 
-### Network Infrastructure
+### Frontend (Vercel)
 
-- VPC with public and private subnets across 2 AZs
-- NAT Gateway for private subnet internet access
-- Security groups for ECS, RDS, and ALB
+- Automatic deployments from GitHub repository
+- Custom domain configuration (`taps.dillonkerr.com`)
+- Built-in CDN and SSL certificate management
+- Preview deployments for pull requests
 
-### Database Infrastructure
+### Backend (Railway)
 
-- RDS PostgreSQL instance in private subnet
-- Automated backups and snapshots
-- Secrets Manager for database credentials
+- Automatic deployments from GitHub repository (`main` branch)
+- Containerized Django application
+- Built-in SSL certificate and HTTPS support
+- Automatic health checks and monitoring
 
-### Compute Infrastructure
+### Database (Railway)
 
-- ECS Fargate for containerized Django application
-- ECR repository for Docker images
-- Application Load Balancer for traffic distribution
-- Auto-scaling based on CPU and memory utilization
-
-### Domain Infrastructure
-
-- ACM certificate for HTTPS
-- Route 53 for DNS management
-- Custom domain configuration
+- Fully managed PostgreSQL database
+- Automatic backups
+- Database credentials managed by Railway
+- Private network connection to backend service
 
 ## Deployment Process
 
 ### Production Deployment
 
-The production deployment process is fully automated using GitHub Actions. The workflow is defined in `.github/workflows/deploy.yml` and consists of the following steps:
+The production deployment process is fully automated through GitHub integrations:
 
-1. **Test**: Run tests for both frontend and backend
-2. **Deploy Infrastructure**: Deploy AWS infrastructure using CDK
-3. **Deploy Backend**: Build and push Docker image to ECR, update ECS service
-4. **Deploy Frontend**: Deploy React application to Vercel
+#### Frontend (Vercel)
 
-### Staging Deployment (Opt-in)
+- **Automatic**: Pushes to `main` branch trigger production deployments
+- **Preview**: Pull requests automatically generate preview deployments
+- **Configuration**: Managed through Vercel dashboard and `vercel.json`
 
-Staging deployments are available for feature branches using an opt-in system via PR labels:
+#### Backend (Railway)
 
-#### How to Deploy to Staging
+- **Automatic**: Pushes to `main` branch trigger production deployments
+- **Build**: Railway automatically detects and builds the Django application
+- **Configuration**: Managed through Railway dashboard and `railway.json` (if present)
+- **Environment Variables**: Configured in Railway dashboard
 
-1. **Create a Pull Request** from your feature branch as usual
-2. **Add the `deploy-staging` label** to the PR when you want to deploy to staging
-3. **Automatic deployments**: Every subsequent commit to the PR will automatically trigger a new staging deployment
-4. **Stop deployments**: Remove the `deploy-staging` label to prevent future deployments
+### Staging Deployment
 
-#### Staging Workflow Details
-
-- **Workflow file**: `.github/workflows/deploy-staging.yml`
-- **Trigger**: Pull request events (opened, synchronized, labeled)
-- **Condition**: Only runs when the `deploy-staging` label is present
-- **Environment**: Deploys to staging infrastructure (`taps-staging-*` resources)
-- **Image tagging**: Docker images tagged as `staging-pr{number}-{sha}` for traceability
-
-#### Benefits of Opt-in Staging
-
-- **No automatic staging deployments** for every PR
-- **Multiple deployments per PR** supported for iterative testing
-- **Easy visual management** via GitHub PR labels
-- **Resource efficiency** - only deploy when needed
-- **Better tracking** with PR-specific image tags
-
-## Required Secrets
-
-The following secrets need to be configured in GitHub Actions:
-
-- `AWS_ROLE_TO_ASSUME`: ARN of the IAM role to assume for AWS deployments
-- `VERCEL_TOKEN`: Vercel API token
+Staging deployments are planned for future implementation and will likely use Railway's PR deployment features.
 
 ## Manual Deployment Steps
 
@@ -102,28 +75,47 @@ The following secrets need to be configured in GitHub Actions:
 
 ## Monitoring and Maintenance
 
-- CloudWatch for logs and metrics
-- CloudWatch Alarms for monitoring
-- RDS automated backups
-- ECR lifecycle policies for image management
+### Vercel
+
+- Built-in analytics and performance monitoring
+- Deployment logs available in dashboard
+- Automatic SSL certificate renewal
+
+### Railway
+
+- Application logs available in Railway dashboard
+- Built-in metrics (CPU, memory, network usage)
+- Automatic database backups
+- Deployment history and rollback capabilities
 
 ## Scaling Considerations
 
-- ECS service auto-scaling based on CPU and memory utilization
-- RDS instance can be scaled vertically (instance size) or horizontally (read replicas)
-- ALB can handle increased traffic automatically
+### Frontend (Vercel)
+
+- Automatic scaling via CDN
+- No manual configuration needed
+
+### Backend (Railway)
+
+- Vertical scaling by adjusting service resources in Railway dashboard
+- Horizontal scaling planned for future implementation
+
+### Database (Railway)
+
+- Vertical scaling by upgrading database plan
+- Automated connection pooling
 
 ## Cost Optimization
 
-- Use Fargate Spot for non-critical workloads
-- RDS instance sizing based on actual usage
-- NAT Gateway sharing across multiple subnets
-- CloudWatch Logs retention policies
+- Railway offers usage-based pricing
+- Monitor resource usage through Railway dashboard
+- Optimize Docker image size to reduce build times
+- Database size monitoring and cleanup strategies
 
 ## Security Considerations
 
-- All resources in private subnets where possible
-- Security groups with least privilege access
-- Secrets Manager for sensitive information
-- HTTPS everywhere
-- IAM roles with minimal permissions
+- HTTPS enforced on all services (Vercel and Railway)
+- Database credentials managed by Railway
+- Private network connection between backend and database
+- Environment variables stored securely in Railway dashboard
+- Vercel environment variables configured per environment

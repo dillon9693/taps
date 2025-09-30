@@ -18,6 +18,3 @@ jobs:
 
   test-backend:
     uses: ./.github/workflows/test-backend.yml
-
-  test-infrastructure:
-    uses: ./.github/workflows/test-infrastructure.yml

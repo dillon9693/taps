@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Taps is a beer discovery application with a React frontend, Django/GraphQL backend, and AWS CDK infrastructure. The application allows users to browse and search for beers, view brewery information, and discover featured beers.
+Taps is a beer discovery application with a React frontend and Django/GraphQL backend. The front-end is deployed using [Vercel](https://vercel.com), and the back-end is deployed using [Railway](https://railway.com/). The application allows users to browse and search for beers, view brewery information, and discover featured beers.
 
 ## Architecture
 
@@ -26,12 +26,6 @@ Taps is a beer discovery application with a React frontend, Django/GraphQL backe
 - Core models: `Beer`, `Brewery`, `Tag` in `taps/models.py`
 - GraphQL schema in `taps/schema.py` with queries for beers, breweries, and tags
 - **Poetry** for dependency management
-
-### Infrastructure (infrastructure/)
-
-- **AWS CDK** with TypeScript for infrastructure as code
-- Modular stack architecture: network, database, compute, and domain stacks
-- Separate staging and production environments
 
 ## Development Commands
 
@@ -60,18 +54,6 @@ poetry run python manage.py add_sample_data # Create sample data
 poetry run python manage.py createsuperuser # Create admin user
 poetry run ruff format .                   # Format code
 poetry run ruff check .                    # Lint code
-```
-
-### Infrastructure (infrastructure/)
-
-```bash
-cd infrastructure
-npm install          # Install dependencies
-npm run build       # Compile TypeScript
-npm run test        # Run tests
-npx cdk deploy      # Deploy to AWS
-npx cdk diff        # Compare with deployed stack
-npx cdk synth       # Generate CloudFormation
 ```
 
 ### Docker Development
@@ -191,7 +173,7 @@ These rules ensure maintainability, safety, and developer velocity.
 - **GH-1 (MUST)** Use Conventional Commits format when writing commit messages: https://www.conventionalcommits.org/en/v1.0.0
 - **GH-2 (SHOULD NOT)** Refer to Claude or Anthropic in commit messages.
 - **GH-3 (MUST)** When implementing a change, create a feature branch off of `main` with the name format `feature/<description>`, replacing `<description>` with a brief description of the feature
-- **GH-4 (MUST)** Run front-end, infrastructure, and back-end checks locally before pushing to remote.
+- **GH-4 (MUST)** Run front-end and back-end checks locally before pushing to remote.
 - **GH-5 (SHOULD)** Unless otherwise specified, open PRs against the `main` branch
 
 #### 4 - Local Development
