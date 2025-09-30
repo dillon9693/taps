@@ -10,12 +10,18 @@ import {
   Box,
   useMantineTheme,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
+import LoginRegisterModal from "./components/LoginRegisterModal";
 
 function App() {
   const theme = useMantineTheme();
+
+  const [authModalOpened, { open, close }] = useDisclosure(false);
+
+  const isAuthenticated = false; // TODO replace with auth logic
 
   return (
     <ApolloProvider client={client}>
@@ -51,12 +57,35 @@ function App() {
               >
                 Search
               </Button>
+
+              {!isAuthenticated && (
+                <Button
+                  variant="subtle"
+                  style={{ color: "white" }}
+                  onClick={open}
+                >
+                  Login / Register
+                </Button>
+              )}
+
+              {isAuthenticated && (
+                <Button
+                  variant="subtle"
+                  onClick={() => console.log("logging out")}
+                  style={{ color: "white" }}
+                >
+                  Logout
+                </Button>
+              )}
             </Group>
           </Group>
         </AppShell.Header>
         <AppShell.Main>
           <Container>
             <Outlet />
+
+            {/* Modals */}
+            <LoginRegisterModal opened={authModalOpened} onClose={close} />
           </Container>
         </AppShell.Main>
       </AppShell>
