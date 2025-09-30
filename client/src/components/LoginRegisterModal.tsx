@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, PasswordInput, Text, TextInput } from "@mantine/core";
+import { Button, Modal, PasswordInput, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
 function RegisterForm() {
@@ -84,7 +84,48 @@ function RegisterForm() {
 }
 
 function LoginForm() {
-  return <Text>Login Form</Text>;
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate: {
+      email: (value: string) =>
+        /^\S+@\S+$/.test(value) ? null : "Invalid email address",
+    },
+  });
+
+  const login = (v: typeof form.values) => {
+    console.log("logging in user");
+    console.log(v);
+  };
+
+  return (
+    <form onSubmit={form.onSubmit((values) => login(values))}>
+      <TextInput
+        label="Email"
+        placeholder="Email"
+        required
+        withAsterisk
+        key={form.key("email")}
+        {...form.getInputProps("email")}
+      />
+      <PasswordInput
+        label="Password"
+        placeholder="Password"
+        description="Must be at least 8 characters"
+        required
+        withAsterisk
+        key={form.key("password")}
+        {...form.getInputProps("password")}
+      />
+
+      <Button type="submit" mt="md" fullWidth>
+        Login
+      </Button>
+    </form>
+  );
 }
 
 interface LoginRegisterModalProps {
