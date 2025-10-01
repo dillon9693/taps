@@ -1,6 +1,5 @@
-import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import { ApolloProvider } from "@apollo/client";
+import { ApolloProvider, useMutation, useQuery } from "@apollo/client";
 import {
   AppShell,
   Container,
@@ -9,59 +8,115 @@ import {
   Text,
   Box,
   useMantineTheme,
+  Loader,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
+import LoginRegisterModal from "./components/LoginRegisterModal";
+import { LOGOUT_USER } from "./graphql/mutations";
+import { GET_CURRENT_USER } from "./graphql/queries";
 
-function App() {
+function AppContent() {
   const theme = useMantineTheme();
 
+  const [authModalOpened, { open, close }] = useDisclosure(false);
+
+  // Query current user to determine authentication state
+  const {
+    data,
+    loading: loadingCurrentUser,
+    error: currentUserError,
+  } = useQuery(GET_CURRENT_USER, {
+    errorPolicy: "all", // Don't crash on network errors
+  });
+
+  // If query fails, assume not authenticated to show login button
+  const isAuthenticated = !currentUserError && !!data?.currentUser;
+
+  const [logout, { loading: loadingLogout }] = useMutation(LOGOUT_USER, {
+    onCompleted: () => {
+      // Clear Apollo cache on logout to remove user data
+      client.resetStore();
+    },
+  });
+
   return (
-    <ApolloProvider client={client}>
-      <AppShell header={{ height: 64 }} padding="md">
-        <AppShell.Header style={{ backgroundColor: theme.colors.accent[5] }}>
-          <Group h="100%" px="md" justify="space-between">
-            <Box
+    <AppShell header={{ height: 64 }} padding="md">
+      <AppShell.Header style={{ backgroundColor: theme.colors.accent[5] }}>
+        <Group h="100%" px="md" justify="space-between">
+          <Box
+            component={Link}
+            to="/home"
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <Group gap="xs">
+              <TapsLogo width={32} height={32} />
+              <Text size="xl" fw={700} style={{ color: "white" }}>
+                Taps
+              </Text>
+            </Group>
+          </Box>
+          <Group gap="xs">
+            <Button
+              variant="subtle"
               component={Link}
               to="/home"
-              style={{ textDecoration: "none", color: "inherit" }}
+              style={{ color: "white" }}
             >
-              <Group gap="xs">
-                <TapsLogo width={32} height={32} />
-                <Text size="xl" fw={700} style={{ color: "white" }}>
-                  Taps
-                </Text>
-              </Group>
-            </Box>
-            <Group gap="xs">
+              Home
+            </Button>
+            <Button
+              variant="subtle"
+              component={Link}
+              to="/search"
+              style={{ color: "white" }}
+            >
+              Search
+            </Button>
+
+            {loadingCurrentUser && <Loader size="xs" color="white" />}
+
+            {!loadingCurrentUser && !isAuthenticated && (
               <Button
                 variant="subtle"
-                component={Link}
-                to="/home"
                 style={{ color: "white" }}
+                onClick={open}
               >
-                Home
+                Login / Register
               </Button>
+            )}
+
+            {!loadingCurrentUser && isAuthenticated && (
               <Button
                 variant="subtle"
-                component={Link}
-                to="/search"
+                onClick={() => logout()}
+                disabled={loadingLogout}
                 style={{ color: "white" }}
               >
-                Search
+                Logout
               </Button>
-            </Group>
+            )}
           </Group>
-        </AppShell.Header>
-        <AppShell.Main>
-          <Container>
-            <Outlet />
-          </Container>
-        </AppShell.Main>
-      </AppShell>
-    </ApolloProvider>
+        </Group>
+      </AppShell.Header>
+      <AppShell.Main>
+        <Container>
+          <Outlet />
+
+          {/* Modals */}
+          <LoginRegisterModal opened={authModalOpened} close={close} />
+        </Container>
+      </AppShell.Main>
+    </AppShell>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ApolloProvider client={client}>
+      <AppContent />
+    </ApolloProvider>
+  );
+}

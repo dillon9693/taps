@@ -1,5 +1,3 @@
-import React from "react";
-
 interface TapsLogoProps {
   width: number;
   height: number;

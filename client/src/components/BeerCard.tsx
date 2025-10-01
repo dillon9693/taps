@@ -1,4 +1,4 @@
-import React from "react";
+import { MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -75,7 +75,7 @@ export default function BeerCard(props: BeerCardProps) {
                 component={Link}
                 to={`/brewery/${beer.brewery.id}`}
                 style={{ color: "inherit" }}
-                onClick={(e: React.MouseEvent) => {
+                onClick={(e: MouseEvent) => {
                   e.stopPropagation();
                 }}
               >
