@@ -38,6 +38,7 @@ root.render(
             <Route path="beer/:id" element={<BeerDetail />} />
             <Route path="brewery/:id" element={<BreweryDetail />} />
 
+            {/* Start auth routes */}
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
             <Route
@@ -45,6 +46,7 @@ root.render(
               element={<RequestPasswordReset />}
             />
             <Route path="reset-password" element={<ResetPassword />} />
+            {/* End auth routes */}
           </Route>
 
           <Route path="*" element={<Navigate to="home" replace />} />
