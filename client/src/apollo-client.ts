@@ -21,9 +21,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
-// HTTP link
+// HTTP link with credentials to send cookies
 const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,
+  credentials: "include", // Send cookies with requests
 });
 
 const client = new ApolloClient({

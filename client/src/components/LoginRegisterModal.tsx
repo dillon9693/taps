@@ -11,6 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
 import { LOGIN_USER, REGISTER_USER } from "../graphql/mutations";
+import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
@@ -59,14 +60,14 @@ function RegisterForm({ close }: ModalProps) {
   });
 
   const [register, { data, loading, error }] =
-    useMutation<RegisterMutationResult>(REGISTER_USER);
-
-  // TODO I don't think this is right (see warning in console)
-  if (data?.registerUser?.success) {
-    console.log("Success! Closing modal");
-    close();
-    return <>empty</>;
-  }
+    useMutation<RegisterMutationResult>(REGISTER_USER, {
+      refetchQueries: [{ query: GET_CURRENT_USER }],
+      onCompleted: (result) => {
+        if (result.registerUser.success) {
+          close();
+        }
+      },
+    });
 
   const hasError = error || (data?.registerUser && !data.registerUser.success);
 
@@ -153,15 +154,17 @@ function LoginForm({ close }: ModalProps) {
     },
   });
 
-  const [login, { data, loading, error }] =
-    useMutation<LoginUserResult>(LOGIN_USER);
-
-  // TODO I don't think this is right (see warning in console)
-  if (data?.loginUser?.success) {
-    console.log("Success! Closing modal");
-    close();
-    return <>empty</>;
-  }
+  const [login, { data, loading, error }] = useMutation<LoginUserResult>(
+    LOGIN_USER,
+    {
+      refetchQueries: [{ query: GET_CURRENT_USER }],
+      onCompleted: (result) => {
+        if (result.loginUser.success) {
+          close();
+        }
+      },
+    },
+  );
 
   const hasError = error || (data?.loginUser && !data.loginUser.success);
 

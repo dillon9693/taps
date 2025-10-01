@@ -32,7 +32,6 @@ export const LOGOUT_USER = gql`
   mutation LogoutUser {
     logoutUser {
       success
-      errors
     }
   }
 `;
