@@ -22,16 +22,8 @@ ALLOWED_HOSTS = [
 
 MIDDLEWARE = [
     "taps_backend.middleware.HealthCheckSSLMiddleware",
-    "allow_cidr.middleware.AllowCIDRMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ] + MIDDLEWARE  # noqa: F405
-
-# Configure CIDR ranges for ALLOWED_HOSTS
-ALLOWED_CIDR_NETS = []
-
-vpc_cidr = env.str("VPC_CIDR", default="")
-if len(vpc_cidr) > 0:
-    ALLOWED_CIDR_NETS.append(vpc_cidr)
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
