@@ -24,8 +24,16 @@ function AppContent() {
   const [authModalOpened, { open, close }] = useDisclosure(false);
 
   // Query current user to determine authentication state
-  const { data, loading: loadingCurrentUser } = useQuery(GET_CURRENT_USER);
-  const isAuthenticated = !!data?.currentUser;
+  const {
+    data,
+    loading: loadingCurrentUser,
+    error: currentUserError,
+  } = useQuery(GET_CURRENT_USER, {
+    errorPolicy: "all", // Don't crash on network errors
+  });
+
+  // If query fails, assume not authenticated to show login button
+  const isAuthenticated = !currentUserError && !!data?.currentUser;
 
   const [logout, { loading: loadingLogout }] = useMutation(LOGOUT_USER, {
     onCompleted: () => {
