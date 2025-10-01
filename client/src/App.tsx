@@ -76,7 +76,6 @@ function AppContent() {
               Search
             </Button>
 
-            {/* TODO this jumps after loading */}
             {loadingCurrentUser && <Loader size="xs" color="white" />}
 
             {!loadingCurrentUser && !isAuthenticated && (
