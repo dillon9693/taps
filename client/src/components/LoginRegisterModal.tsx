@@ -212,7 +212,7 @@ export default function LoginRegisterModal({
   opened,
   close,
 }: LoginRegisterModalProps) {
-  const [isRegistering, setIsRegistering] = useState(true);
+  const [isRegistering, setIsRegistering] = useState(false);
   const modalTitle = isRegistering ? "Register" : "Login";
 
   return (
