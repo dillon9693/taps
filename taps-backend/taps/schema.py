@@ -191,14 +191,14 @@ class RegisterUser(graphene.Mutation):
             validate_password(password)
         except ValidationError:
             password_valid = False
-            errors.append(
+            errors = [
                 "Password does not meet security requirements. "
                 "Please choose a stronger password."
-            )
+            ]
 
         # Return error after both checks to prevent timing-based user enumeration
         if email_exists:
-            errors.append("Unable to register with the provided email address")
+            errors = ["Unable to register with the provided email address."]
             return RegisterUser(success=False, errors=errors, user=None)
 
         if not password_valid:
@@ -254,7 +254,7 @@ class LoginUser(graphene.Mutation):
             )
             return LoginUser(success=True, errors=[], user=user)
         else:
-            errors.append("Invalid email or password")
+            errors.append("Invalid email or password.")
             return LoginUser(success=False, errors=errors, user=None)
 
 
@@ -323,11 +323,11 @@ class ResetPassword(graphene.Mutation):
             user_id = urlsafe_base64_decode(uid).decode()
             user = User.objects.get(pk=user_id)
         except Exception:
-            errors.append("Invalid or expired password reset link")
+            errors.append("Invalid or expired password reset link.")
             return ResetPassword(success=False, errors=errors)
 
         if not default_token_generator.check_token(user, token):
-            errors.append("Invalid or expired password reset link")
+            errors.append("Invalid or expired password reset link.")
             return ResetPassword(success=False, errors=errors)
 
         try:
