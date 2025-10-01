@@ -85,7 +85,7 @@ function App() {
             <Outlet />
 
             {/* Modals */}
-            <LoginRegisterModal opened={authModalOpened} onClose={close} />
+            <LoginRegisterModal opened={authModalOpened} close={close} />
           </Container>
         </AppShell.Main>
       </AppShell>

@@ -1,8 +1,32 @@
 import React from "react";
-import { Button, Modal, PasswordInput, TextInput } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Loader,
+  Modal,
+  PasswordInput,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useMutation } from "@apollo/client";
+import { REGISTER_USER } from "../graphql/mutations";
 
-function RegisterForm() {
+const DEFAULT_ERROR_MESSAGE =
+  "Something went wrong. Please check the form contents.";
+
+type ModalProps = {
+  close: () => void;
+};
+
+type RegisterMutationResult = {
+  registerUser: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+function RegisterForm({ close }: ModalProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -16,7 +40,7 @@ function RegisterForm() {
       email: (value: string) =>
         /^\S+@\S+$/.test(value) ? null : "Invalid email address",
       password: (value: string) => {
-        console.log("#####");
+        console.log("#####"); // TODO remove
 
         return value.length < 8
           ? "Password must be at least 8 characters"
@@ -27,18 +51,26 @@ function RegisterForm() {
     },
   });
 
-  const register = (v: typeof form.values) => {
-    console.log("registering user");
-    console.log(v);
-  };
+  const [register, { data, loading, error }] =
+    useMutation<RegisterMutationResult>(REGISTER_USER);
+
+  // TODO I don't think this is right (see warning in console)
+  if (data?.registerUser?.success) {
+    console.log("Success! Closing modal");
+    close();
+    return <>emptty</>;
+  }
+
+  const hasError = error || (data?.registerUser && !data.registerUser.success);
 
   return (
-    <form onSubmit={form.onSubmit((values) => register(values))}>
+    <form onSubmit={form.onSubmit((values) => register({ variables: values }))}>
       <TextInput
         label="First Name"
         placeholder="First Name"
         required
         withAsterisk
+        disabled={loading}
         key={form.key("firstName")}
         {...form.getInputProps("firstName")}
       />
@@ -47,6 +79,7 @@ function RegisterForm() {
         placeholder="Last Name"
         required
         withAsterisk
+        disabled={loading}
         key={form.key("lastName")}
         {...form.getInputProps("lastName")}
       />
@@ -55,6 +88,7 @@ function RegisterForm() {
         placeholder="Email"
         required
         withAsterisk
+        disabled={loading}
         key={form.key("email")}
         {...form.getInputProps("email")}
       />
@@ -64,6 +98,7 @@ function RegisterForm() {
         description="Must be at least 8 characters"
         required
         withAsterisk
+        disabled={loading}
         key={form.key("password")}
         {...form.getInputProps("password")}
       />
@@ -72,9 +107,24 @@ function RegisterForm() {
         placeholder="Confirm Password"
         required
         withAsterisk
+        disabled={loading}
         key={form.key("confirmPassword")}
         {...form.getInputProps("confirmPassword")}
       />
+
+      {/* TODO make this look better */}
+      {loading && (
+        <Center>
+          <Loader />
+        </Center>
+      )}
+
+      {/* TODO make this look better */}
+      {hasError && (
+        <Text c="red" size="sm">
+          {DEFAULT_ERROR_MESSAGE}
+        </Text>
+      )}
 
       <Button type="submit" mt="md" fullWidth>
         Register
@@ -83,7 +133,7 @@ function RegisterForm() {
   );
 }
 
-function LoginForm() {
+function LoginForm({ close }: ModalProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -99,6 +149,8 @@ function LoginForm() {
   const login = (v: typeof form.values) => {
     console.log("logging in user");
     console.log(v);
+
+    close();
   };
 
   return (
@@ -130,12 +182,12 @@ function LoginForm() {
 
 interface LoginRegisterModalProps {
   opened: boolean;
-  onClose: () => void;
+  close: () => void;
 }
 
 export default function LoginRegisterModal({
   opened,
-  onClose,
+  close,
 }: LoginRegisterModalProps) {
   const [isRegistering, setIsRegistering] = React.useState(true);
 
@@ -143,11 +195,15 @@ export default function LoginRegisterModal({
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={close}
       title={modalTitle}
       transitionProps={{ transition: "fade", duration: 200 }}
     >
-      {isRegistering ? <RegisterForm /> : <LoginForm />}
+      {isRegistering ? (
+        <RegisterForm close={close} />
+      ) : (
+        <LoginForm close={close} />
+      )}
       <Button
         variant="transparent"
         fullWidth
