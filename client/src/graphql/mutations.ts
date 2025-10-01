@@ -52,6 +52,13 @@ export const REQUEST_PASSWORD_RESET = gql`
   }
 `;
 
+export type ResetPasswordResult = {
+  resetPassword: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
 export const RESET_PASSWORD = gql`
   mutation ResetPassword(
     $token: String!

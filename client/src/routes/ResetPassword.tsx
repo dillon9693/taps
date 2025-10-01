@@ -9,17 +9,10 @@ import {
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
 import { useSearchParams } from "react-router-dom";
-import { RESET_PASSWORD } from "../graphql/mutations";
+import { RESET_PASSWORD, ResetPasswordResult } from "../graphql/mutations";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
-
-type ResetPasswordResult = {
-  resetPassword: {
-    success: boolean;
-    errors: string[];
-  };
-};
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
