@@ -260,10 +260,7 @@ function SendPasswordResetRequestForm() {
   });
 
   const [sendPasswordReset, { data, loading, error }] =
-    useMutation<RequestPasswordResetResult>(REQUEST_PASSWORD_RESET, {
-      // onCompleted: (result) => {
-      //   err
-    });
+    useMutation<RequestPasswordResetResult>(REQUEST_PASSWORD_RESET);
 
   const hasError =
     error || (data?.requestPasswordReset && !data.requestPasswordReset.success);
