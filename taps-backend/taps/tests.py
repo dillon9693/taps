@@ -26,7 +26,6 @@ class RegisterUserTestCase(TestCase):
                     user {
                         id
                         email
-                        username
                         firstName
                         lastName
                     }
@@ -45,7 +44,6 @@ class RegisterUserTestCase(TestCase):
         self.assertTrue(data["success"])
         self.assertEqual(data["errors"], [])
         self.assertEqual(data["user"]["email"], "test@example.com")
-        self.assertEqual(data["user"]["username"], "test@example.com")
         self.assertEqual(data["user"]["firstName"], "John")
         self.assertEqual(data["user"]["lastName"], "Doe")
 
@@ -85,7 +83,7 @@ class RegisterUserTestCase(TestCase):
 
         self.assertFalse(data["success"])
         self.assertIn(
-            "Unable to register with the provided email address", data["errors"]
+            "Unable to register with the provided email address.", data["errors"]
         )
         self.assertIsNone(data["user"])
 
@@ -176,7 +174,7 @@ class LoginUserTestCase(TestCase):
         data = result["data"]["loginUser"]
 
         self.assertFalse(data["success"])
-        self.assertIn("Invalid email or password", data["errors"])
+        self.assertIn("Invalid email or password.", data["errors"])
         self.assertIsNone(data["user"])
 
     def test_login_user_nonexistent_email(self):
@@ -201,7 +199,7 @@ class LoginUserTestCase(TestCase):
         data = result["data"]["loginUser"]
 
         self.assertFalse(data["success"])
-        self.assertIn("Invalid email or password", data["errors"])
+        self.assertIn("Invalid email or password.", data["errors"])
         self.assertIsNone(data["user"])
 
 
@@ -246,7 +244,6 @@ class CurrentUserTestCase(TestCase):
                 currentUser {
                     id
                     email
-                    username
                 }
             }
         """
@@ -260,7 +257,6 @@ class CurrentUserTestCase(TestCase):
         data = result["data"]["currentUser"]
 
         self.assertEqual(data["email"], "test@example.com")
-        self.assertEqual(data["username"], "test@example.com")
 
     def test_current_user_unauthenticated(self):
         query = """
@@ -401,7 +397,7 @@ class ResetPasswordTestCase(TestCase):
         data = result["data"]["resetPassword"]
 
         self.assertFalse(data["success"])
-        self.assertIn("Invalid or expired password reset link", data["errors"])
+        self.assertIn("Invalid or expired password reset link.", data["errors"])
 
     def test_reset_password_weak_password(self):
         token = default_token_generator.make_token(self.user)
