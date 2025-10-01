@@ -1,4 +1,3 @@
-import React from "react";
 import { useQuery } from "@apollo/client";
 import { Container, Grid, Title, Loader, Alert, Center } from "@mantine/core";
 import { FEATURED_BEERS } from "../graphql/queries";

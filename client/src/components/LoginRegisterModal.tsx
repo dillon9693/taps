@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   Button,
   Center,
@@ -213,7 +213,7 @@ export default function LoginRegisterModal({
   opened,
   close,
 }: LoginRegisterModalProps) {
-  const [isRegistering, setIsRegistering] = React.useState(true);
+  const [isRegistering, setIsRegistering] = useState(true);
   const modalTitle = isRegistering ? "Register" : "Login";
 
   return (

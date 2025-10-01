@@ -41,6 +41,7 @@ module.exports = {
         tsx: "never",
       },
     ],
+    "react/react-in-jsx-scope": "off", // Not needed for React 17+
     "react/jsx-props-no-spreading": [
       2,
       {
