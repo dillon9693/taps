@@ -67,3 +67,17 @@ class Beer(models.Model):
 
     def __str__(self):
         return f"{self.name} by {self.brewery.name}"
+
+
+class TagVote(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="votes")
+    beer = models.ForeignKey(Beer, on_delete=models.CASCADE, related_name="tag_votes")
+    upvote = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("tag", "beer")
+
+    def __str__(self):
+        return f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on {self.beer.name}"
