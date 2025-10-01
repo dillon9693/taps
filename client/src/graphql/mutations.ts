@@ -40,7 +40,7 @@ export const REQUEST_PASSWORD_RESET = gql`
   mutation RequestPasswordReset($email: String!) {
     requestPasswordReset(email: $email) {
       success
-      errors
+      message
     }
   }
 `;
