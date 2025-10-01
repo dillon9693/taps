@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   Anchor,
   Button,
@@ -20,7 +20,8 @@ const DEFAULT_ERROR_MESSAGE =
 
 export default function Register() {
   const navigate = useNavigate();
-  const lastRoute = "/home"; // TODO get last attempted route
+  const [searchParams] = useSearchParams();
+  const prevRoute = searchParams.get("prev") || "/home";
 
   const form = useForm({
     mode: "uncontrolled",
@@ -46,7 +47,7 @@ export default function Register() {
       refetchQueries: [{ query: GET_CURRENT_USER }],
       onCompleted: (result) => {
         if (result.registerUser.success) {
-          navigate(lastRoute);
+          navigate(prevRoute);
         }
       },
     });
@@ -131,7 +132,7 @@ export default function Register() {
           <Anchor
             component={Link}
             size="sm"
-            to="/login"
+            to={`/login?prev=${encodeURIComponent(prevRoute)}`}
             style={{ color: "inherit" }}
           >
             Return to Login

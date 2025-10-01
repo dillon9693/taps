@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { ApolloProvider, useMutation, useQuery } from "@apollo/client";
 import {
   AppShell,
@@ -18,6 +18,7 @@ import { GET_CURRENT_USER } from "./graphql/queries";
 
 function AppContent() {
   const theme = useMantineTheme();
+  const loc = useLocation();
 
   // Query current user to determine authentication state
   const {
@@ -78,7 +79,7 @@ function AppContent() {
               <Button
                 variant="subtle"
                 component={Link}
-                to="/login"
+                to={`/login?prev=${encodeURIComponent(loc.pathname)}`}
                 style={{ color: "white" }}
               >
                 Login
