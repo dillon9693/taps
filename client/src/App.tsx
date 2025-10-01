@@ -21,7 +21,7 @@ import { GET_CURRENT_USER } from "./graphql/queries";
 function AppContent() {
   const theme = useMantineTheme();
 
-  const [authModalOpened, { open, close }] = useDisclosure(false);
+  const [authModalOpened, { close }] = useDisclosure(false);
 
   // Query current user to determine authentication state
   const {
@@ -81,10 +81,11 @@ function AppContent() {
             {!loadingCurrentUser && !isAuthenticated && (
               <Button
                 variant="subtle"
+                component={Link}
+                to="/login"
                 style={{ color: "white" }}
-                onClick={open}
               >
-                Login / Register
+                Login
               </Button>
             )}
 

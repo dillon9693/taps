@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Anchor,
   Button,
   Center,
   Loader,
@@ -11,33 +10,20 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
-import { Link } from "react-router-dom";
-import {
-  LOGIN_USER,
-  LoginUserResult,
-  REGISTER_USER,
-  RegisterMutationResult,
-} from "../graphql/mutations";
+import { REGISTER_USER, RegisterMutationResult } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
 
 enum CurrentState {
-  LOGIN,
   REGISTER,
 }
 
 const stateConfig = {
-  [CurrentState.LOGIN]: {
-    title: "Login",
-    toggleText: "No account? Register",
-    toggleTargetState: CurrentState.REGISTER,
-  },
   [CurrentState.REGISTER]: {
     title: "Register",
     toggleText: "Have an account? Login",
-    toggleTargetState: CurrentState.LOGIN,
   },
 };
 
@@ -147,88 +133,6 @@ function RegisterForm({ close }: ModalFormProps) {
   );
 }
 
-function LoginForm({ close }: ModalFormProps) {
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validate: {
-      email: (value: string) =>
-        /^\S+@\S+$/.test(value) ? null : "Invalid email address",
-    },
-  });
-
-  const [login, { data, loading, error }] = useMutation<LoginUserResult>(
-    LOGIN_USER,
-    {
-      refetchQueries: [{ query: GET_CURRENT_USER }],
-      onCompleted: (result) => {
-        if (result.loginUser.success) {
-          close();
-        }
-      },
-    },
-  );
-
-  const hasError = error || (data?.loginUser && !data.loginUser.success);
-  const errorMessages =
-    data?.loginUser?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
-
-  return (
-    <form onSubmit={form.onSubmit((values) => login({ variables: values }))}>
-      <TextInput
-        label="Email"
-        placeholder="Email"
-        required
-        withAsterisk
-        key={form.key("email")}
-        {...form.getInputProps("email")}
-      />
-      <PasswordInput
-        label="Password"
-        placeholder="Password"
-        required
-        withAsterisk
-        key={form.key("password")}
-        {...form.getInputProps("password")}
-      />
-
-      {loading && (
-        <Center mt="md">
-          <Loader />
-        </Center>
-      )}
-
-      {hasError && errorMessages.length > 0 && (
-        <Text c="red" size="sm" mt="md">
-          {errorMessages.join(". ")}
-        </Text>
-      )}
-
-      <Button type="submit" mt="md" fullWidth>
-        Login
-      </Button>
-
-      <Center mt="md">
-        <Anchor
-          component={Link}
-          size="sm"
-          to="/request-password-reset"
-          style={{ color: "inherit" }}
-          onClick={(e: MouseEvent) => {
-            e.stopPropagation();
-            close();
-          }}
-        >
-          Forgot Password?
-        </Anchor>
-      </Center>
-    </form>
-  );
-}
-
 interface LoginRegisterModalProps {
   opened: boolean;
   close: () => void;
@@ -238,12 +142,11 @@ export default function LoginRegisterModal({
   opened,
   close,
 }: LoginRegisterModalProps) {
-  const [viewState, setViewState] = useState<CurrentState>(CurrentState.LOGIN);
-  const { title, toggleTargetState, toggleText } = stateConfig[viewState];
+  const [viewState] = useState<CurrentState>(CurrentState.REGISTER);
+  const { title } = stateConfig[viewState];
 
   const onClose = () => {
     close();
-    setViewState(CurrentState.LOGIN);
   };
 
   return (
@@ -254,15 +157,6 @@ export default function LoginRegisterModal({
       transitionProps={{ transition: "fade", duration: 200 }}
     >
       {viewState === CurrentState.REGISTER && <RegisterForm close={onClose} />}
-      {viewState === CurrentState.LOGIN && <LoginForm close={onClose} />}
-
-      <Button
-        variant="transparent"
-        fullWidth
-        onClick={() => setViewState(toggleTargetState)}
-      >
-        {toggleText}
-      </Button>
     </Modal>
   );
 }
