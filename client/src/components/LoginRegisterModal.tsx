@@ -16,7 +16,32 @@ import { GET_CURRENT_USER } from "../graphql/queries";
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
 
-type ModalProps = {
+enum CurrentState {
+  LOGIN,
+  REGISTER,
+  FORGOT_PASSWORD,
+}
+
+const stateConfig = {
+  [CurrentState.LOGIN]: {
+    title: "Login",
+    toggleText: "No account? Register",
+    toggleTargetState: CurrentState.REGISTER,
+  },
+  [CurrentState.REGISTER]: {
+    title: "Register",
+    toggleText: "Have an account? Login",
+    toggleTargetState: CurrentState.LOGIN,
+  },
+  [CurrentState.FORGOT_PASSWORD]: {
+    title: "Forgot Password",
+    toggleText: " No account? Register",
+    toggleTargetState: CurrentState.REGISTER,
+  },
+};
+
+type ModalFormProps = {
+  setViewState: (state: CurrentState) => void;
   close: () => void;
 };
 
@@ -34,7 +59,7 @@ type LoginUserResult = {
   };
 };
 
-function RegisterForm({ close }: ModalProps) {
+function RegisterForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -136,7 +161,7 @@ function RegisterForm({ close }: ModalProps) {
   );
 }
 
-function LoginForm({ close }: ModalProps) {
+function LoginForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -212,27 +237,29 @@ export default function LoginRegisterModal({
   opened,
   close,
 }: LoginRegisterModalProps) {
-  const [isRegistering, setIsRegistering] = useState(false);
-  const modalTitle = isRegistering ? "Register" : "Login";
+  const [viewState, setViewState] = useState<CurrentState>(CurrentState.LOGIN);
+  const { title, toggleTargetState, toggleText } = stateConfig[viewState];
 
   return (
     <Modal
       opened={opened}
       onClose={close}
-      title={modalTitle}
+      title={title}
       transitionProps={{ transition: "fade", duration: 200 }}
     >
-      {isRegistering ? (
-        <RegisterForm close={close} />
-      ) : (
-        <LoginForm close={close} />
+      {viewState === CurrentState.REGISTER && (
+        <RegisterForm close={close} setViewState={setViewState} />
       )}
+      {viewState === CurrentState.LOGIN && (
+        <LoginForm close={close} setViewState={setViewState} />
+      )}
+
       <Button
         variant="transparent"
         fullWidth
-        onClick={() => setIsRegistering(!isRegistering)}
+        onClick={() => setViewState(toggleTargetState)}
       >
-        {isRegistering ? "Have an account? Login" : "No account? Register"}
+        {toggleText}
       </Button>
     </Modal>
   );
