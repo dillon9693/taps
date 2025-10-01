@@ -65,6 +65,8 @@ function RegisterForm({ close }: ModalProps) {
     });
 
   const hasError = error || (data?.registerUser && !data.registerUser.success);
+  const errorMessages =
+    data?.registerUser?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
   return (
     <form onSubmit={form.onSubmit((values) => register({ variables: values }))}>
@@ -115,17 +117,15 @@ function RegisterForm({ close }: ModalProps) {
         {...form.getInputProps("confirmPassword")}
       />
 
-      {/* TODO make this look better */}
       {loading && (
-        <Center>
+        <Center mt="md">
           <Loader />
         </Center>
       )}
 
-      {/* TODO make this look better */}
-      {hasError && (
-        <Text c="red" size="sm">
-          {DEFAULT_ERROR_MESSAGE}
+      {hasError && errorMessages.length > 0 && (
+        <Text c="red" size="sm" mt="md">
+          {errorMessages.join(". ")}
         </Text>
       )}
 
@@ -162,6 +162,8 @@ function LoginForm({ close }: ModalProps) {
   );
 
   const hasError = error || (data?.loginUser && !data.loginUser.success);
+  const errorMessages =
+    data?.loginUser?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
   return (
     <form onSubmit={form.onSubmit((values) => login({ variables: values }))}>
@@ -183,17 +185,15 @@ function LoginForm({ close }: ModalProps) {
         {...form.getInputProps("password")}
       />
 
-      {/* TODO make this look better */}
       {loading && (
-        <Center>
+        <Center mt="md">
           <Loader />
         </Center>
       )}
 
-      {/* TODO make this look better */}
-      {hasError && (
-        <Text c="red" size="sm">
-          {DEFAULT_ERROR_MESSAGE}
+      {hasError && errorMessages.length > 0 && (
+        <Text c="red" size="sm" mt="md">
+          {errorMessages.join(". ")}
         </Text>
       )}
 
