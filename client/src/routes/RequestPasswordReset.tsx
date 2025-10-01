@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useForm } from "@mantine/form";
 import {
+  Anchor,
   Button,
   Center,
   Container,
@@ -10,6 +11,7 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
+import { Link } from "react-router-dom";
 import {
   REQUEST_PASSWORD_RESET,
   RequestPasswordResetResult,
@@ -101,6 +103,22 @@ export default function RequestPasswordReset() {
             </Grid.Col>
           </Container>
         )}
+
+        <Grid.Col span={12}>
+          <Center>
+            <Anchor
+              component={Link}
+              size="sm"
+              to="/home"
+              style={{ color: "inherit" }}
+              onClick={(e: MouseEvent) => {
+                e.stopPropagation();
+              }}
+            >
+              Return Home
+            </Anchor>
+          </Center>
+        </Grid.Col>
       </Grid>
     </Container>
   );
