@@ -57,7 +57,6 @@ export default function ResetPassword() {
   const errorMessages =
     data?.resetPassword?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
-  // TODO route to login
   if (data?.resetPassword.success) {
     return (
       <Container mt="xl" size={420}>
