@@ -22,7 +22,6 @@ type ResetPasswordResult = {
 };
 
 export default function ResetPassword() {
-  // const userId = useQ
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const uid = searchParams.get("uid");
@@ -63,7 +62,7 @@ export default function ResetPassword() {
   const errorMessages =
     data?.resetPassword?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
-  // TODO open login modal
+  // TODO route to login
   if (data?.resetPassword.success) {
     return (
       <Container mt="xl">
