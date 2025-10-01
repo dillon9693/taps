@@ -93,7 +93,7 @@ function AppContent() {
               <Button
                 variant="subtle"
                 onClick={() => logout()}
-                disabled={loadingCurrentUser || loadingLogout}
+                disabled={loadingLogout}
                 style={{ color: "white" }}
               >
                 Logout
