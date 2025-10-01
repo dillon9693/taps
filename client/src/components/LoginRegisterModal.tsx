@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
-import { REGISTER_USER } from "../graphql/mutations";
+import { LOGIN_USER, REGISTER_USER } from "../graphql/mutations";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
@@ -21,6 +21,13 @@ type ModalProps = {
 
 type RegisterMutationResult = {
   registerUser: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+type LoginUserResult = {
+  loginUser: {
     success: boolean;
     errors: string[];
   };
@@ -58,7 +65,7 @@ function RegisterForm({ close }: ModalProps) {
   if (data?.registerUser?.success) {
     console.log("Success! Closing modal");
     close();
-    return <>emptty</>;
+    return <>empty</>;
   }
 
   const hasError = error || (data?.registerUser && !data.registerUser.success);
@@ -146,15 +153,20 @@ function LoginForm({ close }: ModalProps) {
     },
   });
 
-  const login = (v: typeof form.values) => {
-    console.log("logging in user");
-    console.log(v);
+  const [login, { data, loading, error }] =
+    useMutation<LoginUserResult>(LOGIN_USER);
 
+  // TODO I don't think this is right (see warning in console)
+  if (data?.loginUser?.success) {
+    console.log("Success! Closing modal");
     close();
-  };
+    return <>empty</>;
+  }
+
+  const hasError = error || (data?.loginUser && !data.loginUser.success);
 
   return (
-    <form onSubmit={form.onSubmit((values) => login(values))}>
+    <form onSubmit={form.onSubmit((values) => login({ variables: values }))}>
       <TextInput
         label="Email"
         placeholder="Email"
@@ -173,6 +185,20 @@ function LoginForm({ close }: ModalProps) {
         {...form.getInputProps("password")}
       />
 
+      {/* TODO make this look better */}
+      {loading && (
+        <Center>
+          <Loader />
+        </Center>
+      )}
+
+      {/* TODO make this look better */}
+      {hasError && (
+        <Text c="red" size="sm">
+          {DEFAULT_ERROR_MESSAGE}
+        </Text>
+      )}
+
       <Button type="submit" mt="md" fullWidth>
         Login
       </Button>
@@ -190,8 +216,8 @@ export default function LoginRegisterModal({
   close,
 }: LoginRegisterModalProps) {
   const [isRegistering, setIsRegistering] = React.useState(true);
-
   const modalTitle = isRegistering ? "Register" : "Login";
+
   return (
     <Modal
       opened={opened}

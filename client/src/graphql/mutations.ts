@@ -21,7 +21,7 @@ export const REGISTER_USER = gql`
 
 export const LOGIN_USER = gql`
   mutation LoginUser($email: String!, $password: String!) {
-    loginUser(username: $username, password: $password) {
+    loginUser(email: $email, password: $password) {
       success
       errors
     }
