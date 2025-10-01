@@ -13,18 +13,17 @@ env = environ.Env()
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-# TODO set these based on staging vs. prod
+public_domain = env.str("RAILWAY_PUBLIC_DOMAIN")
+
 # Allow the domain where the app will be hosted
 ALLOWED_HOSTS = [
-    "tapsapi.dillonkerr.com",
-    "tapsapi-staging.dillonkerr.com",  # Staging API domain
-    "localhost",  # For Dockerfile health check
-    "taps-production.up.railway.app",  # Railway production domain
+    public_domain,
 ]
 
 MIDDLEWARE = [
     "taps_backend.middleware.HealthCheckSSLMiddleware",
     "allow_cidr.middleware.AllowCIDRMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ] + MIDDLEWARE  # noqa: F405
 
 # Configure CIDR ranges for ALLOWED_HOSTS
@@ -36,8 +35,7 @@ if len(vpc_cidr) > 0:
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
-    "https://taps.dillonkerr.com",
-    "https://taps-staging.dillonkerr.com",  # Staging frontend custom domain
+    FRONTEND_URL,  # Frontend URL from environment variable #noqa: F405
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -51,9 +49,15 @@ SECURE_HSTS_PRELOAD = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Static and media files
-# TODO set these based on staging vs. prod
-STATIC_URL = "https://tapsapi.dillonkerr.com/static/"
-MEDIA_URL = "https://tapsapi.dillonkerr.com/media/"
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+
+# WhiteNoise configuration for serving static files
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Logging configuration
 LOGGING = {
