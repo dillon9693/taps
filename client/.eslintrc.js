@@ -48,5 +48,11 @@ module.exports = {
         exceptions: ["TextInput", "PasswordInput", "NumberInput"],
       },
     ],
+
+    // Use TS-specific ESLint rules instead of base ESLint rules
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error"],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
   },
 };

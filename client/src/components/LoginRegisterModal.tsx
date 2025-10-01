@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Anchor,
   Button,
   Center,
   Loader,
@@ -10,13 +11,32 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
+import { Link } from "react-router-dom";
 import { LOGIN_USER, REGISTER_USER } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
 
-type ModalProps = {
+enum CurrentState {
+  LOGIN,
+  REGISTER,
+}
+
+const stateConfig = {
+  [CurrentState.LOGIN]: {
+    title: "Login",
+    toggleText: "No account? Register",
+    toggleTargetState: CurrentState.REGISTER,
+  },
+  [CurrentState.REGISTER]: {
+    title: "Register",
+    toggleText: "Have an account? Login",
+    toggleTargetState: CurrentState.LOGIN,
+  },
+};
+
+type ModalFormProps = {
   close: () => void;
 };
 
@@ -34,7 +54,7 @@ type LoginUserResult = {
   };
 };
 
-function RegisterForm({ close }: ModalProps) {
+function RegisterForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -136,7 +156,7 @@ function RegisterForm({ close }: ModalProps) {
   );
 }
 
-function LoginForm({ close }: ModalProps) {
+function LoginForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -199,6 +219,21 @@ function LoginForm({ close }: ModalProps) {
       <Button type="submit" mt="md" fullWidth>
         Login
       </Button>
+
+      <Center mt="md">
+        <Anchor
+          component={Link}
+          size="sm"
+          to="/request-password-reset"
+          style={{ color: "inherit" }}
+          onClick={(e: MouseEvent) => {
+            e.stopPropagation();
+            close();
+          }}
+        >
+          Forgot Password?
+        </Anchor>
+      </Center>
     </form>
   );
 }
@@ -212,27 +247,30 @@ export default function LoginRegisterModal({
   opened,
   close,
 }: LoginRegisterModalProps) {
-  const [isRegistering, setIsRegistering] = useState(false);
-  const modalTitle = isRegistering ? "Register" : "Login";
+  const [viewState, setViewState] = useState<CurrentState>(CurrentState.LOGIN);
+  const { title, toggleTargetState, toggleText } = stateConfig[viewState];
+
+  const onClose = () => {
+    close();
+    setViewState(CurrentState.LOGIN);
+  };
 
   return (
     <Modal
       opened={opened}
-      onClose={close}
-      title={modalTitle}
+      onClose={onClose}
+      title={title}
       transitionProps={{ transition: "fade", duration: 200 }}
     >
-      {isRegistering ? (
-        <RegisterForm close={close} />
-      ) : (
-        <LoginForm close={close} />
-      )}
+      {viewState === CurrentState.REGISTER && <RegisterForm close={onClose} />}
+      {viewState === CurrentState.LOGIN && <LoginForm close={onClose} />}
+
       <Button
         variant="transparent"
         fullWidth
-        onClick={() => setIsRegistering(!isRegistering)}
+        onClick={() => setViewState(toggleTargetState)}
       >
-        {isRegistering ? "Have an account? Login" : "No account? Register"}
+        {toggleText}
       </Button>
     </Modal>
   );

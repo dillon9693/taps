@@ -36,14 +36,28 @@ export const LOGOUT_USER = gql`
   }
 `;
 
+export type RequestPasswordResetResult = {
+  requestPasswordReset: {
+    success: boolean;
+    message: string;
+  };
+};
+
 export const REQUEST_PASSWORD_RESET = gql`
   mutation RequestPasswordReset($email: String!) {
     requestPasswordReset(email: $email) {
       success
-      errors
+      message
     }
   }
 `;
+
+export type ResetPasswordResult = {
+  resetPassword: {
+    success: boolean;
+    errors: string[];
+  };
+};
 
 export const RESET_PASSWORD = gql`
   mutation ResetPassword(
