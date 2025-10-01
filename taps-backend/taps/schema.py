@@ -75,8 +75,7 @@ class TagType(DjangoObjectType):
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        # TODO remove username
-        fields = ("id", "username", "email", "first_name", "last_name", "date_joined")
+        fields = ("id", "email", "first_name", "last_name", "date_joined")
 
 
 class Query(graphene.ObjectType):
