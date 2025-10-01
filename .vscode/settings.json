@@ -7,8 +7,13 @@
     "source.fixAll.eslint": "explicit"
   },
 
-  // JS/TS settings
-  "eslint.validate": ["javascript", "typescript"],
+  // JS/TS settings"
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
 
   // Python settings
   "python.testing.pytestEnabled": true,
