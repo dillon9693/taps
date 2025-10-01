@@ -100,7 +100,7 @@ function RegisterForm({ close }: ModalProps) {
       <PasswordInput
         label="Password"
         placeholder="Password"
-        description="Must be at least 8 characters"
+        description="Must be at least 8 characters and not too common"
         required
         withAsterisk
         disabled={loading}
@@ -178,7 +178,6 @@ function LoginForm({ close }: ModalProps) {
       <PasswordInput
         label="Password"
         placeholder="Password"
-        description="Must be at least 8 characters"
         required
         withAsterisk
         key={form.key("password")}
