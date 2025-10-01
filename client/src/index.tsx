@@ -12,6 +12,7 @@ import { theme } from "./theme/theme";
 import "@mantine/core/styles.css";
 import "./index.css";
 import ResetPassword from "./routes/ResetPassword";
+import RequestPasswordReset from "./routes/RequestPasswordReset";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
@@ -34,6 +35,10 @@ root.render(
             <Route path="search" element={<Search />} />
             <Route path="beer/:id" element={<BeerDetail />} />
             <Route path="brewery/:id" element={<BreweryDetail />} />
+            <Route
+              path="request-password-reset"
+              element={<RequestPasswordReset />}
+            />
             <Route path="reset-password" element={<ResetPassword />} />
           </Route>
 

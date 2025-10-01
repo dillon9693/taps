@@ -36,6 +36,13 @@ export const LOGOUT_USER = gql`
   }
 `;
 
+export type RequestPasswordResetResult = {
+  requestPasswordReset: {
+    success: boolean;
+    message: string;
+  };
+};
+
 export const REQUEST_PASSWORD_RESET = gql`
   mutation RequestPasswordReset($email: String!) {
     requestPasswordReset(email: $email) {

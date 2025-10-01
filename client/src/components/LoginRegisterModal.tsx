@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Anchor,
   Button,
   Center,
   Loader,
@@ -10,11 +11,8 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
-import {
-  LOGIN_USER,
-  REGISTER_USER,
-  REQUEST_PASSWORD_RESET,
-} from "../graphql/mutations";
+import { Link } from "react-router-dom";
+import { LOGIN_USER, REGISTER_USER } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
@@ -23,7 +21,6 @@ const DEFAULT_ERROR_MESSAGE =
 enum CurrentState {
   LOGIN,
   REGISTER,
-  FORGOT_PASSWORD,
 }
 
 const stateConfig = {
@@ -37,15 +34,9 @@ const stateConfig = {
     toggleText: "Have an account? Login",
     toggleTargetState: CurrentState.LOGIN,
   },
-  [CurrentState.FORGOT_PASSWORD]: {
-    title: "Forgot Password",
-    toggleText: "Return to Login",
-    toggleTargetState: CurrentState.LOGIN,
-  },
 };
 
 type ModalFormProps = {
-  setViewState: (state: CurrentState) => void;
   close: () => void;
 };
 
@@ -60,13 +51,6 @@ type LoginUserResult = {
   loginUser: {
     success: boolean;
     errors: string[];
-  };
-};
-
-type RequestPasswordResetResult = {
-  requestPasswordReset: {
-    success: boolean;
-    message: string;
   };
 };
 
@@ -172,7 +156,7 @@ function RegisterForm({ close }: ModalFormProps) {
   );
 }
 
-function LoginForm({ close, setViewState }: ModalFormProps) {
+function LoginForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -236,71 +220,20 @@ function LoginForm({ close, setViewState }: ModalFormProps) {
         Login
       </Button>
 
-      <Button
-        variant="transparent"
-        fullWidth
-        onClick={() => setViewState(CurrentState.FORGOT_PASSWORD)}
-      >
-        Forgot Password?
-      </Button>
-    </form>
-  );
-}
-
-function SendPasswordResetRequestForm() {
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      email: "",
-    },
-    validate: {
-      email: (value: string) =>
-        /^\S+@\S+$/.test(value) ? null : "Invalid email address",
-    },
-  });
-
-  const [sendPasswordReset, { data, loading, error }] =
-    useMutation<RequestPasswordResetResult>(REQUEST_PASSWORD_RESET);
-
-  const hasError =
-    error || (data?.requestPasswordReset && !data.requestPasswordReset.success);
-  const errorMessages =
-    error || !data?.requestPasswordReset.success ? [DEFAULT_ERROR_MESSAGE] : [];
-
-  if (data?.requestPasswordReset?.success) {
-    return <Text size="sm">{data.requestPasswordReset.message}</Text>;
-  }
-
-  return (
-    <form
-      onSubmit={form.onSubmit((values) =>
-        sendPasswordReset({ variables: values }),
-      )}
-    >
-      <TextInput
-        label="Email"
-        placeholder="Email"
-        required
-        withAsterisk
-        key={form.key("email")}
-        {...form.getInputProps("email")}
-      />
-
-      {loading && (
-        <Center mt="md">
-          <Loader />
-        </Center>
-      )}
-
-      {hasError && errorMessages.length > 0 && (
-        <Text c="red" size="sm" mt="md">
-          {errorMessages.join(". ")}
-        </Text>
-      )}
-
-      <Button type="submit" mt="md" fullWidth>
-        Send Reset Instructions
-      </Button>
+      <Center mt="md">
+        <Anchor
+          component={Link}
+          size="sm"
+          to="/request-password-reset"
+          style={{ color: "inherit" }}
+          onClick={(e: MouseEvent) => {
+            e.stopPropagation();
+            close();
+          }}
+        >
+          Forgot Password?
+        </Anchor>
+      </Center>
     </form>
   );
 }
@@ -329,15 +262,8 @@ export default function LoginRegisterModal({
       title={title}
       transitionProps={{ transition: "fade", duration: 200 }}
     >
-      {viewState === CurrentState.REGISTER && (
-        <RegisterForm close={onClose} setViewState={setViewState} />
-      )}
-      {viewState === CurrentState.LOGIN && (
-        <LoginForm close={onClose} setViewState={setViewState} />
-      )}
-      {viewState === CurrentState.FORGOT_PASSWORD && (
-        <SendPasswordResetRequestForm />
-      )}
+      {viewState === CurrentState.REGISTER && <RegisterForm close={onClose} />}
+      {viewState === CurrentState.LOGIN && <LoginForm close={onClose} />}
 
       <Button
         variant="transparent"
