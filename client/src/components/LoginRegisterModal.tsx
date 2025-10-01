@@ -247,7 +247,7 @@ function LoginForm({ close, setViewState }: ModalFormProps) {
   );
 }
 
-function ResetPasswordForm() {
+function SendPasswordResetRequestForm() {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -259,7 +259,7 @@ function ResetPasswordForm() {
     },
   });
 
-  const [resetPassword, { data, loading, error }] =
+  const [sendPasswordReset, { data, loading, error }] =
     useMutation<RequestPasswordResetResult>(REQUEST_PASSWORD_RESET, {
       // onCompleted: (result) => {
       //   err
@@ -276,7 +276,9 @@ function ResetPasswordForm() {
 
   return (
     <form
-      onSubmit={form.onSubmit((values) => resetPassword({ variables: values }))}
+      onSubmit={form.onSubmit((values) =>
+        sendPasswordReset({ variables: values }),
+      )}
     >
       <TextInput
         label="Email"
@@ -336,7 +338,9 @@ export default function LoginRegisterModal({
       {viewState === CurrentState.LOGIN && (
         <LoginForm close={onClose} setViewState={setViewState} />
       )}
-      {viewState === CurrentState.FORGOT_PASSWORD && <ResetPasswordForm />}
+      {viewState === CurrentState.FORGOT_PASSWORD && (
+        <SendPasswordResetRequestForm />
+      )}
 
       <Button
         variant="transparent"
