@@ -12,7 +12,12 @@ import {
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { LOGIN_USER, REGISTER_USER } from "../graphql/mutations";
+import {
+  LOGIN_USER,
+  LoginUserResult,
+  REGISTER_USER,
+  RegisterMutationResult,
+} from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
@@ -38,20 +43,6 @@ const stateConfig = {
 
 type ModalFormProps = {
   close: () => void;
-};
-
-type RegisterMutationResult = {
-  registerUser: {
-    success: boolean;
-    errors: string[];
-  };
-};
-
-type LoginUserResult = {
-  loginUser: {
-    success: boolean;
-    errors: string[];
-  };
 };
 
 function RegisterForm({ close }: ModalFormProps) {
