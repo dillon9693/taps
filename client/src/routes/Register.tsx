@@ -1,37 +1,25 @@
-import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { useForm } from "@mantine/form";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  Anchor,
   Button,
   Center,
   Loader,
-  Modal,
   PasswordInput,
   Text,
   TextInput,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useMutation } from "@apollo/client";
 import { REGISTER_USER, RegisterMutationResult } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
 
 const DEFAULT_ERROR_MESSAGE =
   "Something went wrong. Please check the form contents.";
 
-enum CurrentState {
-  REGISTER,
-}
+export default function Register() {
+  const navigate = useNavigate();
+  const lastRoute = "/home"; // TODO get last attempted route
 
-const stateConfig = {
-  [CurrentState.REGISTER]: {
-    title: "Register",
-    toggleText: "Have an account? Login",
-  },
-};
-
-type ModalFormProps = {
-  close: () => void;
-};
-
-function RegisterForm({ close }: ModalFormProps) {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
@@ -56,7 +44,7 @@ function RegisterForm({ close }: ModalFormProps) {
       refetchQueries: [{ query: GET_CURRENT_USER }],
       onCompleted: (result) => {
         if (result.registerUser.success) {
-          close();
+          navigate(lastRoute);
         }
       },
     });
@@ -129,34 +117,17 @@ function RegisterForm({ close }: ModalFormProps) {
       <Button type="submit" mt="md" fullWidth>
         Register
       </Button>
+
+      <Center mt="md">
+        <Anchor
+          component={Link}
+          size="sm"
+          to="/login"
+          style={{ color: "inherit" }}
+        >
+          Return to Login
+        </Anchor>
+      </Center>
     </form>
-  );
-}
-
-interface LoginRegisterModalProps {
-  opened: boolean;
-  close: () => void;
-}
-
-export default function LoginRegisterModal({
-  opened,
-  close,
-}: LoginRegisterModalProps) {
-  const [viewState] = useState<CurrentState>(CurrentState.REGISTER);
-  const { title } = stateConfig[viewState];
-
-  const onClose = () => {
-    close();
-  };
-
-  return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={title}
-      transitionProps={{ transition: "fade", duration: 200 }}
-    >
-      {viewState === CurrentState.REGISTER && <RegisterForm close={onClose} />}
-    </Modal>
   );
 }

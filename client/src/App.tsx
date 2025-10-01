@@ -10,18 +10,14 @@ import {
   useMantineTheme,
   Loader,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
-import LoginRegisterModal from "./components/LoginRegisterModal";
 import { LOGOUT_USER } from "./graphql/mutations";
 import { GET_CURRENT_USER } from "./graphql/queries";
 
 function AppContent() {
   const theme = useMantineTheme();
-
-  const [authModalOpened, { close }] = useDisclosure(false);
 
   // Query current user to determine authentication state
   const {
@@ -105,9 +101,6 @@ function AppContent() {
       <AppShell.Main>
         <Container>
           <Outlet />
-
-          {/* Modals */}
-          <LoginRegisterModal opened={authModalOpened} close={close} />
         </Container>
       </AppShell.Main>
     </AppShell>

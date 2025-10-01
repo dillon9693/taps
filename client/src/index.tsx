@@ -14,6 +14,7 @@ import "./index.css";
 import ResetPassword from "./routes/ResetPassword";
 import RequestPasswordReset from "./routes/RequestPasswordReset";
 import Login from "./routes/Login";
+import Register from "./routes/Register";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
@@ -38,6 +39,7 @@ root.render(
             <Route path="brewery/:id" element={<BreweryDetail />} />
 
             <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
             <Route
               path="request-password-reset"
               element={<RequestPasswordReset />}

@@ -5,6 +5,7 @@ import {
   Anchor,
   Button,
   Center,
+  Divider,
   Loader,
   PasswordInput,
   Text,
@@ -93,6 +94,12 @@ export default function Login() {
           Forgot Password?
         </Anchor>
       </Center>
+
+      <Divider my="lg" />
+
+      <Button component={Link} to="/register" mt="md" color="green" fullWidth>
+        Register
+      </Button>
     </form>
   );
 }
