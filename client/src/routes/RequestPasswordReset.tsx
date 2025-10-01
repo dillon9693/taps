@@ -5,7 +5,6 @@ import {
   Button,
   Center,
   Container,
-  Grid,
   Loader,
   Text,
   TextInput,
@@ -32,7 +31,7 @@ export default function RequestPasswordReset() {
     },
   });
 
-  const [sendPasswordReset, { called, data, loading, error }] =
+  const [sendPasswordReset, { data, loading, error }] =
     useMutation<RequestPasswordResetResult>(REQUEST_PASSWORD_RESET);
 
   const hasError =
@@ -40,86 +39,90 @@ export default function RequestPasswordReset() {
   const errorMessages =
     error || !data?.requestPasswordReset.success ? [DEFAULT_ERROR_MESSAGE] : [];
 
-  // TODO fix formatting
+  if (data?.requestPasswordReset.success) {
+    return (
+      <Container mt="xl">
+        <Title order={1} mb="lg">
+          Check Your Email
+        </Title>
+        <Text>
+          If an account with that email exists, you should receive an email with
+          instructions to reset your password.
+        </Text>
+
+        <Center>
+          <Anchor
+            component={Link}
+            size="sm"
+            m="sm"
+            to="/home"
+            style={{ color: "inherit" }}
+            onClick={(e: MouseEvent) => {
+              e.stopPropagation();
+            }}
+          >
+            Return Home
+          </Anchor>
+        </Center>
+      </Container>
+    );
+  }
+
   return (
     <Container mt="xl">
-      <Grid gutter="lg">
-        <Grid.Col span={12}>
-          <Title order={1} mb="lg">
-            Reset Password
-          </Title>
-        </Grid.Col>
+      <Title order={1} mb="lg">
+        Reset Password
+      </Title>
 
-        {(!called || hasError) && (
-          <Container>
-            <Grid.Col span={12}>
-              <Text>
-                Enter the email associated with your account below, and
-                we&apos;ll send you instructions for how to reset your password.
-              </Text>
-            </Grid.Col>
-            <Grid.Col span={12}>
-              <form
-                onSubmit={form.onSubmit((values) =>
-                  sendPasswordReset({ variables: values }),
-                )}
-              >
-                <TextInput
-                  label="Email"
-                  placeholder="Email"
-                  required
-                  withAsterisk
-                  key={form.key("email")}
-                  {...form.getInputProps("email")}
-                />
-
-                {loading && (
-                  <Center mt="md">
-                    <Loader />
-                  </Center>
-                )}
-
-                {hasError && errorMessages.length > 0 && (
-                  <Text c="red" size="sm" mt="md">
-                    {errorMessages.join(". ")}
-                  </Text>
-                )}
-
-                <Button type="submit" mt="md" fullWidth>
-                  Send Reset Instructions
-                </Button>
-              </form>
-            </Grid.Col>
-          </Container>
+      <Text mb="sm">
+        Enter the email associated with your account below, and we&apos;ll send
+        you instructions for how to reset your password.
+      </Text>
+      <form
+        onSubmit={form.onSubmit((values) =>
+          sendPasswordReset({ variables: values }),
         )}
+      >
+        <TextInput
+          label="Email"
+          placeholder="Email"
+          required
+          withAsterisk
+          key={form.key("email")}
+          {...form.getInputProps("email")}
+        />
 
-        {called && data?.requestPasswordReset.success && (
-          <Container>
-            <Grid.Col span={12}>
-              <Text>
-                If an account with that email exists, you should receive an
-                email with instructions to reset your password.
-              </Text>
-            </Grid.Col>
-          </Container>
-        )}
-
-        <Grid.Col span={12}>
-          <Center>
-            <Anchor
-              component={Link}
-              size="sm"
-              to="/home"
-              style={{ color: "inherit" }}
-              onClick={(e: MouseEvent) => {
-                e.stopPropagation();
-              }}
-            >
-              Return Home
-            </Anchor>
+        {loading && (
+          <Center mt="md">
+            <Loader />
           </Center>
-        </Grid.Col>
-      </Grid>
+        )}
+
+        {hasError && errorMessages.length > 0 && (
+          <Text c="red" size="sm" mt="md">
+            {errorMessages.join(". ")}
+          </Text>
+        )}
+
+        <Button type="submit" mt="md" fullWidth>
+          Send Reset Instructions
+        </Button>
+      </form>
+
+      <Center>
+        <Anchor
+          component={Link}
+          size="sm"
+          m="sm"
+          to="/home"
+          style={{ color: "inherit" }}
+          onClick={(e: MouseEvent) => {
+            e.stopPropagation();
+          }}
+        >
+          Return Home
+        </Anchor>
+      </Center>
     </Container>
   );
 }

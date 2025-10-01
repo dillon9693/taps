@@ -77,7 +77,7 @@ export default function ResetPassword() {
       </Title>
       <Grid gutter="lg">
         <Grid.Col span={12}>
-          <Text>Enter your new password below</Text>
+          <Text>Enter your new password below.</Text>
         </Grid.Col>
         <Grid.Col span={12}>
           <form
