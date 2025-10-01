@@ -18,8 +18,10 @@ import Register from "./routes/Register";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
+  // eslint-disable-next-line no-console
   console.log(`App version: ${version}`);
 } else {
+  // eslint-disable-next-line no-console
   console.log("No app version found");
 }
 
