@@ -5,10 +5,12 @@ import {
   Anchor,
   Button,
   Center,
+  Container,
   Loader,
   PasswordInput,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { REGISTER_USER, RegisterMutationResult } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
@@ -54,80 +56,88 @@ export default function Register() {
     data?.registerUser?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
   return (
-    <form onSubmit={form.onSubmit((values) => register({ variables: values }))}>
-      <TextInput
-        label="First Name"
-        placeholder="First Name"
-        required
-        withAsterisk
-        disabled={loading}
-        key={form.key("firstName")}
-        {...form.getInputProps("firstName")}
-      />
-      <TextInput
-        label="Last Name"
-        placeholder="Last Name"
-        required
-        withAsterisk
-        disabled={loading}
-        key={form.key("lastName")}
-        {...form.getInputProps("lastName")}
-      />
-      <TextInput
-        label="Email"
-        placeholder="Email"
-        required
-        withAsterisk
-        disabled={loading}
-        key={form.key("email")}
-        {...form.getInputProps("email")}
-      />
-      <PasswordInput
-        label="Password"
-        placeholder="Password"
-        description="Must be at least 8 characters and not too common"
-        required
-        withAsterisk
-        disabled={loading}
-        key={form.key("password")}
-        {...form.getInputProps("password")}
-      />
-      <PasswordInput
-        label="Confirm Password"
-        placeholder="Confirm Password"
-        required
-        withAsterisk
-        disabled={loading}
-        key={form.key("confirmPassword")}
-        {...form.getInputProps("confirmPassword")}
-      />
-
-      {loading && (
-        <Center mt="md">
-          <Loader />
-        </Center>
-      )}
-
-      {hasError && errorMessages.length > 0 && (
-        <Text c="red" size="sm" mt="md">
-          {errorMessages.join(". ")}
-        </Text>
-      )}
-
-      <Button type="submit" mt="md" fullWidth>
+    <Container mt="xl" size={420}>
+      <Title order={1} mb="lg">
         Register
-      </Button>
+      </Title>
 
-      <Center mt="md">
-        <Anchor
-          component={Link}
-          size="sm"
-          to="/login"
-          style={{ color: "inherit" }}
-        >
-          Return to Login
-        </Anchor>
-      </Center>
-    </form>
+      <form
+        onSubmit={form.onSubmit((values) => register({ variables: values }))}
+      >
+        <TextInput
+          label="First Name"
+          placeholder="First Name"
+          required
+          withAsterisk
+          disabled={loading}
+          key={form.key("firstName")}
+          {...form.getInputProps("firstName")}
+        />
+        <TextInput
+          label="Last Name"
+          placeholder="Last Name"
+          required
+          withAsterisk
+          disabled={loading}
+          key={form.key("lastName")}
+          {...form.getInputProps("lastName")}
+        />
+        <TextInput
+          label="Email"
+          placeholder="Email"
+          required
+          withAsterisk
+          disabled={loading}
+          key={form.key("email")}
+          {...form.getInputProps("email")}
+        />
+        <PasswordInput
+          label="Password"
+          placeholder="Password"
+          description="Must be at least 8 characters and not too common"
+          required
+          withAsterisk
+          disabled={loading}
+          key={form.key("password")}
+          {...form.getInputProps("password")}
+        />
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm Password"
+          required
+          withAsterisk
+          disabled={loading}
+          key={form.key("confirmPassword")}
+          {...form.getInputProps("confirmPassword")}
+        />
+
+        {loading && (
+          <Center mt="md">
+            <Loader />
+          </Center>
+        )}
+
+        {hasError && errorMessages.length > 0 && (
+          <Text c="red" size="sm" mt="md">
+            {errorMessages.join(". ")}
+          </Text>
+        )}
+
+        <Button type="submit" mt="md" fullWidth>
+          Register
+        </Button>
+
+        <Center mt="md">
+          <Anchor
+            component={Link}
+            size="sm"
+            to="/login"
+            style={{ color: "inherit" }}
+          >
+            Return to Login
+          </Anchor>
+        </Center>
+      </form>
+    </Container>
   );
 }

@@ -5,11 +5,13 @@ import {
   Anchor,
   Button,
   Center,
+  Container,
   Divider,
   Loader,
   PasswordInput,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { LOGIN_USER, LoginUserResult } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
@@ -50,56 +52,62 @@ export default function Login() {
     data?.loginUser?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
   return (
-    <form onSubmit={form.onSubmit((values) => login({ variables: values }))}>
-      <TextInput
-        label="Email"
-        placeholder="Email"
-        required
-        withAsterisk
-        key={form.key("email")}
-        {...form.getInputProps("email")}
-      />
-      <PasswordInput
-        label="Password"
-        placeholder="Password"
-        required
-        withAsterisk
-        key={form.key("password")}
-        {...form.getInputProps("password")}
-      />
-
-      {loading && (
-        <Center mt="md">
-          <Loader />
-        </Center>
-      )}
-
-      {hasError && errorMessages.length > 0 && (
-        <Text c="red" size="sm" mt="md">
-          {errorMessages.join(". ")}
-        </Text>
-      )}
-
-      <Button type="submit" mt="md" fullWidth>
+    <Container mt="xl" size={420}>
+      <Title order={1} mb="lg">
         Login
-      </Button>
+      </Title>
 
-      <Center mt="md">
-        <Anchor
-          component={Link}
-          size="sm"
-          to="/request-password-reset"
-          style={{ color: "inherit" }}
-        >
-          Forgot Password?
-        </Anchor>
-      </Center>
+      <form onSubmit={form.onSubmit((values) => login({ variables: values }))}>
+        <TextInput
+          label="Email"
+          placeholder="Email"
+          required
+          withAsterisk
+          key={form.key("email")}
+          {...form.getInputProps("email")}
+        />
+        <PasswordInput
+          label="Password"
+          placeholder="Password"
+          required
+          withAsterisk
+          key={form.key("password")}
+          {...form.getInputProps("password")}
+        />
 
-      <Divider my="lg" />
+        {loading && (
+          <Center mt="md">
+            <Loader />
+          </Center>
+        )}
 
-      <Button component={Link} to="/register" mt="md" color="green" fullWidth>
-        Register
-      </Button>
-    </form>
+        {hasError && errorMessages.length > 0 && (
+          <Text c="red" size="sm" mt="md">
+            {errorMessages.join(". ")}
+          </Text>
+        )}
+
+        <Button type="submit" mt="md" fullWidth>
+          Login
+        </Button>
+
+        <Center mt="md">
+          <Anchor
+            component={Link}
+            size="sm"
+            to="/request-password-reset"
+            style={{ color: "inherit" }}
+          >
+            Forgot Password?
+          </Anchor>
+        </Center>
+
+        <Divider my="lg" />
+
+        <Button component={Link} to="/register" mt="md" color="green" fullWidth>
+          Register
+        </Button>
+      </form>
+    </Container>
   );
 }
