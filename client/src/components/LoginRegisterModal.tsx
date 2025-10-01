@@ -47,13 +47,8 @@ function RegisterForm({ close }: ModalProps) {
     validate: {
       email: (value: string) =>
         /^\S+@\S+$/.test(value) ? null : "Invalid email address",
-      password: (value: string) => {
-        console.log("#####"); // TODO remove
-
-        return value.length < 8
-          ? "Password must be at least 8 characters"
-          : null;
-      },
+      password: (value: string) =>
+        value.length < 8 ? "Password must be at least 8 characters" : null,
       confirmPassword: (value: string, values: { password: string }) =>
         value !== values.password ? "Passwords do not match" : null,
     },
