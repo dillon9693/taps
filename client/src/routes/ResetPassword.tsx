@@ -1,5 +1,7 @@
 import {
+  Anchor,
   Button,
+  Center,
   Container,
   Grid,
   PasswordInput,
@@ -8,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMutation } from "@apollo/client";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { RESET_PASSWORD, ResetPasswordResult } from "../graphql/mutations";
 
 const DEFAULT_ERROR_MESSAGE =
@@ -55,23 +57,34 @@ export default function ResetPassword() {
   const errorMessages =
     data?.resetPassword?.errors || (error ? [DEFAULT_ERROR_MESSAGE] : []);
 
-  // TODO route to login
   if (data?.resetPassword.success) {
     return (
-      <Container mt="xl">
+      <Container mt="xl" size={420}>
         <Title order={1} mb="lg">
-          Password Reset Successful
+          Success!
         </Title>
         <Text>Your password has been reset successfully. </Text>
-        <Button variant="transparent" fullWidth>
-          Return to Login
-        </Button>
+
+        <Center>
+          <Anchor
+            component={Link}
+            size="sm"
+            m="sm"
+            to="/login"
+            style={{ color: "inherit" }}
+            onClick={(e: MouseEvent) => {
+              e.stopPropagation();
+            }}
+          >
+            Return to Login
+          </Anchor>
+        </Center>
       </Container>
     );
   }
 
   return (
-    <Container mt="xl">
+    <Container mt="xl" size={420}>
       <Title order={1} mb="lg">
         Reset Password
       </Title>

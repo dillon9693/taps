@@ -41,7 +41,7 @@ export default function RequestPasswordReset() {
 
   if (data?.requestPasswordReset.success) {
     return (
-      <Container mt="xl">
+      <Container mt="xl" size={420}>
         <Title order={1} mb="lg">
           Check Your Email
         </Title>
@@ -69,7 +69,7 @@ export default function RequestPasswordReset() {
   }
 
   return (
-    <Container mt="xl">
+    <Container mt="xl" size={420}>
       <Title order={1} mb="lg">
         Reset Password
       </Title>

@@ -1,5 +1,12 @@
 import { gql } from "@apollo/client";
 
+export type RegisterMutationResult = {
+  registerUser: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
 export const REGISTER_USER = gql`
   mutation RegisterUser(
     $email: String!
@@ -18,6 +25,13 @@ export const REGISTER_USER = gql`
     }
   }
 `;
+
+export type LoginUserResult = {
+  loginUser: {
+    success: boolean;
+    errors: string[];
+  };
+};
 
 export const LOGIN_USER = gql`
   mutation LoginUser($email: String!, $password: String!) {

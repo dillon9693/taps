@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { ApolloProvider, useMutation, useQuery } from "@apollo/client";
 import {
   AppShell,
@@ -10,18 +10,15 @@ import {
   useMantineTheme,
   Loader,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
-import LoginRegisterModal from "./components/LoginRegisterModal";
 import { LOGOUT_USER } from "./graphql/mutations";
 import { GET_CURRENT_USER } from "./graphql/queries";
 
 function AppContent() {
   const theme = useMantineTheme();
-
-  const [authModalOpened, { open, close }] = useDisclosure(false);
+  const loc = useLocation();
 
   // Query current user to determine authentication state
   const {
@@ -81,10 +78,11 @@ function AppContent() {
             {!loadingCurrentUser && !isAuthenticated && (
               <Button
                 variant="subtle"
+                component={Link}
+                to={`/login?prev=${encodeURIComponent(loc.pathname)}`}
                 style={{ color: "white" }}
-                onClick={open}
               >
-                Login / Register
+                Login
               </Button>
             )}
 
@@ -104,9 +102,6 @@ function AppContent() {
       <AppShell.Main>
         <Container>
           <Outlet />
-
-          {/* Modals */}
-          <LoginRegisterModal opened={authModalOpened} close={close} />
         </Container>
       </AppShell.Main>
     </AppShell>
