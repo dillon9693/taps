@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -74,6 +75,9 @@ class TagVote(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="votes")
     beer = models.ForeignKey(Beer, on_delete=models.CASCADE, related_name="tag_votes")
     upvote = models.BooleanField()
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="tag_votes"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
