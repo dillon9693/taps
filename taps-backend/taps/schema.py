@@ -360,11 +360,16 @@ class TagVoteMutation(graphene.Mutation):
 
         try:
             tag = Tag.objects.get(id=tag_id)
-            beer = Beer.objects.get(id=beer_id)
+            beer = Beer.objects.get(id=beer_id).prefetch_related("tags")
         except Tag.DoesNotExist:
             return TagVoteMutation(success=False, errors=["Tag not found."])
         except Beer.DoesNotExist:
             return TagVoteMutation(success=False, errors=["Beer not found."])
+
+        if tag not in beer.tags.all():
+            return TagVoteMutation(
+                success=False, errors=["Tag is not associated with the specified beer."]
+            )
 
         try:
             TagVote.objects.update_or_create(
@@ -385,6 +390,7 @@ class Mutation(graphene.ObjectType):
     logout_user = LogoutUser.Field()
     request_password_reset = RequestPasswordReset.Field()
     reset_password = ResetPassword.Field()
+    tag_vote = TagVoteMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
