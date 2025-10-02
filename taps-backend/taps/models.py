@@ -81,7 +81,7 @@ class TagVote(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("tag", "beer")
+        unique_together = ("tag", "beer", "user")
 
     def __str__(self):
         return f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on {self.beer.name}"
