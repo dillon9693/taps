@@ -354,6 +354,7 @@ class TagVoteMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     def mutate(self, info, tag_id, beer_id, upvote):
+        # TODO could create a decorator for auth verification
         user = info.context.user
         if not user.is_authenticated:
             return TagVoteMutation(success=False, errors=["Authentication required."])
@@ -361,7 +362,7 @@ class TagVoteMutation(graphene.Mutation):
         try:
             # TODO could query beer/tag table with joins on each table
             tag = Tag.objects.get(id=tag_id)
-            beer = Beer.objects.get(id=beer_id).prefetch_related("tags")
+            beer = Beer.objects.prefetch_related("tags").get(id=beer_id)
         except Tag.DoesNotExist:
             return TagVoteMutation(success=False, errors=["Tag not found."])
         except Beer.DoesNotExist:
