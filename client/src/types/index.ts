@@ -9,6 +9,11 @@ export interface BreweryInfo {
   beerCount?: number;
 }
 
+export interface Tag {
+  id: string;
+  name: string;
+}
+
 // Base beer information
 export interface BeerSummary {
   id: string;
@@ -20,7 +25,7 @@ export interface BeerSummary {
   averageRating: number;
   imageUrl: string;
   description: string;
-  tags: { name: string }[];
+  tags: Tag[];
 }
 
 // Full brewery details for brewery detail page

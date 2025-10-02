@@ -8,7 +8,6 @@ import {
   Text,
   Image,
   Group,
-  Badge,
   Rating,
   Loader,
   Alert,
@@ -22,6 +21,7 @@ import {
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
+import Tag from "../components/Tag";
 
 type GetBeerResult = {
   beerById: Beer;
@@ -140,17 +140,7 @@ export default function BeerDetail() {
               </Title>
               <Group gap="xs">
                 {beer.tags.map((tag) => (
-                  <Badge
-                    key={tag.name}
-                    variant="outline"
-                    size="lg"
-                    style={{
-                      borderColor: theme.colors.accent[5],
-                      color: theme.colors.accent[5],
-                    }}
-                  >
-                    {tag.name}
-                  </Badge>
+                  <Tag key={tag.id} beer={beer} tag={tag} />
                 ))}
               </Group>
             </Paper>
