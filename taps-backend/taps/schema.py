@@ -360,6 +360,10 @@ class TagVoteMutation(graphene.Mutation):
         if not user.is_authenticated:
             return TagVoteMutation(success=False, errors=["Authentication required."])
 
+        logger.debug(
+            f"TagVoteMutation called by user {user.id} for tag {tag_id} on beer {beer_id} with upvote={upvote}"
+        )
+
         try:
             # TODO could query beer/tag table with joins on each table
             tag = Tag.objects.get(id=tag_id)
@@ -375,6 +379,7 @@ class TagVoteMutation(graphene.Mutation):
             )
 
         try:
+            # TOOD need to check this?
             TagVote.objects.update_or_create(
                 tag=tag,
                 beer=beer,

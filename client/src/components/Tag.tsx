@@ -3,7 +3,9 @@ import {
   IconTriangleFilled,
   IconTriangleInvertedFilled,
 } from "@tabler/icons-react";
+import { useMutation } from "@apollo/client";
 import { Beer, Tag as TagType } from "../types";
+import { TAG_VOTE } from "../graphql/mutations";
 
 interface TagProps {
   beer: Beer;
@@ -11,12 +13,18 @@ interface TagProps {
 }
 
 export default function Tag({ beer, tag }: TagProps) {
+  // TODO disable upvote/downvote if 1) user is not authenticated and 2) user already voted
   const theme = useMantineTheme();
 
   const upvotes = 10;
   const downvotes = 6;
 
-  console.log(beer);
+  const [voteForTag, { data, loading, error }] = useMutation(TAG_VOTE);
+
+  // TODO increment on success
+  console.log(data);
+  // TODO how to handle errors?
+  console.log(error);
 
   // TODO stack count under arrow?
   return (
@@ -33,7 +41,12 @@ export default function Tag({ beer, tag }: TagProps) {
         p={2}
         m={2}
         variant="subtle"
-        onClick={() => console.log("downvote")}
+        onClick={() =>
+          voteForTag({
+            variables: { tagId: tag.id, beerId: beer.id, upvote: false },
+          })
+        }
+        disabled={loading}
       >
         <IconTriangleInvertedFilled size={10} />
         <Text size="xs">{downvotes}</Text>
@@ -45,7 +58,12 @@ export default function Tag({ beer, tag }: TagProps) {
         p={2}
         m={2}
         variant="subtle"
-        onClick={() => console.log("upvote")}
+        onClick={() =>
+          voteForTag({
+            variables: { tagId: tag.id, beerId: beer.id, upvote: true },
+          })
+        }
+        disabled={loading}
       >
         <IconTriangleFilled size={10} />
         <Text size="xs">{upvotes}</Text>
