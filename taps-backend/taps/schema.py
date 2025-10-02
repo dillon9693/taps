@@ -39,7 +39,7 @@ class BreweryType(DjangoObjectType):
 
 class BeerType(DjangoObjectType):
     style_display = graphene.String()
-    # TODO return tags with votes
+    tags_with_votes = graphene.List(lambda: TagVoteType)
 
     class Meta:
         model = Beer
@@ -60,6 +60,32 @@ class BeerType(DjangoObjectType):
 
     def resolve_style_display(self, info):
         return self.get_style_display()
+
+    def resolve_tags_with_votes(self, info):
+        tag_votes = []
+        for tag in self.tags.all():
+            upvote_count = TagVote.objects.filter(
+                tag=tag, beer=self, upvote=True
+            ).count()
+            downvote_count = TagVote.objects.filter(
+                tag=tag, beer=self, upvote=False
+            ).count()
+            tag_votes.append(
+                TagVoteType(
+                    tag_id=str(tag.id),
+                    tag_name=tag.name,
+                    upvote_count=upvote_count,
+                    downvote_count=downvote_count,
+                )
+            )
+        return tag_votes
+
+
+class TagVoteType(graphene.ObjectType):
+    tag_id = graphene.String()
+    tag_name = graphene.String()
+    upvote_count = graphene.Int()
+    downvote_count = graphene.Int()
 
 
 class TagType(DjangoObjectType):
