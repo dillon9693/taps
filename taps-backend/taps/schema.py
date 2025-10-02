@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
-from taps.models import Beer, Brewery, Tag
+from taps.models import Beer, Brewery, Tag, TagVote
 
 logger = logging.getLogger(__name__)
 
@@ -342,6 +342,41 @@ class ResetPassword(graphene.Mutation):
         user.set_password(new_password)
         user.save()
         return ResetPassword(success=True, errors=[])
+
+
+class TagVoteMutation(graphene.Mutation):
+    class Arguments:
+        tag_id = graphene.ID(required=True)
+        beer_id = graphene.ID(required=True)
+        upvote = graphene.Boolean(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, tag_id, beer_id, upvote):
+        user = info.context.user
+        if not user.is_authenticated:
+            return TagVoteMutation(success=False, errors=["Authentication required."])
+
+        try:
+            tag = Tag.objects.get(id=tag_id)
+            beer = Beer.objects.get(id=beer_id)
+        except Tag.DoesNotExist:
+            return TagVoteMutation(success=False, errors=["Tag not found."])
+        except Beer.DoesNotExist:
+            return TagVoteMutation(success=False, errors=["Beer not found."])
+
+        try:
+            TagVote.objects.update_or_create(
+                tag=tag,
+                beer=beer,
+                user=user,
+                defaults={"upvote": upvote},
+            )
+            return TagVoteMutation(success=True, errors=[])
+        except Exception as e:
+            logger.error(f"Tag vote failed: {str(e)}", exc_info=True)
+            return TagVoteMutation(success=False, errors=["Unable to record vote."])
 
 
 class Mutation(graphene.ObjectType):
