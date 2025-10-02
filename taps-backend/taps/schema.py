@@ -359,6 +359,7 @@ class TagVoteMutation(graphene.Mutation):
             return TagVoteMutation(success=False, errors=["Authentication required."])
 
         try:
+            # TODO could query beer/tag table with joins on each table
             tag = Tag.objects.get(id=tag_id)
             beer = Beer.objects.get(id=beer_id).prefetch_related("tags")
         except Tag.DoesNotExist:
