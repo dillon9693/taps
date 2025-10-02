@@ -112,8 +112,12 @@ export default function BeerCard(props: BeerCardProps) {
                 {beer.styleDisplay}
               </Badge>
 
-              {beer.tags.map((tag) => (
-                <Tag key={tag.id} beer={beer} tag={tag} />
+              {beer.tagsWithVotes.map((tagWithVotes) => (
+                <Tag
+                  key={tagWithVotes.tagId}
+                  beer={beer}
+                  tagWithVotes={tagWithVotes}
+                />
               ))}
             </Group>
           </Stack>

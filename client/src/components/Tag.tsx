@@ -4,20 +4,17 @@ import {
   IconTriangleInvertedFilled,
 } from "@tabler/icons-react";
 import { useMutation } from "@apollo/client";
-import { Beer, Tag as TagType } from "../types";
+import { Beer, TagWithVotes } from "../types";
 import { TAG_VOTE } from "../graphql/mutations";
 
 interface TagProps {
   beer: Beer;
-  tag: TagType;
+  tagWithVotes: TagWithVotes;
 }
 
-export default function Tag({ beer, tag }: TagProps) {
+export default function Tag({ beer, tagWithVotes }: TagProps) {
   // TODO disable upvote/downvote if 1) user is not authenticated and 2) user already voted
   const theme = useMantineTheme();
-
-  const upvotes = 10;
-  const downvotes = 6;
 
   const [voteForTag, { data, loading, error }] = useMutation(TAG_VOTE);
 
@@ -29,7 +26,7 @@ export default function Tag({ beer, tag }: TagProps) {
   // TODO stack count under arrow?
   return (
     <Badge
-      key={tag.name}
+      key={tagWithVotes.tagName}
       variant="outline"
       size="sm"
       style={{
@@ -43,16 +40,20 @@ export default function Tag({ beer, tag }: TagProps) {
         variant="subtle"
         onClick={() =>
           voteForTag({
-            variables: { tagId: tag.id, beerId: beer.id, upvote: false },
+            variables: {
+              tagId: tagWithVotes.tagId,
+              beerId: beer.id,
+              upvote: false,
+            },
           })
         }
         disabled={loading}
       >
         <IconTriangleInvertedFilled size={10} />
-        <Text size="xs">{downvotes}</Text>
+        <Text size="xs">{tagWithVotes.downvoteCount}</Text>
       </Button>
 
-      {tag.name}
+      {tagWithVotes.tagName}
 
       <Button
         p={2}
@@ -60,13 +61,17 @@ export default function Tag({ beer, tag }: TagProps) {
         variant="subtle"
         onClick={() =>
           voteForTag({
-            variables: { tagId: tag.id, beerId: beer.id, upvote: true },
+            variables: {
+              tagId: tagWithVotes.tagId,
+              beerId: beer.id,
+              upvote: true,
+            },
           })
         }
         disabled={loading}
       >
         <IconTriangleFilled size={10} />
-        <Text size="xs">{upvotes}</Text>
+        <Text size="xs">{tagWithVotes.upvoteCount}</Text>
       </Button>
     </Badge>
   );

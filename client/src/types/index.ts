@@ -14,6 +14,13 @@ export interface Tag {
   name: string;
 }
 
+export interface TagWithVotes {
+  tagId: string;
+  tagName: string;
+  upvoteCount: number;
+  downvoteCount: number;
+}
+
 // Base beer information
 export interface BeerSummary {
   id: string;
@@ -26,6 +33,7 @@ export interface BeerSummary {
   imageUrl: string;
   description: string;
   tags: Tag[];
+  tagsWithVotes: TagWithVotes[];
 }
 
 // Full brewery details for brewery detail page

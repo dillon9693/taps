@@ -139,8 +139,12 @@ export default function BeerDetail() {
                 Tags
               </Title>
               <Group gap="xs">
-                {beer.tags.map((tag) => (
-                  <Tag key={tag.id} beer={beer} tag={tag} />
+                {beer.tagsWithVotes.map((tagWithVotes) => (
+                  <Tag
+                    key={tagWithVotes.tagId}
+                    beer={beer}
+                    tagWithVotes={tagWithVotes}
+                  />
                 ))}
               </Group>
             </Paper>
