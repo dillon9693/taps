@@ -39,6 +39,7 @@ class BreweryType(DjangoObjectType):
 
 class BeerType(DjangoObjectType):
     style_display = graphene.String()
+    # TODO return tags with votes
 
     class Meta:
         model = Beer
