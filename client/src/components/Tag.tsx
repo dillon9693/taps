@@ -4,9 +4,10 @@ import {
   IconTriangleFilled,
   IconTriangleInvertedFilled,
 } from "@tabler/icons-react";
-import { useMutation } from "@apollo/client";
-import { Beer, TagWithVotes } from "../types";
-import { TAG_VOTE, TagVoteResult } from "../graphql/mutations";
+import { useMutation, useQuery } from "@apollo/client";
+import type { Beer, TagWithVotes } from "../types";
+import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
+import { GET_CURRENT_USER } from "../graphql/queries";
 
 interface TagProps {
   beer: Beer;
@@ -14,11 +15,20 @@ interface TagProps {
 }
 
 export default function Tag({ beer, tagWithVotes }: TagProps) {
-  // TODO disable upvote/downvote if 1) user is not authenticated
   const theme = useMantineTheme();
   const [userVoteType, setUserVoteType] = useState(
     tagWithVotes.currentUserVote,
   );
+
+  const { data: currentUserData, error: currentUserError } = useQuery(
+    GET_CURRENT_USER,
+    {
+      errorPolicy: "all",
+      fetchPolicy: "cache-first",
+    },
+  );
+
+  const isAuthenticated = !currentUserError && !!currentUserData?.currentUser;
 
   const [voteForTag, { data, loading, error }] =
     useMutation<TagVoteResult>(TAG_VOTE);
@@ -70,7 +80,11 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         m={2}
         variant="subtle"
         onClick={performVoteFunc(false)}
-        disabled={loading || (userVoteType !== null && !userVoteType)}
+        disabled={
+          loading ||
+          !isAuthenticated ||
+          (userVoteType !== null && !userVoteType)
+        }
       >
         <IconTriangleInvertedFilled size={10} />
         <Text size="xs">{downvoteCount}</Text>
@@ -83,7 +97,9 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         m={2}
         variant="subtle"
         onClick={performVoteFunc(true)}
-        disabled={loading || (userVoteType !== null && userVoteType)}
+        disabled={
+          loading || !isAuthenticated || (userVoteType !== null && userVoteType)
+        }
       >
         <IconTriangleFilled size={10} />
         <Text size="xs">{upvoteCount}</Text>
