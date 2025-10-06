@@ -378,6 +378,8 @@ class TagVoteMutation(graphene.Mutation):
         upvote = graphene.Boolean(required=True)
 
     success = graphene.Boolean()
+    new_upvote_count = graphene.Int()
+    new_downvote_count = graphene.Int()
     errors = graphene.List(graphene.String)
 
     def mutate(self, info, tag_id, beer_id, upvote):
@@ -412,7 +414,16 @@ class TagVoteMutation(graphene.Mutation):
                 user=user,
                 defaults={"upvote": upvote},
             )
-            return TagVoteMutation(success=True, errors=[])
+
+            new_upvote_count = TagVote.vote_count(beer, tag, True)
+            new_downvote_count = TagVote.vote_count(beer, tag, False)
+
+            return TagVoteMutation(
+                success=True,
+                new_upvote_count=new_upvote_count,
+                new_downvote_count=new_downvote_count,
+                errors=[],
+            )
         except Exception as e:
             logger.error(f"Tag vote failed: {str(e)}", exc_info=True)
             return TagVoteMutation(success=False, errors=["Unable to record vote."])

@@ -85,3 +85,10 @@ class TagVote(models.Model):
 
     def __str__(self):
         return f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on {self.beer.name}"
+
+    @classmethod
+    def vote_count(cls, beer: Beer, tag: Tag, upvote: bool):
+        """
+        Gets the count of votes by type (upvote for downvote) for a given beer and tag.
+        """
+        return cls.objects.filter(beer=beer, tag=tag, upvote=upvote).count()

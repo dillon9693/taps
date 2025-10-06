@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { Badge, Button, Text, useMantineTheme } from "@mantine/core";
 import {
   IconTriangleFilled,
@@ -6,7 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { useMutation } from "@apollo/client";
 import { Beer, TagWithVotes } from "../types";
-import { TAG_VOTE } from "../graphql/mutations";
+import { TAG_VOTE, TagVoteResult } from "../graphql/mutations";
 
 interface TagProps {
   beer: Beer;
@@ -17,12 +17,20 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
   // TODO disable upvote/downvote if 1) user is not authenticated and 2) user already voted
   const theme = useMantineTheme();
 
-  const [voteForTag, { data, loading, error }] = useMutation(TAG_VOTE);
+  const [voteForTag, { data, loading, error }] =
+    useMutation<TagVoteResult>(TAG_VOTE);
 
   // TODO increment on success
   console.log(data);
   // TODO how to handle errors?
   console.log(error);
+
+  const upvoteCount = data?.tagVote?.success
+    ? data.tagVote.newUpvoteCount
+    : tagWithVotes.upvoteCount;
+  const downvoteCount = data?.tagVote?.success
+    ? data.tagVote.newDownvoteCount
+    : tagWithVotes.downvoteCount;
 
   const performVoteFunc =
     (upvote: boolean) => (e: MouseEvent<HTMLButtonElement>) => {
@@ -40,6 +48,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
       });
     };
 
+  // TODO disable if already voted?
   // TODO stack count under arrow?
   return (
     <Badge
@@ -59,7 +68,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         disabled={loading}
       >
         <IconTriangleInvertedFilled size={10} />
-        <Text size="xs">{tagWithVotes.downvoteCount}</Text>
+        <Text size="xs">{downvoteCount}</Text>
       </Button>
 
       {tagWithVotes.tagName}
@@ -72,7 +81,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         disabled={loading}
       >
         <IconTriangleFilled size={10} />
-        <Text size="xs">{tagWithVotes.upvoteCount}</Text>
+        <Text size="xs">{upvoteCount}</Text>
       </Button>
     </Badge>
   );
