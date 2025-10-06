@@ -133,7 +133,7 @@ export default function BeerDetail() {
             <Text lh={1.7}>{beer.description}</Text>
           </Paper>
 
-          {beer.tags.length > 0 && (
+          {beer.tagsWithVotes.length > 0 && (
             <Paper p="lg" withBorder shadow="sm">
               <Title order={4} mb="md">
                 Tags
