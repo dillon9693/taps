@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { Badge, Button, Text, useMantineTheme } from "@mantine/core";
 import {
   IconTriangleFilled,
@@ -23,6 +24,22 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
   // TODO how to handle errors?
   console.log(error);
 
+  const performVoteFunc =
+    (upvote: boolean) => (e: MouseEvent<HTMLButtonElement>) => {
+      // Need both of these for some reason b/c, if not, it will navigate page due to
+      // the link on the BeerCard (may remove this in the future)
+      e.preventDefault();
+      e.stopPropagation();
+
+      voteForTag({
+        variables: {
+          tagId: tagWithVotes.tagId,
+          beerId: beer.id,
+          upvote,
+        },
+      });
+    };
+
   // TODO stack count under arrow?
   return (
     <Badge
@@ -38,15 +55,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         p={2}
         m={2}
         variant="subtle"
-        onClick={() =>
-          voteForTag({
-            variables: {
-              tagId: tagWithVotes.tagId,
-              beerId: beer.id,
-              upvote: false,
-            },
-          })
-        }
+        onClick={performVoteFunc(false)}
         disabled={loading}
       >
         <IconTriangleInvertedFilled size={10} />
@@ -59,15 +68,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         p={2}
         m={2}
         variant="subtle"
-        onClick={() =>
-          voteForTag({
-            variables: {
-              tagId: tagWithVotes.tagId,
-              beerId: beer.id,
-              upvote: true,
-            },
-          })
-        }
+        onClick={performVoteFunc(true)}
         disabled={loading}
       >
         <IconTriangleFilled size={10} />
