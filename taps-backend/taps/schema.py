@@ -64,21 +64,29 @@ class BeerType(DjangoObjectType):
     def resolve_tags_with_votes(self, info):
         tag_votes = []
 
-        # TODO pre fetch all user votes associated with tags
-        for tag in self.tags.all():
-            current_user_vote = TagVote.objects.filter(
-                tag=tag, beer=self, user=info.context.user
-            ).first()
-            current_user_vote_val = (
-                current_user_vote.upvote if current_user_vote is not None else None
-            )
+        tags_for_beer = self.tags.all()
 
+        tag_votes_for_beer_by_user = (
+            TagVote.objects.filter(
+                user=info.context.user, tag__in=tags_for_beer, beer=self
+            ).all()
+            if info.context.user.is_authenticated
+            else {}
+        )
+
+        user_vote_by_tag_id = {
+            vote.tag.id: vote.upvote for vote in tag_votes_for_beer_by_user
+        }
+
+        for tag in tags_for_beer:
             upvote_count = TagVote.objects.filter(
                 tag=tag, beer=self, upvote=True
             ).count()
             downvote_count = TagVote.objects.filter(
                 tag=tag, beer=self, upvote=False
             ).count()
+
+            current_user_vote_val = user_vote_by_tag_id.get(tag.id, None)
 
             tag_votes.append(
                 TagVoteType(
