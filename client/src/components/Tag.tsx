@@ -8,6 +8,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import type { Beer, TagWithVotes } from "../types";
 import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { GET_CURRENT_USER } from "../graphql/queries";
+import styles from "./Tag.module.css";
 
 interface TagProps {
   beer: Beer;
@@ -63,7 +64,6 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
       }
     };
 
-  // TODO better styling on disabled state
   // TODO stack count under arrow?
   return (
     <Badge
@@ -85,6 +85,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
           !isAuthenticated ||
           (userVoteType !== null && !userVoteType)
         }
+        className={styles.voteButton}
       >
         <IconTriangleInvertedFilled size={10} />
         <Text size="xs">{downvoteCount}</Text>
@@ -100,6 +101,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         disabled={
           loading || !isAuthenticated || (userVoteType !== null && userVoteType)
         }
+        className={styles.voteButton}
       >
         <IconTriangleFilled size={10} />
         <Text size="xs">{upvoteCount}</Text>
