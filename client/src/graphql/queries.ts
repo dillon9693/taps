@@ -9,7 +9,6 @@ const BREWERY_INFO_FRAGMENT = gql`
   }
 `;
 
-// TODO we might be able to get rid of tags
 const BEER_FIELDS_FRAGMENT = gql`
   fragment BeerFields on BeerType {
     id
