@@ -67,7 +67,6 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
       }
     };
 
-  // TODO stack count under arrow?
   return (
     <Badge
       key={tagWithVotes.tagName}
