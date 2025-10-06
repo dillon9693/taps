@@ -19,6 +19,7 @@ export interface TagWithVotes {
   tagName: string;
   upvoteCount: number;
   downvoteCount: number;
+  currentUserVote: boolean | null; // null indicates user has not voted yet
 }
 
 // Base beer information

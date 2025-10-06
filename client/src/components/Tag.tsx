@@ -1,4 +1,4 @@
-import { type MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { Badge, Button, Text, useMantineTheme } from "@mantine/core";
 import {
   IconTriangleFilled,
@@ -14,14 +14,15 @@ interface TagProps {
 }
 
 export default function Tag({ beer, tagWithVotes }: TagProps) {
-  // TODO disable upvote/downvote if 1) user is not authenticated and 2) user already voted
+  // TODO disable upvote/downvote if 1) user is not authenticated
   const theme = useMantineTheme();
+  const [userVoteType, setUserVoteType] = useState(
+    tagWithVotes.currentUserVote,
+  );
 
   const [voteForTag, { data, loading, error }] =
     useMutation<TagVoteResult>(TAG_VOTE);
 
-  // TODO increment on success
-  console.log(data);
   // TODO how to handle errors?
   console.log(error);
 
@@ -33,22 +34,26 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
     : tagWithVotes.downvoteCount;
 
   const performVoteFunc =
-    (upvote: boolean) => (e: MouseEvent<HTMLButtonElement>) => {
+    (upvote: boolean) => async (e: MouseEvent<HTMLButtonElement>) => {
       // Need both of these for some reason b/c, if not, it will navigate page due to
       // the link on the BeerCard (may remove this in the future)
       e.preventDefault();
       e.stopPropagation();
 
-      voteForTag({
+      const result = await voteForTag({
         variables: {
           tagId: tagWithVotes.tagId,
           beerId: beer.id,
           upvote,
         },
       });
+
+      if (!result.errors && result.data?.tagVote.success) {
+        setUserVoteType(upvote);
+      }
     };
 
-  // TODO disable if already voted?
+  // TODO better styling on disabled state
   // TODO stack count under arrow?
   return (
     <Badge
@@ -65,7 +70,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         m={2}
         variant="subtle"
         onClick={performVoteFunc(false)}
-        disabled={loading}
+        disabled={loading || (userVoteType !== null && !userVoteType)}
       >
         <IconTriangleInvertedFilled size={10} />
         <Text size="xs">{downvoteCount}</Text>
@@ -78,7 +83,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         m={2}
         variant="subtle"
         onClick={performVoteFunc(true)}
-        disabled={loading}
+        disabled={loading || (userVoteType !== null && userVoteType)}
       >
         <IconTriangleFilled size={10} />
         <Text size="xs">{upvoteCount}</Text>

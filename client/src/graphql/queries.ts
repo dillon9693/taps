@@ -33,6 +33,7 @@ const BEER_FIELDS_FRAGMENT = gql`
       tagName
       upvoteCount
       downvoteCount
+      currentUserVote
     }
   }
   ${BREWERY_INFO_FRAGMENT}

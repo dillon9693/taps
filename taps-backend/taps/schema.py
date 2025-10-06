@@ -63,19 +63,30 @@ class BeerType(DjangoObjectType):
 
     def resolve_tags_with_votes(self, info):
         tag_votes = []
+
+        # TODO pre fetch all user votes associated with tags
         for tag in self.tags.all():
+            current_user_vote = TagVote.objects.filter(
+                tag=tag, beer=self, user=info.context.user
+            ).first()
+            current_user_vote_val = (
+                current_user_vote.upvote if current_user_vote is not None else None
+            )
+
             upvote_count = TagVote.objects.filter(
                 tag=tag, beer=self, upvote=True
             ).count()
             downvote_count = TagVote.objects.filter(
                 tag=tag, beer=self, upvote=False
             ).count()
+
             tag_votes.append(
                 TagVoteType(
                     tag_id=str(tag.id),
                     tag_name=tag.name,
                     upvote_count=upvote_count,
                     downvote_count=downvote_count,
+                    current_user_vote=current_user_vote_val,
                 )
             )
         return tag_votes
@@ -86,6 +97,7 @@ class TagVoteType(graphene.ObjectType):
     tag_name = graphene.String()
     upvote_count = graphene.Int()
     downvote_count = graphene.Int()
+    current_user_vote = graphene.Boolean()
 
 
 class TagType(DjangoObjectType):
