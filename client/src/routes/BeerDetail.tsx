@@ -52,19 +52,17 @@ export default function BeerDetail() {
       : "Beer Details",
   });
 
-  const [saveBeer, { client: saveBeerClient }] = useMutation<SaveBeerResult>(
-    SAVE_BEER,
-    {
+  const [saveBeer, { client: saveBeerClient, loading: saveBeerLoading }] =
+    useMutation<SaveBeerResult>(SAVE_BEER, {
       onCompleted: (result) => {
         if (result.saveBeer.success) {
           setIsSaved(true);
           saveBeerClient.refetchQueries({ include: [GET_BEER] });
         }
       },
-    },
-  );
+    });
 
-  const [unsaveBeer, { client: unsaveBeerClient }] =
+  const [unsaveBeer, { client: unsaveBeerClient, loading: unsaveBeerLoading }] =
     useMutation<UnsaveBeerResult>(UNSAVE_BEER, {
       onCompleted: (result) => {
         if (result.unsaveBeer.success) {
@@ -123,7 +121,6 @@ export default function BeerDetail() {
     }
   };
 
-  // TODO add loader when saving
   // TODO change styles when saved vs. unsaved
 
   return (
@@ -171,7 +168,11 @@ export default function BeerDetail() {
                     style={{ backgroundColor: theme.colors.accent[5] }}
                     onClick={onSaveButtonClick}
                   >
-                    {saveButtonText}
+                    {saveBeerLoading || unsaveBeerLoading ? (
+                      <Loader size="xs" color="white" />
+                    ) : (
+                      saveButtonText
+                    )}
                   </Button>
                 </Group>
               </Stack>
