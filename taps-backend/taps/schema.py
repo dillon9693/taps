@@ -101,7 +101,8 @@ class BeerType(DjangoObjectType):
             )
         return tag_votes
 
-    # TODO more efficient way to do this?
+    # TODO eventually look into a more efficient way to do this b/c right now it's
+    # likely sending 1 query per returned beer
     def resolve_is_saved(self, info):
         user = info.context.user
         if not user.is_authenticated:
@@ -573,9 +574,10 @@ class UnsaveBeerMutation(graphene.Mutation):
             logger.error(f"Saving of beer failed: {str(e)}", exc_info=True)
             return UnsaveBeerMutation(success=False, errors=["Unable to unsave beer."])
 
-            logger.debug(
-                f"Successfully un-saved beer {beer_id} for user {user.id}",
-            )
+        logger.debug(
+            f"Successfully un-saved beer {beer_id} for user {user.id}",
+        )
+
         return UnsaveBeerMutation(success=True, errors=[])
 
 
