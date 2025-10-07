@@ -89,6 +89,9 @@ export default function Account() {
         Account
       </Title>
       <Paper shadow="sm" p="lg" radius="md" withBorder>
+        <Title order={2} mb="md">
+          Account Details
+        </Title>
         <Stack gap="md">
           {isEditing ? (
             <form onSubmit={handleSubmit}>
