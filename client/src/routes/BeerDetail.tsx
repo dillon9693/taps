@@ -58,6 +58,7 @@ export default function BeerDetail() {
     skip: !id,
   });
 
+  // Keep this state in sync with updates from the back-end
   useEffect(() => {
     if (data?.beerById) {
       setIsSaved(data.beerById.isSaved);
