@@ -12,6 +12,7 @@ import {
 import { Navigate } from "react-router-dom";
 import { FormEvent, useState } from "react";
 import { useMutation } from "@apollo/client";
+import { notifications } from "@mantine/notifications";
 import { useAuth } from "../contexts/AuthContext";
 import {
   UPDATE_ACCOUNT_DETAILS,
@@ -47,6 +48,11 @@ export default function Account() {
         if (result.updateAccountDetails.success) {
           client.refetchQueries({ include: [GET_CURRENT_USER] });
           setIsEditing(false);
+          notifications.show({
+            title: "Success!",
+            message: "Account details successfully updated",
+            color: "green",
+          });
         }
       },
     });
