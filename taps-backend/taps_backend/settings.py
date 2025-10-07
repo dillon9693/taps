@@ -166,6 +166,4 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 # Session settings
 SESSION_COOKIE_AGE = 604800  # 1 week (reduced from 2 weeks for security)
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = (
-    "Lax"  # Lax allows cross-origin cookies (required for cross-domain auth)
-)
+SESSION_COOKIE_SAMESITE = "Strict"  # Strict for better CSRF protection
