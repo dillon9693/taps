@@ -513,9 +513,7 @@ class SaveBeerMutation(graphene.Mutation):
     def mutate(self, info, beer_id):
         user = info.context.user
         if not user.is_authenticated:
-            return UpdateAccountDetailsMutation(
-                success=False, errors=["Authentication required."]
-            )
+            return SaveBeerMutation(success=False, errors=["Authentication required."])
 
         try:
             beer = Beer.objects.get(id=beer_id)
