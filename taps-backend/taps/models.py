@@ -95,3 +95,18 @@ class TagVote(models.Model):
         Gets the count of votes by type (upvote for downvote) for a given beer and tag.
         """
         return cls.objects.filter(beer=beer, tag=tag, upvote=upvote).count()
+
+
+class SavedBeer(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    beer = models.ForeignKey(Beer, on_delete=models.CASCADE, related_name="user_saves")
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="saved_beers"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("beer", "user")
+
+    def __str__(self):
+        return f"Saved beer for beer {self.beer.name} and user ID {self.user.id}"
