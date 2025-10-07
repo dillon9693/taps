@@ -19,6 +19,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useState } from "react";
+import { notifications } from "@mantine/notifications";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
@@ -29,6 +30,18 @@ import {
   UNSAVE_BEER,
   UnsaveBeerResult,
 } from "../graphql/mutations";
+
+const SAVE_ERROR_NOTIFICATION = {
+  title: "Error!",
+  message: "There was an issue saving this beer. Please try again",
+  color: "red",
+};
+
+const UNSAVE_ERROR_NOTIFICATION = {
+  title: "Error!",
+  message: "There was an issue removing save from this beer. Please try again",
+  color: "red",
+};
 
 type GetBeerResult = {
   beerById: Beer;
@@ -58,7 +71,12 @@ export default function BeerDetail() {
         if (result.saveBeer.success) {
           setIsSaved(true);
           saveBeerClient.refetchQueries({ include: [GET_BEER] });
+        } else {
+          notifications.show(SAVE_ERROR_NOTIFICATION);
         }
+      },
+      onError: () => {
+        notifications.show(SAVE_ERROR_NOTIFICATION);
       },
     });
 
@@ -68,7 +86,12 @@ export default function BeerDetail() {
         if (result.unsaveBeer.success) {
           setIsSaved(false);
           unsaveBeerClient.refetchQueries({ include: [GET_BEER] });
+        } else {
+          notifications.show(UNSAVE_ERROR_NOTIFICATION);
         }
+      },
+      onError: () => {
+        notifications.show(UNSAVE_ERROR_NOTIFICATION);
       },
     });
 
