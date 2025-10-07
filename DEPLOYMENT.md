@@ -58,15 +58,13 @@ Staging deployments are planned for future implementation and will likely use Ra
 
 ## Manual Deployment Steps
 
-TODO out of date
-
 ### Frontend (Vercel)
 
-TODO update
+Use Vercel dashboard
 
 ### Backend (Railway)
 
-TODO update
+Use Railway dashboard
 
 ## Monitoring and Maintenance
 
