@@ -42,11 +42,11 @@ export default function Account() {
     setIsEditing(false);
   };
 
-  const [updateAccountDetails, { data, error, loading }] =
+  const [updateAccountDetails, { data, error, loading, client }] =
     useMutation<UpdateAccountDetailsResult>(UPDATE_ACCOUNT_DETAILS, {
-      refetchQueries: [{ query: GET_CURRENT_USER }],
-      onCompleted: () => {
-        if (data?.updateAccountDetails.success) {
+      onCompleted: (result) => {
+        if (result.updateAccountDetails.success) {
+          client.refetchQueries({ include: [GET_CURRENT_USER] });
           setIsEditing(false);
         }
       },
