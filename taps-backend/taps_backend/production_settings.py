@@ -35,6 +35,12 @@ CORS_ALLOW_CREDENTIALS = True
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+# Session cookie settings for subdomain sharing
+# Extract base domain from RAILWAY_PUBLIC_DOMAIN
+# (e.g., api.tapsbeer.com -> .tapsbeer.com)
+SESSION_COOKIE_DOMAIN = f".{'.'.join(public_domain.split('.')[-2:])}"
+CSRF_COOKIE_DOMAIN = SESSION_COOKIE_DOMAIN
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
