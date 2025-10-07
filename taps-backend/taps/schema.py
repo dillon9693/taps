@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
-from taps.models import Beer, Brewery, Tag
+from taps.models import Beer, Brewery, Tag, TagVote
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,7 @@ class BreweryType(DjangoObjectType):
 
 class BeerType(DjangoObjectType):
     style_display = graphene.String()
+    tags_with_votes = graphene.List(lambda: TagVoteType)
 
     class Meta:
         model = Beer
@@ -59,6 +60,52 @@ class BeerType(DjangoObjectType):
 
     def resolve_style_display(self, info):
         return self.get_style_display()
+
+    def resolve_tags_with_votes(self, info):
+        tag_votes = []
+
+        tags_for_beer = self.tags.all()
+
+        tag_votes_for_beer_by_user = (
+            TagVote.objects.filter(
+                user=info.context.user, tag__in=tags_for_beer, beer=self
+            ).all()
+            if info.context.user.is_authenticated
+            else {}
+        )
+
+        user_vote_by_tag_id = {
+            vote.tag.id: vote.upvote for vote in tag_votes_for_beer_by_user
+        }
+
+        for tag in tags_for_beer:
+            upvote_count = TagVote.objects.filter(
+                tag=tag, beer=self, upvote=True
+            ).count()
+            downvote_count = TagVote.objects.filter(
+                tag=tag, beer=self, upvote=False
+            ).count()
+
+            current_user_vote = user_vote_by_tag_id.get(tag.id, None)
+
+            tag_votes.append(
+                TagVoteType(
+                    tag_id=str(tag.id),
+                    tag_name=tag.name,
+                    upvote_count=upvote_count,
+                    downvote_count=downvote_count,
+                    current_user_vote=current_user_vote,
+                )
+            )
+        return tag_votes
+
+
+class TagVoteType(graphene.ObjectType):
+    tag_id = graphene.String()
+    tag_name = graphene.String()
+    upvote_count = graphene.Int()
+    downvote_count = graphene.Int()
+    current_user_vote = graphene.Boolean()
 
 
 class TagType(DjangoObjectType):
@@ -344,12 +391,69 @@ class ResetPassword(graphene.Mutation):
         return ResetPassword(success=True, errors=[])
 
 
+class TagVoteMutation(graphene.Mutation):
+    class Arguments:
+        tag_id = graphene.ID(required=True)
+        beer_id = graphene.ID(required=True)
+        upvote = graphene.Boolean(required=True)
+
+    success = graphene.Boolean()
+    new_upvote_count = graphene.Int()
+    new_downvote_count = graphene.Int()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, tag_id, beer_id, upvote):
+        user = info.context.user
+        if not user.is_authenticated:
+            return TagVoteMutation(success=False, errors=["Authentication required."])
+
+        logger.debug(
+            f"TagVoteMutation called by user {user.id} for tag {tag_id} on beer "
+            f"{beer_id} with upvote={upvote}"
+        )
+
+        try:
+            tag = Tag.objects.get(id=tag_id)
+            beer = Beer.objects.prefetch_related("tags").get(id=beer_id)
+        except Tag.DoesNotExist:
+            return TagVoteMutation(success=False, errors=["Tag not found."])
+        except Beer.DoesNotExist:
+            return TagVoteMutation(success=False, errors=["Beer not found."])
+
+        if tag not in beer.tags.all():
+            return TagVoteMutation(
+                success=False, errors=["Tag is not associated with the specified beer."]
+            )
+
+        try:
+            TagVote.objects.update_or_create(
+                tag=tag,
+                beer=beer,
+                user=user,
+                defaults={"upvote": upvote},
+            )
+
+            new_upvote_count = TagVote.vote_count(beer, tag, True)
+            new_downvote_count = TagVote.vote_count(beer, tag, False)
+
+            return TagVoteMutation(
+                success=True,
+                new_upvote_count=new_upvote_count,
+                new_downvote_count=new_downvote_count,
+                errors=[],
+            )
+        except Exception as e:
+            logger.error(f"Tag vote failed: {str(e)}", exc_info=True)
+            return TagVoteMutation(success=False, errors=["Unable to record vote."])
+
+
 class Mutation(graphene.ObjectType):
     register_user = RegisterUser.Field()
     login_user = LoginUser.Field()
     logout_user = LogoutUser.Field()
     request_password_reset = RequestPasswordReset.Field()
     reset_password = ResetPassword.Field()
+    tag_vote = TagVoteMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

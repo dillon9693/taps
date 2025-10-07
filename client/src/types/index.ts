@@ -9,6 +9,19 @@ export interface BreweryInfo {
   beerCount?: number;
 }
 
+export interface Tag {
+  id: string;
+  name: string;
+}
+
+export interface TagWithVotes {
+  tagId: string;
+  tagName: string;
+  upvoteCount: number;
+  downvoteCount: number;
+  currentUserVote: boolean | null; // null indicates user has not voted yet
+}
+
 // Base beer information
 export interface BeerSummary {
   id: string;
@@ -20,7 +33,8 @@ export interface BeerSummary {
   averageRating: number;
   imageUrl: string;
   description: string;
-  tags: { name: string }[];
+  tags: Tag[];
+  tagsWithVotes: TagWithVotes[];
 }
 
 // Full brewery details for brewery detail page

@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import App from "./App";
 import Home from "./routes/Home";
 import Search from "./routes/Search";
@@ -10,6 +11,7 @@ import BreweryDetail from "./routes/BreweryDetail";
 import reportWebVitals from "./reportWebVitals";
 import { theme } from "./theme/theme";
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import "./index.css";
 import ResetPassword from "./routes/ResetPassword";
 import RequestPasswordReset from "./routes/RequestPasswordReset";
@@ -18,8 +20,10 @@ import Register from "./routes/Register";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
+  // eslint-disable-next-line no-console
   console.log(`App version: ${version}`);
 } else {
+  // eslint-disable-next-line no-console
   console.log("No app version found");
 }
 
@@ -29,6 +33,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <MantineProvider theme={theme}>
+      <Notifications />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />}>

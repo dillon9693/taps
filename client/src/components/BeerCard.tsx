@@ -13,6 +13,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import type { Beer } from "../types";
+import Tag from "./Tag";
 
 interface BeerCardProps {
   beer: Beer;
@@ -110,18 +111,13 @@ export default function BeerCard(props: BeerCardProps) {
               >
                 {beer.styleDisplay}
               </Badge>
-              {beer.tags.map((tag) => (
-                <Badge
-                  key={tag.name}
-                  variant="outline"
-                  size="sm"
-                  style={{
-                    borderColor: theme.colors.accent[5],
-                    color: theme.colors.accent[5],
-                  }}
-                >
-                  {tag.name}
-                </Badge>
+
+              {beer.tagsWithVotes.map((tagWithVotes) => (
+                <Tag
+                  key={`${tagWithVotes.tagId}-${beer.id}`}
+                  beer={beer}
+                  tagWithVotes={tagWithVotes}
+                />
               ))}
             </Group>
           </Stack>

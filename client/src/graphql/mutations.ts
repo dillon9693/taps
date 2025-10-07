@@ -85,3 +85,23 @@ export const RESET_PASSWORD = gql`
     }
   }
 `;
+
+export type TagVoteResult = {
+  tagVote: {
+    success: boolean;
+    newUpvoteCount: number;
+    newDownvoteCount: number;
+    errors: string[];
+  };
+};
+
+export const TAG_VOTE = gql`
+  mutation TagVote($tagId: ID!, $beerId: ID!, $upvote: Boolean!) {
+    tagVote(tagId: $tagId, beerId: $beerId, upvote: $upvote) {
+      success
+      newUpvoteCount
+      newDownvoteCount
+      errors
+    }
+  }
+`;

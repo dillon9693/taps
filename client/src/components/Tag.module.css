@@ -1,0 +1,6 @@
+.voteButton {
+  &:disabled {
+    background-color: transparent;
+    color: var(--mantine-color-gray-5);
+  }
+}

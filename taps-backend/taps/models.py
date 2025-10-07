@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.auth import get_user_model
 from django.db import models
 
 
@@ -67,3 +68,30 @@ class Beer(models.Model):
 
     def __str__(self):
         return f"{self.name} by {self.brewery.name}"
+
+
+class TagVote(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="votes")
+    beer = models.ForeignKey(Beer, on_delete=models.CASCADE, related_name="tag_votes")
+    upvote = models.BooleanField()
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="tag_votes"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("tag", "beer", "user")
+
+    def __str__(self):
+        return (
+            f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on "
+            f"{self.beer.name}"
+        )
+
+    @classmethod
+    def vote_count(cls, beer: Beer, tag: Tag, upvote: bool):
+        """
+        Gets the count of votes by type (upvote for downvote) for a given beer and tag.
+        """
+        return cls.objects.filter(beer=beer, tag=tag, upvote=upvote).count()

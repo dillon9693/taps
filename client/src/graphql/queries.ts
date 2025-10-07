@@ -24,7 +24,15 @@ const BEER_FIELDS_FRAGMENT = gql`
     averageRating
     imageUrl
     tags {
+      id
       name
+    }
+    tagsWithVotes {
+      tagId
+      tagName
+      upvoteCount
+      downvoteCount
+      currentUserVote
     }
   }
   ${BREWERY_INFO_FRAGMENT}

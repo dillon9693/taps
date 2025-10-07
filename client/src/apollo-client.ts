@@ -6,17 +6,17 @@ import { HttpLink } from "@apollo/client/link/http";
 const GRAPHQL_ENDPOINT =
   process.env.REACT_APP_API_URL || "http://localhost:8000/graphql";
 
-console.log("Graph QL endpoint:", GRAPHQL_ENDPOINT);
-
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path }) => {
+      // eslint-disable-next-line no-console
       console.error(
         `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
       );
     });
   }
   if (networkError) {
+    // eslint-disable-next-line no-console
     console.error(`[Network error]: ${networkError}`);
   }
 });
