@@ -569,11 +569,11 @@ class UnsaveBeerMutation(graphene.Mutation):
         try:
             saved_beer.delete()
         except Exception as e:
-            logger.error(f"Saving of beer failed: {str(e)}", exc_info=True)
+            logger.error(f"Unsaving of beer failed: {str(e)}", exc_info=True)
             return UnsaveBeerMutation(success=False, errors=["Unable to unsave beer."])
 
         logger.debug(
-            f"Successfully un-saved beer {beer_id} for user {user.id}",
+            f"Successfully unsaved beer {beer_id} for user {user.id}",
         )
 
         return UnsaveBeerMutation(success=True, errors=[])
