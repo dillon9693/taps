@@ -86,7 +86,7 @@ class BeerType(DjangoObjectType):
                 tag=tag, beer=self, upvote=False
             ).count()
 
-            current_user_vote_val = user_vote_by_tag_id.get(tag.id, None)
+            current_user_vote = user_vote_by_tag_id.get(tag.id, None)
 
             tag_votes.append(
                 TagVoteType(
@@ -94,7 +94,7 @@ class BeerType(DjangoObjectType):
                     tag_name=tag.name,
                     upvote_count=upvote_count,
                     downvote_count=downvote_count,
-                    current_user_vote=current_user_vote_val,
+                    current_user_vote=current_user_vote,
                 )
             )
         return tag_votes
