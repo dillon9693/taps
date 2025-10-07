@@ -107,10 +107,11 @@ export default function Account() {
                 <TextInput
                   label="Email"
                   type="email"
+                  description="Email is not currently editable"
                   value={email}
                   onChange={(e) => setEmail(e.currentTarget.value)}
                   styles={textInputStyles}
-                  required
+                  disabled
                 />
 
                 {formErrorMessage && (
