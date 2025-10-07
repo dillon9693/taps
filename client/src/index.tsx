@@ -21,6 +21,8 @@ import RequestPasswordReset from "./routes/RequestPasswordReset";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
 import RequireUnauthenticated from "./components/RequireUnauthenticated";
+import Account from "./routes/Account";
+import RequireAuthenticated from "./components/RequireAuthenticated";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
@@ -48,6 +50,14 @@ root.render(
                 <Route path="search" element={<Search />} />
                 <Route path="beer/:id" element={<BeerDetail />} />
                 <Route path="brewery/:id" element={<BreweryDetail />} />
+                <Route
+                  path="account"
+                  element={
+                    <RequireAuthenticated>
+                      <Account />
+                    </RequireAuthenticated>
+                  }
+                />
 
                 {/* Start auth routes */}
                 <Route

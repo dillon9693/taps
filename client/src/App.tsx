@@ -63,6 +63,17 @@ export default function App() {
               Search
             </Button>
 
+            {isAuthenticated && (
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/account"
+                style={{ color: "white" }}
+              >
+                Account
+              </Button>
+            )}
+
             {loadingCurrentUser && (
               <Box
                 style={{
