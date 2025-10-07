@@ -105,3 +105,19 @@ export const TAG_VOTE = gql`
     }
   }
 `;
+
+export type UpdateAccountDetailsResult = {
+  updateAccountDetails: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+export const UPDATE_ACCOUNT_DETAILS = gql`
+  mutation UpdateAccountDetails($firstName: String!, $lastName: String!) {
+    updateAccountDetails(firstName: $firstName, lastName: $lastName) {
+      success
+      errors
+    }
+  }
+`;
