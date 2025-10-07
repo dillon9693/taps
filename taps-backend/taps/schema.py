@@ -13,7 +13,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
-from taps.models import Beer, Brewery, Tag, TagVote
+from taps.models import Beer, Brewery, SavedBeer, Tag, TagVote
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +134,7 @@ class Query(graphene.ObjectType):
         search=graphene.String(required=False),
     )
     featured_beers = graphene.List(BeerType, count=graphene.Int(required=False))
+    saved_beers = graphene.List(BeerType, count=graphene.Int(required=False))
     beer_by_id = graphene.Field(BeerType, id=graphene.ID(required=True))
 
     all_breweries = graphene.List(
@@ -172,6 +173,19 @@ class Query(graphene.ObjectType):
             .filter(average_rating__isnull=False)
             .order_by("-average_rating")[:count]
         )
+
+    def resolve_saved_beers(self, info, count=10):
+        user = info.context.user
+        if not user.is_authenticated:
+            raise Exception("Authenticated required.")
+
+        saved_beers = (
+            SavedBeer.objects.filter(user=user)
+            .prefetch_related("beer")
+            .order_by("-created_at")[:count]
+        )
+
+        return [saved_beer.beer for saved_beer in saved_beers]
 
     def resolve_beer_by_id(self, info, id):
         try:

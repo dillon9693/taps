@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { Beer } from "../types";
 
 // Reusable fragments
 const BREWERY_INFO_FRAGMENT = gql`
@@ -103,4 +104,17 @@ export const GET_CURRENT_USER = gql`
       lastName
     }
   }
+`;
+
+export type SavedBeersResult = {
+  savedBeers: Beer[];
+};
+
+export const SAVED_BEERS = gql`
+  query GetSavedBeers {
+    savedBeers {
+      ...BeerFields
+    }
+  }
+  ${BEER_FIELDS_FRAGMENT}
 `;

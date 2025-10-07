@@ -8,17 +8,26 @@ import {
   Button,
   TextInput,
   Alert,
+  Space,
+  Grid,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { Navigate } from "react-router-dom";
 import { FormEvent, useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
 import { useAuth } from "../contexts/AuthContext";
 import {
   UPDATE_ACCOUNT_DETAILS,
   UpdateAccountDetailsResult,
 } from "../graphql/mutations";
-import { GET_CURRENT_USER } from "../graphql/queries";
+import {
+  GET_CURRENT_USER,
+  SAVED_BEERS,
+  SavedBeersResult,
+} from "../graphql/queries";
+import BeerCard from "../components/BeerCard";
 
 export default function Account() {
   const { currentUser } = useAuth();
@@ -83,12 +92,21 @@ export default function Account() {
   const formErrorMessage =
     error?.message || data?.updateAccountDetails.errors.join(", ");
 
+  const {
+    loading: savedBeersLoading,
+    error: savedBeersError,
+    data: savedBeersData,
+  } = useQuery<SavedBeersResult>(SAVED_BEERS);
+
   return (
     <Container mt="xl" size="sm">
       <Title order={1} mb="lg">
         Account
       </Title>
       <Paper shadow="sm" p="lg" radius="md" withBorder>
+        <Title order={2} mb="md">
+          Account Details
+        </Title>
         <Stack gap="md">
           {isEditing ? (
             <form onSubmit={handleSubmit}>
@@ -170,6 +188,34 @@ export default function Account() {
             </>
           )}
         </Stack>
+      </Paper>
+
+      <Space h="md" />
+
+      <Paper shadow="sm" p="lg" radius="md" withBorder>
+        <Title order={2} mb="md">
+          Your Saved Beers
+        </Title>
+
+        {savedBeersLoading && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+
+        {!savedBeersLoading && !savedBeersError && (
+          <Grid gutter="lg">
+            {savedBeersData?.savedBeers?.map((beer) => (
+              <Grid.Col key={beer.id} span={{ base: 12, md: 6 }}>
+                <BeerCard beer={beer} />
+              </Grid.Col>
+            ))}
+          </Grid>
+        )}
+
+        {!savedBeersLoading && savedBeersError && (
+          <Text c="red">Error loading saved beers.</Text>
+        )}
       </Paper>
     </Container>
   );
