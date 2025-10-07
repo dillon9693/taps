@@ -51,7 +51,7 @@ export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
 
-  const [isSaved, setIsSaved] = useState<boolean>();
+  const [isSaved, setIsSaved] = useState<boolean>(false);
 
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
