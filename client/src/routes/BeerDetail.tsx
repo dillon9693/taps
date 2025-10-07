@@ -190,6 +190,8 @@ export default function BeerDetail() {
                     color={theme.colors.accent[5]}
                     style={{ minWidth: "85px" }}
                     onClick={onSaveButtonClick}
+                    aria-label={isSaved ? "Unsave this beer" : "Save this beer"}
+                    aria-busy={saveBeerLoading || unsaveBeerLoading}
                   >
                     {saveBeerLoading || unsaveBeerLoading ? (
                       <Loader size="xs" color="white" />
