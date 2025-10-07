@@ -510,7 +510,10 @@ class SaveBeerMutation(graphene.Mutation):
 
         try:
             SavedBeer.objects.create(beer=beer, user=user)
-        except IntegrityError:
+        except IntegrityError as e:
+            logger.error(
+                f"Integrity error when saving beer for user: {str(e)}", exc_info=True
+            )
             return SaveBeerMutation(
                 success=False, errors=["Beer has already been saved."]
             )
