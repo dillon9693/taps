@@ -7,6 +7,7 @@ import {
   Group,
   Button,
   TextInput,
+  Alert,
 } from "@mantine/core";
 import { Navigate } from "react-router-dom";
 import { FormEvent, useState } from "react";
@@ -41,16 +42,19 @@ export default function Account() {
     setIsEditing(false);
   };
 
-  const [updateAccountDetails, { loading }] =
+  const [updateAccountDetails, { data, error, loading }] =
     useMutation<UpdateAccountDetailsResult>(UPDATE_ACCOUNT_DETAILS, {
       refetchQueries: [{ query: GET_CURRENT_USER }],
       onCompleted: () => {
-        setIsEditing(false);
+        if (data?.updateAccountDetails.success) {
+          setIsEditing(false);
+        }
       },
     });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+
     updateAccountDetails({
       variables: {
         firstName,
@@ -70,6 +74,9 @@ export default function Account() {
       color: "var(--mantine-color-dimmed)",
     },
   };
+
+  const formErrorMessage =
+    error?.message || data?.updateAccountDetails.errors.join(", ");
 
   return (
     <Container mt="xl" size="sm">
@@ -105,6 +112,12 @@ export default function Account() {
                   styles={textInputStyles}
                   required
                 />
+
+                {formErrorMessage && (
+                  <Alert color="red" title="Error">
+                    {formErrorMessage}
+                  </Alert>
+                )}
 
                 <Group justify="flex-end" mt="md">
                   <Button variant="subtle" onClick={handleCancel} type="button">
