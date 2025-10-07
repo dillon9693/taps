@@ -24,6 +24,7 @@ const BEER_FIELDS_FRAGMENT = gql`
     description
     averageRating
     imageUrl
+    isSaved
     tags {
       id
       name

@@ -33,6 +33,7 @@ export interface BeerSummary {
   averageRating: number;
   imageUrl: string;
   description: string;
+  isSaved: boolean;
   tags: Tag[];
   tagsWithVotes: TagWithVotes[];
 }

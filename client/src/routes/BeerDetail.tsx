@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Container,
   Grid,
@@ -18,10 +18,30 @@ import {
   Anchor,
   useMantineTheme,
 } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { notifications } from "@mantine/notifications";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
 import Tag from "../components/Tag";
+import {
+  SAVE_BEER,
+  SaveBeerResult,
+  UNSAVE_BEER,
+  UnsaveBeerResult,
+} from "../graphql/mutations";
+
+const SAVE_ERROR_NOTIFICATION = {
+  title: "Error!",
+  message: "There was an issue saving this beer. Please try again",
+  color: "red",
+};
+
+const UNSAVE_ERROR_NOTIFICATION = {
+  title: "Error!",
+  message: "There was an issue removing save from this beer. Please try again",
+  color: "red",
+};
 
 type GetBeerResult = {
   beerById: Beer;
@@ -30,16 +50,56 @@ type GetBeerResult = {
 export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
+
+  const [isSaved, setIsSaved] = useState<boolean>(false);
+
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
     skip: !id,
   });
+
+  // Keep this state in sync with updates from the back-end
+  useEffect(() => {
+    if (data?.beerById) {
+      setIsSaved(data.beerById.isSaved);
+    }
+  }, [data]);
 
   usePageTitle({
     title: data?.beerById
       ? `${data.beerById.name} by ${data.beerById.brewery.name}`
       : "Beer Details",
   });
+
+  const [saveBeer, { client: saveBeerClient, loading: saveBeerLoading }] =
+    useMutation<SaveBeerResult>(SAVE_BEER, {
+      onCompleted: (result) => {
+        if (result.saveBeer.success) {
+          setIsSaved(true);
+          saveBeerClient.refetchQueries({ include: [GET_BEER] });
+        } else {
+          notifications.show(SAVE_ERROR_NOTIFICATION);
+        }
+      },
+      onError: () => {
+        notifications.show(SAVE_ERROR_NOTIFICATION);
+      },
+    });
+
+  const [unsaveBeer, { client: unsaveBeerClient, loading: unsaveBeerLoading }] =
+    useMutation<UnsaveBeerResult>(UNSAVE_BEER, {
+      onCompleted: (result) => {
+        if (result.unsaveBeer.success) {
+          setIsSaved(false);
+          unsaveBeerClient.refetchQueries({ include: [GET_BEER] });
+        } else {
+          notifications.show(UNSAVE_ERROR_NOTIFICATION);
+        }
+      },
+      onError: () => {
+        notifications.show(UNSAVE_ERROR_NOTIFICATION);
+      },
+    });
 
   if (loading) {
     return (
@@ -78,6 +138,15 @@ export default function BeerDetail() {
 
   const { beerById: beer } = data;
 
+  const saveButtonText = isSaved ? "Saved!" : "Save";
+  const onSaveButtonClick = () => {
+    if (isSaved) {
+      unsaveBeer({ variables: { beerId: beer.id } });
+    } else {
+      saveBeer({ variables: { beerId: beer.id } });
+    }
+  };
+
   return (
     <Container mt="xl" mb="xl">
       {/* Hero Section */}
@@ -115,6 +184,24 @@ export default function BeerDetail() {
                     size="lg"
                   />
                   <Text size="lg">{beer.averageRating}/5</Text>
+                </Group>
+                <Group align="center" mb="lg">
+                  <Button
+                    size="sm"
+                    radius="md"
+                    variant={isSaved ? "filled" : "outline"}
+                    color={theme.colors.accent[5]}
+                    style={{ minWidth: "85px" }}
+                    onClick={onSaveButtonClick}
+                    aria-label={isSaved ? "Unsave this beer" : "Save this beer"}
+                    aria-busy={saveBeerLoading || unsaveBeerLoading}
+                  >
+                    {saveBeerLoading || unsaveBeerLoading ? (
+                      <Loader size="xs" color="white" />
+                    ) : (
+                      saveButtonText
+                    )}
+                  </Button>
                 </Group>
               </Stack>
             </Card.Section>

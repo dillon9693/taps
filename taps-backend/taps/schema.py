@@ -8,6 +8,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Count
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -40,6 +41,7 @@ class BreweryType(DjangoObjectType):
 class BeerType(DjangoObjectType):
     style_display = graphene.String()
     tags_with_votes = graphene.List(lambda: TagVoteType)
+    is_saved = graphene.Boolean()
 
     class Meta:
         model = Beer
@@ -98,6 +100,19 @@ class BeerType(DjangoObjectType):
                 )
             )
         return tag_votes
+
+    # TODO eventually look into a more efficient way to do this b/c right now it's
+    # likely sending 1 query per returned beer
+    def resolve_is_saved(self, info):
+        user = info.context.user
+        if not user.is_authenticated:
+            return False
+
+        saved_beer = SavedBeer.objects.filter(beer=self, user=user).first()
+        if saved_beer is None:
+            return False
+
+        return True
 
 
 class TagVoteType(graphene.ObjectType):
@@ -488,6 +503,82 @@ class UpdateAccountDetailsMutation(graphene.Mutation):
             )
 
 
+class SaveBeerMutation(graphene.Mutation):
+    class Arguments:
+        beer_id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, beer_id):
+        user = info.context.user
+        if not user.is_authenticated:
+            return SaveBeerMutation(success=False, errors=["Authentication required."])
+
+        try:
+            beer = Beer.objects.get(id=beer_id)
+        except Beer.DoesNotExist:
+            return SaveBeerMutation(success=False, errors=["Beer does not exist."])
+
+        try:
+            SavedBeer.objects.create(beer=beer, user=user)
+        except IntegrityError as e:
+            logger.error(
+                f"Integrity error when saving beer for user: {str(e)}", exc_info=True
+            )
+            return SaveBeerMutation(
+                success=False, errors=["Beer has already been saved."]
+            )
+        except Exception as e:
+            logger.error(f"Saving of beer failed: {str(e)}", exc_info=True)
+            return SaveBeerMutation(success=False, errors=["Unable to save beer."])
+
+        logger.debug(
+            f"Successfully saved beer {beer_id} for user {user.id}",
+        )
+
+        return SaveBeerMutation(success=True, errors=[])
+
+
+class UnsaveBeerMutation(graphene.Mutation):
+    class Arguments:
+        beer_id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, beer_id):
+        user = info.context.user
+        if not user.is_authenticated:
+            return UnsaveBeerMutation(
+                success=False, errors=["Authentication required."]
+            )
+
+        try:
+            beer = Beer.objects.get(id=beer_id)
+        except Beer.DoesNotExist:
+            return UnsaveBeerMutation(success=False, errors=["Beer does not exist."])
+
+        try:
+            saved_beer = SavedBeer.objects.get(beer=beer, user=user)
+        except SavedBeer.DoesNotExist:
+            return UnsaveBeerMutation(
+                success=False, errors=["Beer has not yet been saved."]
+            )
+
+        try:
+            saved_beer.delete()
+        except Exception as e:
+            logger.error(f"Unsaving of beer failed: {str(e)}", exc_info=True)
+            return UnsaveBeerMutation(success=False, errors=["Unable to unsave beer."])
+
+        logger.debug(
+            f"Successfully unsaved beer {beer_id} for user {user.id}",
+        )
+
+        return UnsaveBeerMutation(success=True, errors=[])
+
+
 class Mutation(graphene.ObjectType):
     register_user = RegisterUser.Field()
     login_user = LoginUser.Field()
@@ -496,6 +587,8 @@ class Mutation(graphene.ObjectType):
     reset_password = ResetPassword.Field()
     tag_vote = TagVoteMutation.Field()
     update_account_details = UpdateAccountDetailsMutation.Field()
+    save_beer = SaveBeerMutation.Field()
+    unsave_beer = UnsaveBeerMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

@@ -121,3 +121,35 @@ export const UPDATE_ACCOUNT_DETAILS = gql`
     }
   }
 `;
+
+export type SaveBeerResult = {
+  saveBeer: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+export const SAVE_BEER = gql`
+  mutation SaveBeer($beerId: ID!) {
+    saveBeer(beerId: $beerId) {
+      success
+      errors
+    }
+  }
+`;
+
+export type UnsaveBeerResult = {
+  unsaveBeer: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+export const UNSAVE_BEER = gql`
+  mutation UnsaveBeer($beerId: ID!) {
+    unsaveBeer(beerId: $beerId) {
+      success
+      errors
+    }
+  }
+`;

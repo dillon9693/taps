@@ -205,6 +205,12 @@ export default function Account() {
 
         {!savedBeersLoading && !savedBeersError && (
           <Grid gutter="lg">
+            {savedBeersData?.savedBeers.length === 0 && (
+              <Center m="sm">
+                <Text>You haven&apos;t saved any beers yet!</Text>
+              </Center>
+            )}
+
             {savedBeersData?.savedBeers?.map((beer) => (
               <Grid.Col key={beer.id} span={{ base: 12, md: 6 }}>
                 <BeerCard beer={beer} />
