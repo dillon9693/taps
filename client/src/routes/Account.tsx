@@ -26,7 +26,6 @@ export default function Account() {
   const [lastName, setLastName] = useState(currentUser?.lastName || "");
   const [email, setEmail] = useState(currentUser?.email || "");
 
-  // TODO any way to avoid this check
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
