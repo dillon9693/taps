@@ -18,7 +18,7 @@ import {
   Anchor,
   useMantineTheme,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
@@ -51,13 +51,18 @@ export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
 
-  const [isSaved, setIsSaved] = useState<boolean | null>(null);
-  const saveButtonText = isSaved ? "Saved!" : "Save";
+  const [isSaved, setIsSaved] = useState<boolean>();
 
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
     skip: !id,
   });
+
+  useEffect(() => {
+    if (data?.beerById) {
+      setIsSaved(data.beerById.isSaved);
+    }
+  }, [data]);
 
   usePageTitle({
     title: data?.beerById
@@ -132,10 +137,7 @@ export default function BeerDetail() {
 
   const { beerById: beer } = data;
 
-  if (beer.isSaved !== isSaved) {
-    setIsSaved(beer.isSaved);
-  }
-
+  const saveButtonText = isSaved ? "Saved!" : "Save";
   const onSaveButtonClick = () => {
     if (isSaved) {
       unsaveBeer({ variables: { beerId: beer.id } });
