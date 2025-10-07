@@ -121,8 +121,6 @@ export default function BeerDetail() {
     }
   };
 
-  // TODO change styles when saved vs. unsaved
-
   return (
     <Container mt="xl" mb="xl">
       {/* Hero Section */}
@@ -165,7 +163,9 @@ export default function BeerDetail() {
                   <Button
                     size="sm"
                     radius="md"
-                    style={{ backgroundColor: theme.colors.accent[5] }}
+                    variant={isSaved ? "filled" : "outline"}
+                    color={theme.colors.accent[5]}
+                    style={{ minWidth: "85px" }}
                     onClick={onSaveButtonClick}
                   >
                     {saveBeerLoading || unsaveBeerLoading ? (
