@@ -408,7 +408,8 @@ class TagVoteMutation(graphene.Mutation):
             return TagVoteMutation(success=False, errors=["Authentication required."])
 
         logger.debug(
-            f"TagVoteMutation called by user {user.id} for tag {tag_id} on beer {beer_id} with upvote={upvote}"
+            f"TagVoteMutation called by user {user.id} for tag {tag_id} on beer "
+            f"{beer_id} with upvote={upvote}"
         )
 
         try:

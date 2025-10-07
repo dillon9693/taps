@@ -84,7 +84,10 @@ class TagVote(models.Model):
         unique_together = ("tag", "beer", "user")
 
     def __str__(self):
-        return f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on {self.beer.name}"
+        return (
+            f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on "
+            f"{self.beer.name}"
+        )
 
     @classmethod
     def vote_count(cls, beer: Beer, tag: Tag, upvote: bool):
