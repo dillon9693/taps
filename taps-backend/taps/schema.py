@@ -447,6 +447,33 @@ class TagVoteMutation(graphene.Mutation):
             return TagVoteMutation(success=False, errors=["Unable to record vote."])
 
 
+class UpdateAccountDetailsMutation(graphene.Mutation):
+    class Arguments:
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, first_name, last_name):
+        user = info.context.user
+        if not user.is_authenticated:
+            return UpdateAccountDetailsMutation(
+                success=False, errors=["Authentication required."]
+            )
+
+        try:
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            return UpdateAccountDetailsMutation(success=True, errors=[])
+        except Exception as e:
+            logger.error(f"Account update failed: {str(e)}", exc_info=True)
+            return UpdateAccountDetailsMutation(
+                success=False, errors=["Unable to save account updates."]
+            )
+
+
 class Mutation(graphene.ObjectType):
     register_user = RegisterUser.Field()
     login_user = LoginUser.Field()
@@ -454,6 +481,7 @@ class Mutation(graphene.ObjectType):
     request_password_reset = RequestPasswordReset.Field()
     reset_password = ResetPassword.Field()
     tag_vote = TagVoteMutation.Field()
+    update_account_details = UpdateAccountDetailsMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
