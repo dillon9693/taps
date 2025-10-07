@@ -9,8 +9,14 @@ import {
   TextInput,
 } from "@mantine/core";
 import { Navigate } from "react-router-dom";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import { useMutation } from "@apollo/client";
 import { useAuth } from "../contexts/AuthContext";
+import {
+  UPDATE_ACCOUNT_DETAILS,
+  UpdateAccountDetailsResult,
+} from "../graphql/mutations";
+import { GET_CURRENT_USER } from "../graphql/queries";
 
 export default function Account() {
   const { currentUser } = useAuth();
@@ -35,10 +41,22 @@ export default function Account() {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
-    // TODO: Implement GraphQL mutation to update user
-    console.log("Saving:", { firstName, lastName, email });
-    setIsEditing(false);
+  const [updateAccountDetails, { loading }] =
+    useMutation<UpdateAccountDetailsResult>(UPDATE_ACCOUNT_DETAILS, {
+      refetchQueries: [{ query: GET_CURRENT_USER }],
+      onCompleted: () => {
+        setIsEditing(false);
+      },
+    });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    updateAccountDetails({
+      variables: {
+        firstName,
+        lastName,
+      },
+    });
   };
 
   const textInputStyles = {
@@ -61,36 +79,43 @@ export default function Account() {
       <Paper shadow="sm" p="lg" radius="md" withBorder>
         <Stack gap="md">
           {isEditing ? (
-            <>
-              <TextInput
-                label="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.currentTarget.value)}
-                styles={textInputStyles}
-              />
+            <form onSubmit={handleSubmit}>
+              <Stack gap="md">
+                <TextInput
+                  label="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.currentTarget.value)}
+                  styles={textInputStyles}
+                  required
+                />
 
-              <TextInput
-                label="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.currentTarget.value)}
-                styles={textInputStyles}
-              />
+                <TextInput
+                  label="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.currentTarget.value)}
+                  styles={textInputStyles}
+                  required
+                />
 
-              <TextInput
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.currentTarget.value)}
-                styles={textInputStyles}
-              />
+                <TextInput
+                  label="Email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.currentTarget.value)}
+                  styles={textInputStyles}
+                  required
+                />
 
-              <Group justify="flex-end" mt="md">
-                <Button variant="subtle" onClick={handleCancel}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSave}>Save</Button>
-              </Group>
-            </>
+                <Group justify="flex-end" mt="md">
+                  <Button variant="subtle" onClick={handleCancel} type="button">
+                    Cancel
+                  </Button>
+                  <Button type="submit" loading={loading}>
+                    Save
+                  </Button>
+                </Group>
+              </Stack>
+            </form>
           ) : (
             <>
               <Stack gap="xs">
