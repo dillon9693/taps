@@ -63,7 +63,17 @@ export default function App() {
               Search
             </Button>
 
-            {loadingCurrentUser && <Loader size="xs" color="white" />}
+            {loadingCurrentUser && (
+              <Box
+                style={{
+                  minWidth: "85px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Loader size="xs" color="white" />
+              </Box>
+            )}
 
             {!loadingCurrentUser && !isAuthenticated && (
               <Button
