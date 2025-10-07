@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Container,
   Grid,
@@ -18,10 +18,17 @@ import {
   Anchor,
   useMantineTheme,
 } from "@mantine/core";
+import { useState } from "react";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
 import Tag from "../components/Tag";
+import {
+  SAVE_BEER,
+  SaveBeerResult,
+  UNSAVE_BEER,
+  UnsaveBeerResult,
+} from "../graphql/mutations";
 
 type GetBeerResult = {
   beerById: Beer;
@@ -30,6 +37,10 @@ type GetBeerResult = {
 export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
+
+  const [isSaved, setIsSaved] = useState<boolean | null>(null);
+  const saveButtonText = isSaved ? "Saved!" : "Save";
+
   const { loading, error, data } = useQuery<GetBeerResult>(GET_BEER, {
     variables: { id },
     skip: !id,
@@ -40,6 +51,28 @@ export default function BeerDetail() {
       ? `${data.beerById.name} by ${data.beerById.brewery.name}`
       : "Beer Details",
   });
+
+  const [saveBeer, { client: saveBeerClient }] = useMutation<SaveBeerResult>(
+    SAVE_BEER,
+    {
+      onCompleted: (result) => {
+        if (result.saveBeer.success) {
+          setIsSaved(true);
+          saveBeerClient.refetchQueries({ include: [GET_BEER] });
+        }
+      },
+    },
+  );
+
+  const [unsaveBeer, { client: unsaveBeerClient }] =
+    useMutation<UnsaveBeerResult>(UNSAVE_BEER, {
+      onCompleted: (result) => {
+        if (result.unsaveBeer.success) {
+          setIsSaved(false);
+          unsaveBeerClient.refetchQueries({ include: [GET_BEER] });
+        }
+      },
+    });
 
   if (loading) {
     return (
@@ -78,6 +111,21 @@ export default function BeerDetail() {
 
   const { beerById: beer } = data;
 
+  if (beer.isSaved !== isSaved) {
+    setIsSaved(beer.isSaved);
+  }
+
+  const onSaveButtonClick = () => {
+    if (isSaved) {
+      unsaveBeer({ variables: { beerId: beer.id } });
+    } else {
+      saveBeer({ variables: { beerId: beer.id } });
+    }
+  };
+
+  // TODO add loader when saving
+  // TODO change styles when saved vs. unsaved
+
   return (
     <Container mt="xl" mb="xl">
       {/* Hero Section */}
@@ -115,6 +163,16 @@ export default function BeerDetail() {
                     size="lg"
                   />
                   <Text size="lg">{beer.averageRating}/5</Text>
+                </Group>
+                <Group align="center" mb="lg">
+                  <Button
+                    size="sm"
+                    radius="md"
+                    style={{ backgroundColor: theme.colors.accent[5] }}
+                    onClick={onSaveButtonClick}
+                  >
+                    {saveButtonText}
+                  </Button>
                 </Group>
               </Stack>
             </Card.Section>
