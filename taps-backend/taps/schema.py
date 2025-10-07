@@ -177,7 +177,7 @@ class Query(graphene.ObjectType):
     def resolve_saved_beers(self, info, count=10):
         user = info.context.user
         if not user.is_authenticated:
-            return  # TODO check what happens here?
+            raise Exception("Authenticated required.")
 
         saved_beers = (
             SavedBeer.objects.filter(user=user)
