@@ -41,6 +41,7 @@ class BreweryType(DjangoObjectType):
 class BeerType(DjangoObjectType):
     style_display = graphene.String()
     tags_with_votes = graphene.List(lambda: TagVoteType)
+    is_saved = graphene.Boolean()
 
     class Meta:
         model = Beer
@@ -99,6 +100,18 @@ class BeerType(DjangoObjectType):
                 )
             )
         return tag_votes
+
+    # TODO more efficient way to do this?
+    def resolve_is_saved(self, info):
+        user = info.context.user
+        if not user.is_authenticated:
+            return False
+
+        saved_beer = SavedBeer.objects.filter(beer=self, user=user).first()
+        if saved_beer is None:
+            return False
+
+        return True
 
 
 class TagVoteType(graphene.ObjectType):
