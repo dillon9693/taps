@@ -141,7 +141,7 @@ export default function BeerDetail() {
               <Group gap="xs">
                 {beer.tagsWithVotes.map((tagWithVotes) => (
                   <Tag
-                    key={tagWithVotes.tagId}
+                    key={`${tagWithVotes.tagId}-${beer.id}`}
                     beer={beer}
                     tagWithVotes={tagWithVotes}
                   />

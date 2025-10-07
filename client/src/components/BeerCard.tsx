@@ -114,7 +114,7 @@ export default function BeerCard(props: BeerCardProps) {
 
               {beer.tagsWithVotes.map((tagWithVotes) => (
                 <Tag
-                  key={tagWithVotes.tagId}
+                  key={`${tagWithVotes.tagId}-${beer.id}`}
                   beer={beer}
                   tagWithVotes={tagWithVotes}
                 />
