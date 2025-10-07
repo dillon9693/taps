@@ -3,6 +3,9 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { ApolloProvider } from "@apollo/client";
+import client from "./apollo-client";
+import { AuthProvider } from "./contexts/AuthContext";
 import App from "./App";
 import Home from "./routes/Home";
 import Search from "./routes/Search";
@@ -17,6 +20,7 @@ import ResetPassword from "./routes/ResetPassword";
 import RequestPasswordReset from "./routes/RequestPasswordReset";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
+import RequireUnauthenticated from "./components/RequireUnauthenticated";
 
 const version = process.env.REACT_APP_VERSION;
 if (version) {
@@ -32,32 +36,61 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <MantineProvider theme={theme}>
-      <Notifications />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route index element={<Navigate to="home" replace />} />
-            <Route path="home" element={<Home />} />
-            <Route path="search" element={<Search />} />
-            <Route path="beer/:id" element={<BeerDetail />} />
-            <Route path="brewery/:id" element={<BreweryDetail />} />
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<App />}>
+                <Route index element={<Navigate to="home" replace />} />
+                <Route path="home" element={<Home />} />
+                <Route path="search" element={<Search />} />
+                <Route path="beer/:id" element={<BeerDetail />} />
+                <Route path="brewery/:id" element={<BreweryDetail />} />
 
-            {/* Start auth routes */}
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route
-              path="request-password-reset"
-              element={<RequestPasswordReset />}
-            />
-            <Route path="reset-password" element={<ResetPassword />} />
-            {/* End auth routes */}
-          </Route>
+                {/* Start auth routes */}
+                <Route
+                  path="login"
+                  element={
+                    <RequireUnauthenticated>
+                      <Login />
+                    </RequireUnauthenticated>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <RequireUnauthenticated>
+                      <Register />
+                    </RequireUnauthenticated>
+                  }
+                />
+                <Route
+                  path="request-password-reset"
+                  element={
+                    <RequireUnauthenticated>
+                      <RequestPasswordReset />
+                    </RequireUnauthenticated>
+                  }
+                />
+                <Route
+                  path="reset-password"
+                  element={
+                    <RequireUnauthenticated>
+                      <ResetPassword />
+                    </RequireUnauthenticated>
+                  }
+                />
+                {/* End auth routes */}
+              </Route>
 
-          <Route path="*" element={<Navigate to="home" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </MantineProvider>
+              <Route path="*" element={<Navigate to="home" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </MantineProvider>
+      </AuthProvider>
+    </ApolloProvider>
   </React.StrictMode>,
 );
 

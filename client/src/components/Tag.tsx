@@ -4,11 +4,11 @@ import {
   IconTriangleFilled,
   IconTriangleInvertedFilled,
 } from "@tabler/icons-react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
 import type { Beer, TagWithVotes } from "../types";
 import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
-import { GET_CURRENT_USER } from "../graphql/queries";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
 
 interface TagProps {
@@ -22,15 +22,7 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
     tagWithVotes.currentUserVote,
   );
 
-  const { data: currentUserData, error: currentUserError } = useQuery(
-    GET_CURRENT_USER,
-    {
-      errorPolicy: "all",
-      fetchPolicy: "cache-first",
-    },
-  );
-
-  const isAuthenticated = !currentUserError && !!currentUserData?.currentUser;
+  const { isAuthenticated } = useAuth();
 
   const [voteForTag, { data, loading }] = useMutation<TagVoteResult>(TAG_VOTE);
 

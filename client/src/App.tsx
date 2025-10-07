@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { ApolloProvider, useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   AppShell,
   Container,
@@ -14,23 +14,13 @@ import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
 import { LOGOUT_USER } from "./graphql/mutations";
-import { GET_CURRENT_USER } from "./graphql/queries";
+import { useAuth } from "./contexts/AuthContext";
 
-function AppContent() {
+export default function App() {
   const theme = useMantineTheme();
   const loc = useLocation();
 
-  // Query current user to determine authentication state
-  const {
-    data,
-    loading: loadingCurrentUser,
-    error: currentUserError,
-  } = useQuery(GET_CURRENT_USER, {
-    errorPolicy: "all", // Don't crash on network errors
-  });
-
-  // If query fails, assume not authenticated to show login button
-  const isAuthenticated = !currentUserError && !!data?.currentUser;
+  const { isAuthenticated, loading: loadingCurrentUser } = useAuth();
 
   const [logout, { loading: loadingLogout }] = useMutation(LOGOUT_USER, {
     onCompleted: () => {
@@ -105,13 +95,5 @@ function AppContent() {
         </Container>
       </AppShell.Main>
     </AppShell>
-  );
-}
-
-export default function App() {
-  return (
-    <ApolloProvider client={client}>
-      <AppContent />
-    </ApolloProvider>
   );
 }
