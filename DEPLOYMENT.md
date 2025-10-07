@@ -7,7 +7,7 @@ This document outlines the deployment process for the Taps beer discovery applic
 The Taps application is deployed using the following architecture:
 
 - **Frontend**: React application deployed to Vercel at `taps.dillonkerr.com`
-- **Backend**: Django application deployed to Railway at `https://taps-production.up.railway.app`
+- **Backend**: Django application deployed to Railway at `https://tapsapi.dillonkerr.com`
 - **Database**: PostgreSQL database managed by Railway
 
 ## Infrastructure Components
@@ -58,20 +58,15 @@ Staging deployments are planned for future implementation and will likely use Ra
 
 ## Manual Deployment Steps
 
+TODO out of date
+
 ### Frontend (Vercel)
 
-1. Install Vercel CLI: `npm install -g vercel`
-2. Navigate to the client directory: `cd client`
-3. Login to Vercel: `vercel login`
-4. Deploy to production: `vercel --prod`
-5. Configure custom domain: `vercel domains add taps.dillonkerr.com`
+TODO update
 
-### Backend (AWS)
+### Backend (Railway)
 
-1. Deploy infrastructure: `cd infrastructure && cdk deploy --all`
-2. Build Docker image: `cd taps-backend && docker build -t taps-backend .`
-3. Push to ECR: `docker push <ecr-repository-uri>:latest`
-4. Update ECS service: `aws ecs update-service --cluster taps-production-cluster --service taps-production-service --force-new-deployment`
+TODO update
 
 ## Monitoring and Maintenance
 
