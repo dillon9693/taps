@@ -147,6 +147,10 @@ export default function BeerDetail() {
     }
   };
 
+  const handleAddTag = () => {
+    console.log("Add a new tag");
+  };
+
   return (
     <Container mt="xl" mb="xl">
       {/* Hero Section */}
@@ -233,6 +237,22 @@ export default function BeerDetail() {
                     tagWithVotes={tagWithVotes}
                   />
                 ))}
+              </Group>
+
+              <Group mt="xs">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius="xl"
+                  style={{
+                    borderColor: theme.colors.accent[5],
+                    color: theme.colors.accent[5],
+                    fontSize: "12px",
+                  }}
+                  onClick={handleAddTag}
+                >
+                  Add Tag
+                </Button>
               </Group>
             </Paper>
           )}
