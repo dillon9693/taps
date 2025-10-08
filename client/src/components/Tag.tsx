@@ -14,9 +14,14 @@ import styles from "./Tag.module.css";
 interface TagProps {
   beer: Beer;
   tagWithVotes: TagWithVotes;
+  withVotes?: boolean;
 }
 
-export default function Tag({ beer, tagWithVotes }: TagProps) {
+export default function Tag({
+  beer,
+  tagWithVotes,
+  withVotes = true,
+}: TagProps) {
   const theme = useMantineTheme();
   const [userVoteType, setUserVoteType] = useState(
     tagWithVotes.currentUserVote,
@@ -69,37 +74,43 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
         color: theme.colors.accent[5],
       }}
     >
-      <Button
-        p={2}
-        m={2}
-        variant="subtle"
-        onClick={performVoteFunc(false)}
-        disabled={
-          loading ||
-          !isAuthenticated ||
-          (userVoteType !== null && !userVoteType)
-        }
-        className={styles.voteButton}
-      >
-        <IconTriangleInvertedFilled size={10} />
-        <Text size="xs">{downvoteCount}</Text>
-      </Button>
+      {withVotes && (
+        <Button
+          p={2}
+          m={2}
+          variant="subtle"
+          onClick={performVoteFunc(false)}
+          disabled={
+            loading ||
+            !isAuthenticated ||
+            (userVoteType !== null && !userVoteType)
+          }
+          className={styles.voteButton}
+        >
+          <IconTriangleInvertedFilled size={10} />
+          <Text size="xs">{downvoteCount}</Text>
+        </Button>
+      )}
 
       {tagWithVotes.tagName}
 
-      <Button
-        p={2}
-        m={2}
-        variant="subtle"
-        onClick={performVoteFunc(true)}
-        disabled={
-          loading || !isAuthenticated || (userVoteType !== null && userVoteType)
-        }
-        className={styles.voteButton}
-      >
-        <IconTriangleFilled size={10} />
-        <Text size="xs">{upvoteCount}</Text>
-      </Button>
+      {withVotes && (
+        <Button
+          p={2}
+          m={2}
+          variant="subtle"
+          onClick={performVoteFunc(true)}
+          disabled={
+            loading ||
+            !isAuthenticated ||
+            (userVoteType !== null && userVoteType)
+          }
+          className={styles.voteButton}
+        >
+          <IconTriangleFilled size={10} />
+          <Text size="xs">{upvoteCount}</Text>
+        </Button>
+      )}
     </Badge>
   );
 }
