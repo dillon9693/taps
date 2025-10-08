@@ -16,6 +16,12 @@ class RateLimitUtilsTest(TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
+        from django.conf import settings
+
+        # Enable rate limiting for these tests
+        self._original_testing = settings.TESTING
+        settings.TESTING = False
+
         self.factory = RequestFactory()
         self.user = User.objects.create_user(
             username="testuser", email="test@example.com", password="testpass"
@@ -24,6 +30,10 @@ class RateLimitUtilsTest(TestCase):
 
     def tearDown(self):
         """Clean up after tests."""
+        from django.conf import settings
+
+        # Restore original TESTING flag
+        settings.TESTING = self._original_testing
         cache.clear()
 
     def test_get_rate_limit_key_authenticated(self):
