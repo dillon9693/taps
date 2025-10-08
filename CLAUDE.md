@@ -23,9 +23,11 @@ Taps is a beer discovery application with a React frontend and Django/GraphQL ba
 - **Django 5.1** with Python 3.11+
 - **Graphene-Django** for GraphQL API
 - **PostgreSQL** for production database
+- **Redis** for rate limiting cache
 - Core models: `Beer`, `Brewery`, `Tag` in `taps/models.py`
 - GraphQL schema in `taps/schema.py` with queries for beers, breweries, and tags
 - **Poetry** for dependency management
+- **Rate limiting** implemented via custom middleware and decorators
 
 ## Development Commands
 
@@ -59,11 +61,13 @@ poetry run ruff check .                    # Lint code
 ### Docker Development
 
 ```bash
-docker compose up                                           # Start all services
-docker compose down                                         # Stop all service
+docker compose up                                           # Start all services (db, redis, backend, frontend)
+docker compose down                                         # Stop all services
 docker compose exec backend poetry run python manage.py add_sample_data  # Add sample data
 docker compose exec backend poetry run python manage.py createsuperuser  # Create admin user
 ```
+
+**Note:** Docker Compose includes a Redis service for rate limiting. The backend depends on Redis being healthy before starting.
 
 ## Key Configuration
 
@@ -71,6 +75,10 @@ docker compose exec backend poetry run python manage.py createsuperuser  # Creat
 
 - Frontend: `REACT_APP_API_URL` (defaults to http://localhost:8000/graphql)
 - Backend: Uses django-environ for configuration
+  - `DATABASE_URL`: PostgreSQL connection string
+  - `REDIS_URL`: Redis connection string (required for rate limiting)
+  - `SECRET_KEY`: Django secret key
+  - `FRONTEND_URL`: Frontend URL for CORS and password reset emails
 
 ### Code Quality
 
@@ -85,6 +93,26 @@ docker compose exec backend poetry run python manage.py createsuperuser  # Creat
 - CI runs both test suites on pull requests
 
 ## GraphQL API
+
+### Rate Limiting
+
+The API implements rate limiting to protect against abuse:
+
+**Rate Limit Tiers:**
+- Anonymous users:
+  - Queries: 100 requests / 15 minutes
+  - Mutations: 20 requests / 15 minutes
+  - Auth mutations (login, register, password reset): 5 requests / 15 minutes
+- Authenticated users:
+  - Queries: 500 requests / 15 minutes
+  - Mutations: 100 requests / 15 minutes
+  - Auth mutations: 10 requests / 15 minutes
+
+**Implementation:**
+- Base rate limiting via `GraphQLRateLimitMiddleware` in `taps_backend/middleware.py`
+- Fine-grained limits via `@graphql_ratelimit` decorator on mutation resolvers
+- Rate limit tracking stored in Redis cache
+- Returns GraphQL error with code `RATE_LIMIT_EXCEEDED` when limit exceeded
 
 ### Key Queries
 
@@ -115,9 +143,14 @@ query GetFeaturedBeers {
 ## Deployment
 
 - Frontend: Vercel (configured via vercel.json)
-- Backend: AWS ECS with CDK
-- Database: AWS RDS PostgreSQL
+- Backend: Railway
+- Database: Railway PostgreSQL
+- Redis: Railway Redis (must be provisioned separately for production)
 - CI/CD: GitHub Actions with separate workflows for frontend and backend testing
+
+**Production Setup Notes:**
+- Redis must be manually provisioned in Railway and connected to the backend service
+- Set `REDIS_URL` environment variable in Railway to the Redis connection string
 
 ## Data Models
 

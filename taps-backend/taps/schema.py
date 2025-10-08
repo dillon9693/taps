@@ -15,6 +15,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
 from taps.models import Beer, Brewery, SavedBeer, Tag, TagVote
+from taps.rate_limit import graphql_ratelimit
 
 logger = logging.getLogger(__name__)
 
@@ -255,6 +256,7 @@ class RegisterUser(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @graphql_ratelimit(anon_rate="5/15m", auth_rate="10/15m")
     def mutate(self, info, email, password, first_name, last_name):
         errors = []
 
@@ -316,6 +318,7 @@ class LoginUser(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @graphql_ratelimit(anon_rate="5/15m", auth_rate="10/15m")
     def mutate(self, info, email, password):
         errors = []
 
@@ -349,6 +352,7 @@ class RequestPasswordReset(graphene.Mutation):
     success = graphene.Boolean()
     message = graphene.String()
 
+    @graphql_ratelimit(anon_rate="5/15m", auth_rate="10/15m")
     def mutate(self, info, email):
         try:
             user = User.objects.get(email=email)
@@ -392,6 +396,7 @@ class ResetPassword(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @graphql_ratelimit(anon_rate="5/15m", auth_rate="10/15m")
     def mutate(self, info, uid, token, new_password):
         errors = []
 
