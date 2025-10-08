@@ -20,6 +20,7 @@ import {
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
@@ -30,6 +31,7 @@ import {
   UNSAVE_BEER,
   UnsaveBeerResult,
 } from "../graphql/mutations";
+import AddTagModal from "../components/AddTagModal";
 
 const SAVE_ERROR_NOTIFICATION = {
   title: "Error!",
@@ -101,6 +103,11 @@ export default function BeerDetail() {
       },
     });
 
+  const [
+    addTagModalOpened,
+    { open: openAddTagModal, close: closeAddTagModal },
+  ] = useDisclosure();
+
   if (loading) {
     return (
       <Container mt="xl">
@@ -148,11 +155,17 @@ export default function BeerDetail() {
   };
 
   const handleAddTag = () => {
-    console.log("Add a new tag");
+    openAddTagModal();
   };
 
   return (
     <Container mt="xl" mb="xl">
+      <AddTagModal
+        beer={beer}
+        opened={addTagModalOpened}
+        close={closeAddTagModal}
+      />
+
       {/* Hero Section */}
       <Card mb="lg" withBorder shadow="md">
         <Grid>
