@@ -31,7 +31,6 @@ interface TagProps {
   variant?: BadgeProps["variant"];
 }
 
-// TODO if on-click, add hover styles
 export default function Tag({
   beer,
   tag,
@@ -103,22 +102,28 @@ export default function Tag({
       }
     };
 
-  const handleBadgeClick = (e: MouseEvent) => {
+  const handleTagClick = (e: MouseEvent) => {
     if (onClick) {
       onClick(e, normalizedTag);
     }
   };
 
+  const ParentComponent = onClick ? Button : Badge;
+
   return (
-    <Badge
+    <ParentComponent
       key={normalizedTag.name}
       variant={variant}
       size="sm"
       style={{
         borderColor: theme.colors.accent[5],
+        borderRadius: "10px",
         color: theme.colors.accent[5],
+        fontSize: "10px",
+        height: "25px",
+        textTransform: "uppercase",
       }}
-      onClick={handleBadgeClick}
+      onClick={handleTagClick}
     >
       {withVotes && (
         <Button
@@ -157,6 +162,6 @@ export default function Tag({
           <Text size="xs">{upvoteCount}</Text>
         </Button>
       )}
-    </Badge>
+    </ParentComponent>
   );
 }
