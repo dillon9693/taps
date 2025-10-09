@@ -441,9 +441,7 @@ class NewTagsForBeerTestCase(TestCase):
         self.client.force_login(self.user)
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(
-            name="Test Brewery", location="Test City"
-        )
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
 
         # Create a beer
         self.beer = Beer.objects.create(
