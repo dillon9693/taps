@@ -1,7 +1,17 @@
-import { Button, Group, Modal, Text, useMantineTheme } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Group,
+  Loader,
+  Modal,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { MouseEvent, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { Beer, Tag as TagType } from "../types";
 import Tag from "./Tag";
+import { NEW_TAGS_FOR_BEER, NewTagsForBeerResult } from "../graphql/queries";
 
 interface AddTagModalProps {
   beer: Beer;
@@ -15,24 +25,22 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const [selectedTags, setSelectedTags] = useState(new Set<string>());
   const [errorMessage, setErrorMessage] = useState("");
 
-  // TOOD fetch from back-end
+  // TODO handle errors
+  const { data, loading } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
+    variables: {
+      beerId: beer.id,
+    },
+  });
+
   // TODO change these to just tags
-  const tags = [
-    {
-      tagId: "123",
-      tagName: "Hazy",
-      upvoteCount: 1,
-      downvoteCount: 2,
+  const tags =
+    data?.newTagsForBeer.map((tag) => ({
+      tagId: tag.id,
+      tagName: tag.name,
+      upvoteCount: 0,
+      downvoteCount: 0,
       currentUserVote: null,
-    },
-    {
-      tagId: "124",
-      tagName: "Juicy",
-      upvoteCount: 1,
-      downvoteCount: 2,
-      currentUserVote: null,
-    },
-  ];
+    })) || [];
 
   const handleTagClick = (e: MouseEvent, tag: TagType) => {
     if (selectedTags.has(tag.id)) {
@@ -71,16 +79,23 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
       title={`Adding Tags for ${beer.name}`}
     >
       <Group mt="8" mb="8">
-        {tags.map((tag) => (
-          <Tag
-            key={`add-${tag.tagId}-${beer.id}`}
-            beer={beer}
-            tagWithVotes={tag}
-            withVotes={false}
-            onClick={handleTagClick}
-            variant={selectedTags.has(tag.tagId) ? "filled" : "outline"}
-          />
-        ))}
+        {loading && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+
+        {!loading &&
+          tags.map((tag) => (
+            <Tag
+              key={`add-${tag.tagId}-${beer.id}`}
+              beer={beer}
+              tagWithVotes={tag}
+              withVotes={false}
+              onClick={handleTagClick}
+              variant={selectedTags.has(tag.tagId) ? "filled" : "outline"}
+            />
+          ))}
       </Group>
 
       <Group mt="8" mb="8">
