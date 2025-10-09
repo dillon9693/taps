@@ -8,10 +8,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { MouseEvent, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { notifications } from "@mantine/notifications";
 import { Beer, Tag as TagType } from "../types";
 import Tag from "./Tag";
 import { NEW_TAGS_FOR_BEER, NewTagsForBeerResult } from "../graphql/queries";
+import { ADD_TAGS_FOR_BEER, AddTagsForBeerResult } from "../graphql/mutations";
 
 interface AddTagModalProps {
   beer: Beer;
@@ -26,15 +28,18 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const [errorMessage, setErrorMessage] = useState("");
 
   // TODO handle errors
-  const { data, loading } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
-    variables: {
-      beerId: beer.id,
+  const { data: newTagsForBeerData, loading } = useQuery<NewTagsForBeerResult>(
+    NEW_TAGS_FOR_BEER,
+    {
+      variables: {
+        beerId: beer.id,
+      },
     },
-  });
+  );
 
   // TODO change these to just tags
   const tags =
-    data?.newTagsForBeer.map((tag) => ({
+    newTagsForBeerData?.newTagsForBeer.map((tag) => ({
       tagId: tag.id,
       tagName: tag.name,
       upvoteCount: 0,
@@ -53,22 +58,44 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     }
   };
 
-  const handleAddTagsClick = () => {
-    console.log("Adding tags");
-    console.log(selectedTags);
-
-    if (selectedTags.size === 0) {
-      setErrorMessage("Please select at least one tag.");
-    }
-
-    // TODO save
-  };
-
   const onModalClose = () => {
     setSelectedTags(new Set());
     setErrorMessage("");
 
     close();
+  };
+
+  const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(ADD_TAGS_FOR_BEER);
+
+  const handleAddTagsClick = async () => {
+    if (selectedTags.size === 0) {
+      setErrorMessage("Please select at least one tag.");
+      return;
+    }
+
+    const { data, errors } = await addTagsForBeer({
+      variables: {
+        beerId: beer.id,
+        tagIds: [...selectedTags],
+      },
+    });
+
+    if (errors && errors.length > 0) {
+      setErrorMessage("Something went wrong. Please try again.");
+      return;
+    }
+
+    if (data && !data.addTagsForBeer.success) {
+      setErrorMessage(data.addTagsForBeer.errors[0]);
+      return;
+    }
+
+    onModalClose();
+    notifications.show({
+      title: "Tags added!",
+      message: "The selected tags were added successfully.",
+      color: "green",
+    });
   };
 
   // TODO display tags staggered?
