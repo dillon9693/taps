@@ -19,6 +19,7 @@ interface TagProps {
   variant?: string; // TODO type using mantine
 }
 
+// TODO if on-click, add hover styles
 export default function Tag({
   beer,
   tagWithVotes,
