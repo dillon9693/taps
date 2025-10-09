@@ -158,10 +158,6 @@ export default function BeerDetail() {
     }
   };
 
-  const handleAddTag = () => {
-    openAddTagModal();
-  };
-
   return (
     <Container mt="xl" mb="xl">
       <AddTagModal
@@ -275,7 +271,7 @@ export default function BeerDetail() {
                     color: theme.colors.accent[5],
                     fontSize: "12px",
                   }}
-                  onClick={handleAddTag}
+                  onClick={openAddTagModal}
                   disabled={!isAuthenticated}
                 >
                   Add Tag
