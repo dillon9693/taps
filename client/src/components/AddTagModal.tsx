@@ -119,6 +119,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
         placeholder="Search for tags..."
         value={searchTerm}
         onChange={(event) => setSearchTerm(event.currentTarget.value)}
+        maxLength={50}
         mb="md"
       />
 

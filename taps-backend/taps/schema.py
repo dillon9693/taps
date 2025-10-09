@@ -247,7 +247,9 @@ class Query(graphene.ObjectType):
         qs = Tag.objects.exclude(beers__id=beer_id)
 
         if search:
-            qs = qs.filter(name__icontains=search)
+            # Limit search term to 50 characters for security and performance
+            search_term = search[:50]
+            qs = qs.filter(name__icontains=search_term)
 
         return qs.order_by("name")[:count]
 
