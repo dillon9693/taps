@@ -1,37 +1,77 @@
 import { useState, type MouseEvent } from "react";
-import { Badge, Button, Text, useMantineTheme } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Text,
+  useMantineTheme,
+  type BadgeProps,
+} from "@mantine/core";
 import {
   IconTriangleFilled,
   IconTriangleInvertedFilled,
 } from "@tabler/icons-react";
 import { useMutation } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
-import type { Beer, TagWithVotes } from "../types";
+import {
+  isTagWithVotes,
+  toNormalizedTag,
+  type Beer,
+  type Tag as TagType,
+  type TagWithVotes,
+} from "../types";
 import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
 
-interface TagProps {
+type SharedProps = {
   beer: Beer;
-  tagWithVotes: TagWithVotes;
-}
+  variant?: BadgeProps["variant"];
+};
 
-export default function Tag({ beer, tagWithVotes }: TagProps) {
+type TagPropsWithVotes = SharedProps & {
+  tag: TagWithVotes;
+  withVotes: true;
+  onClick?: never; // Explicitly forbidden
+};
+
+type TagPropsWithoutVotes = SharedProps & {
+  tag: TagType;
+  withVotes: false;
+  onClick?: (e: MouseEvent, tag: TagType) => void;
+};
+
+type TagProps = TagPropsWithVotes | TagPropsWithoutVotes;
+
+export default function Tag({
+  beer,
+  tag,
+  withVotes = true,
+  onClick = undefined,
+  variant = "outline",
+}: TagProps) {
   const theme = useMantineTheme();
+  const normalizedTag = toNormalizedTag(tag);
+
   const [userVoteType, setUserVoteType] = useState(
-    tagWithVotes.currentUserVote,
+    isTagWithVotes(tag) ? tag.currentUserVote : null,
   );
 
   const { isAuthenticated } = useAuth();
 
   const [voteForTag, { data, loading }] = useMutation<TagVoteResult>(TAG_VOTE);
 
-  const upvoteCount = data?.tagVote?.success
-    ? data.tagVote.newUpvoteCount
-    : tagWithVotes.upvoteCount;
-  const downvoteCount = data?.tagVote?.success
-    ? data.tagVote.newDownvoteCount
-    : tagWithVotes.downvoteCount;
+  let upvoteCount = 0;
+  let downvoteCount = 0;
+
+  if (isTagWithVotes(tag)) {
+    upvoteCount = data?.tagVote?.success
+      ? data.tagVote.newUpvoteCount
+      : tag.upvoteCount;
+
+    downvoteCount = data?.tagVote?.success
+      ? data.tagVote.newDownvoteCount
+      : tag.downvoteCount;
+  }
 
   const performVoteFunc =
     (upvote: boolean) => async (e: MouseEvent<HTMLButtonElement>) => {
@@ -40,9 +80,13 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
       e.preventDefault();
       e.stopPropagation();
 
+      if (!isTagWithVotes(tag)) {
+        throw new Error("Can only vote when `tag` is of type `TagWithVotes`");
+      }
+
       const result = await voteForTag({
         variables: {
-          tagId: tagWithVotes.tagId,
+          tagId: tag.tagId,
           beerId: beer.id,
           upvote,
         },
@@ -59,47 +103,66 @@ export default function Tag({ beer, tagWithVotes }: TagProps) {
       }
     };
 
+  const handleTagClick = (e: MouseEvent) => {
+    if (onClick) {
+      onClick(e, normalizedTag);
+    }
+  };
+
+  const ParentComponent = onClick ? Button : Badge;
+
   return (
-    <Badge
-      key={tagWithVotes.tagName}
-      variant="outline"
+    <ParentComponent
+      key={normalizedTag.name}
+      variant={variant}
       size="sm"
       style={{
         borderColor: theme.colors.accent[5],
+        borderRadius: "10px",
         color: theme.colors.accent[5],
+        fontSize: "10px",
+        height: "25px",
+        textTransform: "uppercase",
       }}
+      onClick={handleTagClick}
     >
-      <Button
-        p={2}
-        m={2}
-        variant="subtle"
-        onClick={performVoteFunc(false)}
-        disabled={
-          loading ||
-          !isAuthenticated ||
-          (userVoteType !== null && !userVoteType)
-        }
-        className={styles.voteButton}
-      >
-        <IconTriangleInvertedFilled size={10} />
-        <Text size="xs">{downvoteCount}</Text>
-      </Button>
+      {withVotes && (
+        <Button
+          p={2}
+          m={2}
+          variant="subtle"
+          onClick={performVoteFunc(false)}
+          disabled={
+            loading ||
+            !isAuthenticated ||
+            (userVoteType !== null && !userVoteType)
+          }
+          className={styles.voteButton}
+        >
+          <IconTriangleInvertedFilled size={10} />
+          <Text size="xs">{downvoteCount}</Text>
+        </Button>
+      )}
 
-      {tagWithVotes.tagName}
+      {normalizedTag.name}
 
-      <Button
-        p={2}
-        m={2}
-        variant="subtle"
-        onClick={performVoteFunc(true)}
-        disabled={
-          loading || !isAuthenticated || (userVoteType !== null && userVoteType)
-        }
-        className={styles.voteButton}
-      >
-        <IconTriangleFilled size={10} />
-        <Text size="xs">{upvoteCount}</Text>
-      </Button>
-    </Badge>
+      {withVotes && (
+        <Button
+          p={2}
+          m={2}
+          variant="subtle"
+          onClick={performVoteFunc(true)}
+          disabled={
+            loading ||
+            !isAuthenticated ||
+            (userVoteType !== null && userVoteType)
+          }
+          className={styles.voteButton}
+        >
+          <IconTriangleFilled size={10} />
+          <Text size="xs">{upvoteCount}</Text>
+        </Button>
+      )}
+    </ParentComponent>
   );
 }

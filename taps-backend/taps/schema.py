@@ -160,6 +160,9 @@ class Query(graphene.ObjectType):
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
+    new_tags_for_beer = graphene.List(
+        TagType, beer_id=graphene.ID(required=True), count=graphene.Int(required=False)
+    )
 
     current_user = graphene.Field(UserType)
 
@@ -236,6 +239,9 @@ class Query(graphene.ObjectType):
             .annotate(beer_count=Count("beers"))
             .order_by("-beer_count", "name")[:count]
         )
+
+    def resolve_new_tags_for_beer(self, info, beer_id, count=10):
+        return Tag.objects.exclude(beers__id=beer_id).order_by("name")[:count]
 
     def resolve_current_user(self, info):
         user = info.context.user
@@ -579,6 +585,51 @@ class UnsaveBeerMutation(graphene.Mutation):
         return UnsaveBeerMutation(success=True, errors=[])
 
 
+class AddTagsForBeerMutation(graphene.Mutation):
+    class Arguments:
+        beer_id = graphene.ID(required=True)
+        tag_ids = graphene.List(graphene.ID, required=True)
+
+    success = graphene.Boolean()
+    errors = graphene.List(graphene.String)
+
+    def mutate(self, info, beer_id, tag_ids):
+        user = info.context.user
+        if not user.is_authenticated:
+            return AddTagsForBeerMutation(
+                success=False, errors=["Authentication required."]
+            )
+
+        try:
+            beer = Beer.objects.get(id=beer_id)
+        except Beer.DoesNotExist:
+            return AddTagsForBeerMutation(
+                success=False, errors=["Beer does not exist."]
+            )
+
+        if len(tag_ids) == 0:
+            return AddTagsForBeerMutation(
+                success=False, errors=["Must specify at least one tag ID."]
+            )
+
+        tags = Tag.objects.filter(id__in=tag_ids).all()
+
+        if len(tags) != len(tag_ids):
+            return AddTagsForBeerMutation(
+                success=False, errors=["Invalid tag IDs specified."]
+            )
+
+        try:
+            beer.tags.add(*tags)
+        except Exception as e:
+            logger.error(f"Adding tag to beer failed: {str(e)}", exc_info=True)
+            return AddTagsForBeerMutation(
+                success=False, errors=["Unable to add tag to beer."]
+            )
+
+        return AddTagsForBeerMutation(success=True, errors=[])
+
+
 class Mutation(graphene.ObjectType):
     register_user = RegisterUser.Field()
     login_user = LoginUser.Field()
@@ -589,6 +640,7 @@ class Mutation(graphene.ObjectType):
     update_account_details = UpdateAccountDetailsMutation.Field()
     save_beer = SaveBeerMutation.Field()
     unsave_beer = UnsaveBeerMutation.Field()
+    add_tags_for_beer = AddTagsForBeerMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

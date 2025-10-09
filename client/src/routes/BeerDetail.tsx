@@ -17,9 +17,11 @@ import {
   Stack,
   Anchor,
   useMantineTheme,
+  Tooltip,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 import { GET_BEER } from "../graphql/queries";
 import type { Beer } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
@@ -30,6 +32,8 @@ import {
   UNSAVE_BEER,
   UnsaveBeerResult,
 } from "../graphql/mutations";
+import AddTagModal from "../components/AddTagModal";
+import { useAuth } from "../contexts/AuthContext";
 
 const SAVE_ERROR_NOTIFICATION = {
   title: "Error!",
@@ -50,6 +54,8 @@ type GetBeerResult = {
 export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
+
+  const { isAuthenticated } = useAuth();
 
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
@@ -101,6 +107,11 @@ export default function BeerDetail() {
       },
     });
 
+  const [
+    addTagModalOpened,
+    { open: openAddTagModal, close: closeAddTagModal },
+  ] = useDisclosure(false);
+
   if (loading) {
     return (
       <Container mt="xl">
@@ -149,6 +160,12 @@ export default function BeerDetail() {
 
   return (
     <Container mt="xl" mb="xl">
+      <AddTagModal
+        beer={beer}
+        opened={addTagModalOpened}
+        close={closeAddTagModal}
+      />
+
       {/* Hero Section */}
       <Card mb="lg" withBorder shadow="md">
         <Grid>
@@ -220,22 +237,49 @@ export default function BeerDetail() {
             <Text lh={1.7}>{beer.description}</Text>
           </Paper>
 
-          {beer.tagsWithVotes.length > 0 && (
-            <Paper p="lg" withBorder shadow="sm">
-              <Title order={4} mb="md">
-                Tags
-              </Title>
-              <Group gap="xs">
-                {beer.tagsWithVotes.map((tagWithVotes) => (
+          <Paper p="lg" withBorder shadow="sm">
+            <Title order={4} mb="md">
+              Tags
+            </Title>
+            <Group gap="xs">
+              {beer.tagsWithVotes.length > 0 &&
+                beer.tagsWithVotes.map((tagWithVotes) => (
                   <Tag
                     key={`${tagWithVotes.tagId}-${beer.id}`}
                     beer={beer}
-                    tagWithVotes={tagWithVotes}
+                    tag={tagWithVotes}
+                    withVotes
                   />
                 ))}
-              </Group>
-            </Paper>
-          )}
+
+              {beer.tagsWithVotes.length === 0 && (
+                <Text size="sm">No tags added yet!</Text>
+              )}
+            </Group>
+
+            <Group mt="xs">
+              <Tooltip
+                label="Sign in to add tags"
+                disabled={isAuthenticated}
+                withArrow
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius="xl"
+                  style={{
+                    borderColor: theme.colors.accent[5],
+                    color: theme.colors.accent[5],
+                    fontSize: "12px",
+                  }}
+                  onClick={openAddTagModal}
+                  disabled={!isAuthenticated}
+                >
+                  Add Tag
+                </Button>
+              </Tooltip>
+            </Group>
+          </Paper>
         </Grid.Col>
 
         {/* Right Column - Technical Specs */}

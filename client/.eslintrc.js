@@ -48,6 +48,7 @@ module.exports = {
         exceptions: ["TextInput", "PasswordInput", "NumberInput"],
       },
     ],
+    "react/require-default-props": "off", // Not needed for functional components
 
     // Use TS-specific ESLint rules instead of base ESLint rules
     "no-shadow": "off",

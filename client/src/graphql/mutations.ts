@@ -153,3 +153,19 @@ export const UNSAVE_BEER = gql`
     }
   }
 `;
+
+export type AddTagsForBeerResult = {
+  addTagsForBeer: {
+    success: boolean;
+    errors: string[];
+  };
+};
+
+export const ADD_TAGS_FOR_BEER = gql`
+  mutation AddTagsForBeer($beerId: ID!, $tagIds: [ID!]!) {
+    addTagsForBeer(beerId: $beerId, tagIds: $tagIds) {
+      success
+      errors
+    }
+  }
+`;
