@@ -110,7 +110,7 @@ export default function BeerDetail() {
   const [
     addTagModalOpened,
     { open: openAddTagModal, close: closeAddTagModal },
-  ] = useDisclosure();
+  ] = useDisclosure(false);
 
   if (loading) {
     return (
