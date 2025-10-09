@@ -34,12 +34,14 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
 
   const {
     data: newTagsForBeerData,
-    loading,
+    loading: isLoadingNewTags,
     error: newTagsForBeerError,
   } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
     variables: {
       beerId: beer.id,
     },
+    notifyOnNetworkStatusChange: true,
+    skip: !opened,
   });
 
   const handleTagClick = (e: MouseEvent, tag: TagType) => {
@@ -63,10 +65,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(
     ADD_TAGS_FOR_BEER,
     {
-      refetchQueries: [
-        { query: GET_BEER, variables: { id: beer.id } },
-        { query: NEW_TAGS_FOR_BEER, variables: { beerId: beer.id } },
-      ],
+      refetchQueries: [{ query: GET_BEER, variables: { id: beer.id } }],
     },
   );
 
@@ -110,14 +109,17 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
       onClose={onModalClose}
       title={`Adding Tags for ${beer.name}`}
     >
-      <Group mt="8" mb="8">
-        {loading && (
+      <Group mt="8" mb="8" grow>
+        {isLoadingNewTags && (
           <Center>
             <Loader />
           </Center>
         )}
+      </Group>
 
-        {!loading &&
+      <Group mt="8" mb="8">
+        {!isLoadingNewTags &&
+          !newTagsForBeerError &&
           newTagsForBeerData?.newTagsForBeer.map((tag) => (
             <Tag
               key={`add-tags-${tag.id}-${beer.id}`}
@@ -144,26 +146,28 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
         </Text>
       </Group>
 
-      <Group>
-        <Tooltip
-          label="You must select at least one tag"
-          disabled={selectedTags.size !== 0}
-          withArrow
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            radius="xl"
-            style={{
-              borderColor: theme.colors.accent[5],
-              color: theme.colors.accent[5],
-            }}
-            onClick={handleAddTagsClick}
-            disabled={hasNoTagsToAdd || selectedTags.size === 0}
+      <Group grow>
+        <Center>
+          <Tooltip
+            label="You must select at least one tag"
+            disabled={selectedTags.size !== 0}
+            withArrow
           >
-            Add Selected Tags
-          </Button>
-        </Tooltip>
+            <Button
+              variant="outline"
+              size="sm"
+              radius="xl"
+              style={{
+                borderColor: theme.colors.accent[5],
+                color: theme.colors.accent[5],
+              }}
+              onClick={handleAddTagsClick}
+              disabled={hasNoTagsToAdd || selectedTags.size === 0}
+            >
+              Add Selected Tags
+            </Button>
+          </Tooltip>
+        </Center>
       </Group>
     </Modal>
   );
