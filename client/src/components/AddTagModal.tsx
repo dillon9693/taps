@@ -43,7 +43,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
     variables: {
       beerId: beer.id,
-      search: debouncedSearchTerm || undefined,
+      search: debouncedSearchTerm.trim() || undefined,
     },
     notifyOnNetworkStatusChange: true,
     skip: !opened,
