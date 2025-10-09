@@ -7,6 +7,8 @@ from django.test import Client, TestCase
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
+from taps.models import Beer, Brewery, Tag
+
 
 class RegisterUserTestCase(TestCase):
     def setUp(self):
@@ -426,3 +428,179 @@ class ResetPasswordTestCase(TestCase):
 
         self.assertFalse(data["success"])
         self.assertTrue(len(data["errors"]) > 0)
+
+
+class NewTagsForBeerTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="securePassword123!",
+        )
+        self.client.force_login(self.user)
+
+        # Create a brewery
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+
+        # Create a beer
+        self.beer = Beer.objects.create(
+            name="Test Beer",
+            brewery=self.brewery,
+            style="IPA",
+            abv=5.5,
+            description="Test description",
+        )
+
+        # Create tags
+        self.tag1 = Tag.objects.create(name="hoppy")
+        self.tag2 = Tag.objects.create(name="bitter")
+        self.tag3 = Tag.objects.create(name="citrus")
+        self.tag4 = Tag.objects.create(name="fruity")
+        self.tag5 = Tag.objects.create(name="tropical")
+
+        # Add some tags to the beer
+        self.beer.tags.add(self.tag1)
+
+    def test_new_tags_for_beer_without_search(self):
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+        data = result["data"]["newTagsForBeer"]
+
+        # Should return all tags except the one already added (tag1/hoppy)
+        self.assertEqual(len(data), 4)
+        tag_names = [tag["name"] for tag in data]
+        self.assertNotIn("hoppy", tag_names)
+        self.assertIn("bitter", tag_names)
+        self.assertIn("citrus", tag_names)
+        self.assertIn("fruity", tag_names)
+        self.assertIn("tropical", tag_names)
+
+    def test_new_tags_for_beer_with_search(self):
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}", search: "fr") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+        data = result["data"]["newTagsForBeer"]
+
+        # Should only return tags matching "fr" (fruity)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["name"], "fruity")
+
+    def test_new_tags_for_beer_with_search_case_insensitive(self):
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}", search: "CIT") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+        data = result["data"]["newTagsForBeer"]
+
+        # Should return citrus (case insensitive match)
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["name"], "citrus")
+
+    def test_new_tags_for_beer_with_search_no_matches(self):
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}", search: "zzz") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+        data = result["data"]["newTagsForBeer"]
+
+        # Should return empty list
+        self.assertEqual(len(data), 0)
+
+    def test_new_tags_for_beer_with_long_search_term(self):
+        # Create a search term longer than 50 characters
+        long_search = "a" * 60
+
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}", search: "{long_search}") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+
+        # Should not raise an error, just return empty results
+        data = result["data"]["newTagsForBeer"]
+        self.assertEqual(len(data), 0)
+
+    def test_new_tags_for_beer_excludes_already_added_tags(self):
+        # Add another tag to the beer
+        self.beer.tags.add(self.tag2)
+
+        query = f"""
+            query {{
+                newTagsForBeer(beerId: "{self.beer.id}") {{
+                    id
+                    name
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": query}),
+            content_type="application/json",
+        )
+        result = response.json()
+        data = result["data"]["newTagsForBeer"]
+
+        # Should return all tags except hoppy and bitter
+        self.assertEqual(len(data), 3)
+        tag_names = [tag["name"] for tag in data]
+        self.assertNotIn("hoppy", tag_names)
+        self.assertNotIn("bitter", tag_names)

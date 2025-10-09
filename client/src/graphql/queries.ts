@@ -125,8 +125,8 @@ export type NewTagsForBeerResult = {
 };
 
 export const NEW_TAGS_FOR_BEER = gql`
-  query NewTagsForBeer($beerId: ID!) {
-    newTagsForBeer(beerId: $beerId) {
+  query NewTagsForBeer($beerId: ID!, $search: String) {
+    newTagsForBeer(beerId: $beerId, search: $search) {
       id
       name
     }

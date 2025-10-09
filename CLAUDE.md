@@ -176,6 +176,7 @@ These rules ensure maintainability, safety, and developer velocity.
 - **GH-4 (MUST)** Run front-end and back-end checks locally before pushing to remote.
 - **GH-5 (SHOULD)** Unless otherwise specified, open PRs against the `main` branch
 - **GH-6 (SHOULD)** Unless otherwise specified, compare changes againast the `main` branch, NOT THE `develop` branch
+- **GH-7 (SHOULD)** Break feature implementation into logical commits. When in doubt, commit more often than not.
 
 #### 4 - Local Development
 

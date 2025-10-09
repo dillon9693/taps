@@ -161,7 +161,10 @@ class Query(graphene.ObjectType):
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
     new_tags_for_beer = graphene.List(
-        TagType, beer_id=graphene.ID(required=True), count=graphene.Int(required=False)
+        TagType,
+        beer_id=graphene.ID(required=True),
+        count=graphene.Int(required=False),
+        search=graphene.String(required=False),
     )
 
     current_user = graphene.Field(UserType)
@@ -240,8 +243,15 @@ class Query(graphene.ObjectType):
             .order_by("-beer_count", "name")[:count]
         )
 
-    def resolve_new_tags_for_beer(self, info, beer_id, count=10):
-        return Tag.objects.exclude(beers__id=beer_id).order_by("name")[:count]
+    def resolve_new_tags_for_beer(self, info, beer_id, count=10, search=None):
+        qs = Tag.objects.exclude(beers__id=beer_id)
+
+        if search:
+            # Limit search term to 50 characters for security and performance
+            search_term = search[:50]
+            qs = qs.filter(name__icontains=search_term)
+
+        return qs.order_by("name")[:count]
 
     def resolve_current_user(self, info):
         user = info.context.user
