@@ -59,11 +59,13 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     close();
   };
 
-  // TODO re-fetch tags for beer as well
   const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(
     ADD_TAGS_FOR_BEER,
     {
-      refetchQueries: [{ query: GET_BEER, variables: { id: beer.id } }],
+      refetchQueries: [
+        { query: GET_BEER, variables: { id: beer.id } },
+        { query: NEW_TAGS_FOR_BEER, variables: { beerId: beer.id } },
+      ],
     },
   );
 
