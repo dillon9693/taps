@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Beer } from "../types";
+import { Beer, Tag } from "../types";
 
 // Reusable fragments
 const BREWERY_INFO_FRAGMENT = gql`
@@ -118,4 +118,17 @@ export const SAVED_BEERS = gql`
     }
   }
   ${BEER_FIELDS_FRAGMENT}
+`;
+
+export type NewTagsForBeerResult = {
+  newTagsForBeer: Tag[];
+};
+
+export const NEW_TAGS_FOR_BEER = gql`
+  query NewTagsForBeer($beerId: ID!) {
+    newTagsForBeer(beerId: $beerId) {
+      id
+      name
+    }
+  }
 `;
