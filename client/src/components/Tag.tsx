@@ -23,20 +23,21 @@ import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
 
-type TagPropsWithVotes = {
+type SharedProps = {
   beer: Beer;
-  tag: TagWithVotes;
-  withVotes: true;
-  onClick?: never; // Explicitly forbidden
   variant?: BadgeProps["variant"];
 };
 
-type TagPropsWithoutVotes = {
-  beer: Beer;
+type TagPropsWithVotes = SharedProps & {
+  tag: TagWithVotes;
+  withVotes: true;
+  onClick?: never; // Explicitly forbidden
+};
+
+type TagPropsWithoutVotes = SharedProps & {
   tag: TagType;
   withVotes: false;
   onClick?: (e: MouseEvent, tag: TagType) => void;
-  variant?: BadgeProps["variant"];
 };
 
 type TagProps = TagPropsWithVotes | TagPropsWithoutVotes;
