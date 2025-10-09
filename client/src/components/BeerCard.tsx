@@ -117,6 +117,7 @@ export default function BeerCard(props: BeerCardProps) {
                   key={`${tagWithVotes.tagId}-${beer.id}`}
                   beer={beer}
                   tag={tagWithVotes}
+                  withVotes
                 />
               ))}
             </Group>
