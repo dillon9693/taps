@@ -45,6 +45,10 @@ export default function Tag({
     );
   }
 
+  if (withVotes && onClick !== undefined) {
+    throw new Error("`onClick` handler not allowed when `withVotes` is true");
+  }
+
   const theme = useMantineTheme();
   const normalizedTag = toNormalizedTag(tag);
 
