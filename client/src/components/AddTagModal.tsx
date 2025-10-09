@@ -12,7 +12,11 @@ import { useMutation, useQuery } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
 import { Beer, Tag as TagType } from "../types";
 import Tag from "./Tag";
-import { NEW_TAGS_FOR_BEER, NewTagsForBeerResult } from "../graphql/queries";
+import {
+  GET_BEER,
+  NEW_TAGS_FOR_BEER,
+  NewTagsForBeerResult,
+} from "../graphql/queries";
 import { ADD_TAGS_FOR_BEER, AddTagsForBeerResult } from "../graphql/mutations";
 
 interface AddTagModalProps {
@@ -65,7 +69,12 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     close();
   };
 
-  const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(ADD_TAGS_FOR_BEER);
+  const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(
+    ADD_TAGS_FOR_BEER,
+    {
+      refetchQueries: [{ query: GET_BEER, variables: { id: beer.id } }],
+    },
+  );
 
   const handleAddTagsClick = async () => {
     if (selectedTags.size === 0) {
