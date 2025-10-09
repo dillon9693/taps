@@ -6,7 +6,7 @@ import {
 } from "@tabler/icons-react";
 import { useMutation } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
-import type { Beer, TagWithVotes } from "../types";
+import type { Beer, Tag as TagType, TagWithVotes } from "../types";
 import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
@@ -15,12 +15,16 @@ interface TagProps {
   beer: Beer;
   tagWithVotes: TagWithVotes;
   withVotes?: boolean;
+  onClick?: (e: MouseEvent, tag: TagType) => void;
+  variant?: string; // TODO type using mantine
 }
 
 export default function Tag({
   beer,
   tagWithVotes,
   withVotes = true,
+  onClick = undefined,
+  variant = "outline",
 }: TagProps) {
   const theme = useMantineTheme();
   const [userVoteType, setUserVoteType] = useState(
@@ -64,15 +68,22 @@ export default function Tag({
       }
     };
 
+  const handleBadgeClick = (e: MouseEvent) => {
+    if (onClick) {
+      onClick(e, { id: tagWithVotes.tagId, name: tagWithVotes.tagName });
+    }
+  };
+
   return (
     <Badge
       key={tagWithVotes.tagName}
-      variant="outline"
+      variant={variant}
       size="sm"
       style={{
         borderColor: theme.colors.accent[5],
         color: theme.colors.accent[5],
       }}
+      onClick={handleBadgeClick}
     >
       {withVotes && (
         <Button
