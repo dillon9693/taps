@@ -31,15 +31,15 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const [selectedTags, setSelectedTags] = useState(new Set<string>());
   const [errorMessage, setErrorMessage] = useState("");
 
-  // TODO handle errors
-  const { data: newTagsForBeerData, loading } = useQuery<NewTagsForBeerResult>(
-    NEW_TAGS_FOR_BEER,
-    {
-      variables: {
-        beerId: beer.id,
-      },
+  const {
+    data: newTagsForBeerData,
+    loading,
+    error: newTagsForBeerError,
+  } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
+    variables: {
+      beerId: beer.id,
     },
-  );
+  });
 
   const handleTagClick = (e: MouseEvent, tag: TagType) => {
     if (selectedTags.has(tag.id)) {
@@ -125,6 +125,12 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
               variant={selectedTags.has(tag.id) ? "filled" : "outline"}
             />
           ))}
+
+        {newTagsForBeerError && (
+          <Text size="xs" c="red">
+            Something went wrong loading tags.
+          </Text>
+        )}
       </Group>
 
       <Group mt="8" mb="8">
