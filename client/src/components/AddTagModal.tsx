@@ -103,7 +103,6 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const hasNoTagsToAdd =
     newTagsForBeerData && newTagsForBeerData.newTagsForBeer.length === 0;
 
-  // TODO display tags staggered?
   return (
     <Modal
       opened={opened}
