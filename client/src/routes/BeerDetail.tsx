@@ -17,6 +17,7 @@ import {
   Stack,
   Anchor,
   useMantineTheme,
+  Tooltip,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { notifications } from "@mantine/notifications";
@@ -260,20 +261,26 @@ export default function BeerDetail() {
             </Group>
 
             <Group mt="xs">
-              <Button
-                variant="outline"
-                size="sm"
-                radius="xl"
-                style={{
-                  borderColor: theme.colors.accent[5],
-                  color: theme.colors.accent[5],
-                  fontSize: "12px",
-                }}
-                onClick={handleAddTag}
-                disabled={!isAuthenticated}
+              <Tooltip
+                label="Sign in to add tags"
+                disabled={isAuthenticated}
+                withArrow
               >
-                Add Tag
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  radius="xl"
+                  style={{
+                    borderColor: theme.colors.accent[5],
+                    color: theme.colors.accent[5],
+                    fontSize: "12px",
+                  }}
+                  onClick={handleAddTag}
+                  disabled={!isAuthenticated}
+                >
+                  Add Tag
+                </Button>
+              </Tooltip>
             </Group>
           </Paper>
         </Grid.Col>
