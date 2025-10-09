@@ -160,6 +160,9 @@ class Query(graphene.ObjectType):
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
 
     top_tags = graphene.List(TagType, count=graphene.Int(required=False))
+    new_tags_for_beer = graphene.List(
+        TagType, beer_id=graphene.ID(required=True), count=graphene.Int(required=False)
+    )
 
     current_user = graphene.Field(UserType)
 
@@ -236,6 +239,9 @@ class Query(graphene.ObjectType):
             .annotate(beer_count=Count("beers"))
             .order_by("-beer_count", "name")[:count]
         )
+
+    def resolve_new_tags_for_beer(self, info, beer_id, count=10):
+        return Tag.objects.exclude(beers__id=beer_id).order_by("name")[:count]
 
     def resolve_current_user(self, info):
         user = info.context.user
