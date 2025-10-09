@@ -56,11 +56,18 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     // TODO save
   };
 
+  const onModalClose = () => {
+    setSelectedTags(new Set());
+    setErrorMessage("");
+
+    close();
+  };
+
   // TODO display tags staggered?
   return (
     <Modal
       opened={opened}
-      onClose={close}
+      onClose={onModalClose}
       title={`Adding Tags for ${beer.name}`}
     >
       <Group mt="8" mb="8">
