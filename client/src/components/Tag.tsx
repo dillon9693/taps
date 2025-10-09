@@ -1,5 +1,11 @@
 import { useState, type MouseEvent } from "react";
-import { Badge, Button, Text, useMantineTheme } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Text,
+  useMantineTheme,
+  type BadgeProps,
+} from "@mantine/core";
 import {
   IconTriangleFilled,
   IconTriangleInvertedFilled,
@@ -22,7 +28,7 @@ interface TagProps {
   tag: TagWithVotes | TagType;
   withVotes?: boolean;
   onClick?: (e: MouseEvent, tag: TagType) => void;
-  variant?: string; // TODO type using mantine
+  variant?: BadgeProps["variant"];
 }
 
 // TODO if on-click, add hover styles
