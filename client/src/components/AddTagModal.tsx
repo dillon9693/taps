@@ -1,4 +1,4 @@
-import { Button, Group, Modal, useMantineTheme } from "@mantine/core";
+import { Button, Group, Modal, Text, useMantineTheme } from "@mantine/core";
 import { MouseEvent, useState } from "react";
 import { Beer, Tag as TagType } from "../types";
 import Tag from "./Tag";
@@ -13,6 +13,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const theme = useMantineTheme();
 
   const [selectedTags, setSelectedTags] = useState(new Set<string>());
+  const [errorMessage, setErrorMessage] = useState("");
 
   // TOOD fetch from back-end
   // TODO change these to just tags
@@ -47,6 +48,12 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const handleAddTagsClick = () => {
     console.log("Adding tags");
     console.log(selectedTags);
+
+    if (selectedTags.size === 0) {
+      setErrorMessage("Please select at least one tag.");
+    }
+
+    // TODO save
   };
 
   // TODO display tags staggered?
@@ -67,6 +74,12 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
             variant={selectedTags.has(tag.tagId) ? "filled" : "outline"}
           />
         ))}
+      </Group>
+
+      <Group mt="8" mb="8">
+        <Text c="red" size="sm">
+          {errorMessage}
+        </Text>
       </Group>
 
       <Group>
