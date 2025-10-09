@@ -32,6 +32,7 @@ import {
   UnsaveBeerResult,
 } from "../graphql/mutations";
 import AddTagModal from "../components/AddTagModal";
+import { useAuth } from "../contexts/AuthContext";
 
 const SAVE_ERROR_NOTIFICATION = {
   title: "Error!",
@@ -52,6 +53,8 @@ type GetBeerResult = {
 export default function BeerDetail() {
   const { id } = useParams<{ id: string }>();
   const theme = useMantineTheme();
+
+  const { isAuthenticated } = useAuth();
 
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
@@ -263,6 +266,7 @@ export default function BeerDetail() {
                     fontSize: "12px",
                   }}
                   onClick={handleAddTag}
+                  disabled={!isAuthenticated}
                 >
                   Add Tag
                 </Button>
