@@ -5,9 +5,11 @@ import {
   Loader,
   Modal,
   Text,
+  TextInput,
   Tooltip,
   useMantineTheme,
 } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { MouseEvent, useState } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
@@ -31,6 +33,8 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
 
   const [selectedTags, setSelectedTags] = useState(new Set<string>());
   const [errorMessage, setErrorMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm] = useDebouncedValue(searchTerm, 300);
 
   const {
     data: newTagsForBeerData,
@@ -39,6 +43,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   } = useQuery<NewTagsForBeerResult>(NEW_TAGS_FOR_BEER, {
     variables: {
       beerId: beer.id,
+      search: debouncedSearchTerm || undefined,
     },
     notifyOnNetworkStatusChange: true,
     skip: !opened,
@@ -58,6 +63,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
   const onModalClose = () => {
     setSelectedTags(new Set());
     setErrorMessage("");
+    setSearchTerm("");
 
     close();
   };
@@ -109,6 +115,13 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
       onClose={onModalClose}
       title={`Adding Tags for ${beer.name}`}
     >
+      <TextInput
+        placeholder="Search for tags..."
+        value={searchTerm}
+        onChange={(event) => setSearchTerm(event.currentTarget.value)}
+        mb="md"
+      />
+
       <Group mt="8" mb="8" grow>
         {isLoadingNewTags && (
           <Center>
