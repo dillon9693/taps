@@ -5,6 +5,7 @@ import {
   Loader,
   Modal,
   Text,
+  Tooltip,
   useMantineTheme,
 } from "@mantine/core";
 import { MouseEvent, useState } from "react";
@@ -144,19 +145,25 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
       </Group>
 
       <Group>
-        <Button
-          variant="outline"
-          size="sm"
-          radius="xl"
-          style={{
-            borderColor: theme.colors.accent[5],
-            color: theme.colors.accent[5],
-          }}
-          onClick={handleAddTagsClick}
-          disabled={hasNoTagsToAdd || selectedTags.size === 0}
+        <Tooltip
+          label="You must select at least one tag"
+          disabled={selectedTags.size !== 0}
+          withArrow
         >
-          Add Selected Tags
-        </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            radius="xl"
+            style={{
+              borderColor: theme.colors.accent[5],
+              color: theme.colors.accent[5],
+            }}
+            onClick={handleAddTagsClick}
+            disabled={hasNoTagsToAdd || selectedTags.size === 0}
+          >
+            Add Selected Tags
+          </Button>
+        </Tooltip>
       </Group>
     </Modal>
   );
