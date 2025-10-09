@@ -144,7 +144,13 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
             />
           ))}
 
-        {hasNoTagsToAdd && <Text size="xs">No tags available to add.</Text>}
+        {hasNoTagsToAdd && (
+          <Text size="xs">
+            {searchTerm
+              ? `No tags found matching "${searchTerm}"`
+              : "No tags available to add."}
+          </Text>
+        )}
 
         {newTagsForBeerError && (
           <Text size="xs" c="red">
