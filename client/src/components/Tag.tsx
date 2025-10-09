@@ -23,13 +23,23 @@ import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
 
-interface TagProps {
+type TagPropsWithVotes = {
   beer: Beer;
-  tag: TagWithVotes | TagType;
-  withVotes?: boolean;
+  tag: TagWithVotes;
+  withVotes: true;
+  onClick?: never; // Explicitly forbidden
+  variant?: BadgeProps["variant"];
+};
+
+type TagPropsWithoutVotes = {
+  beer: Beer;
+  tag: TagType;
+  withVotes: false;
   onClick?: (e: MouseEvent, tag: TagType) => void;
   variant?: BadgeProps["variant"];
-}
+};
+
+type TagProps = TagPropsWithVotes | TagPropsWithoutVotes;
 
 export default function Tag({
   beer,
@@ -38,16 +48,6 @@ export default function Tag({
   onClick = undefined,
   variant = "outline",
 }: TagProps) {
-  if (withVotes && !isTagWithVotes(tag)) {
-    throw new Error(
-      "`tag` prop must be of type `TagWithVotes` if `withVotes` prop is `true`",
-    );
-  }
-
-  if (withVotes && onClick !== undefined) {
-    throw new Error("`onClick` handler not allowed when `withVotes` is true");
-  }
-
   const theme = useMantineTheme();
   const normalizedTag = toNormalizedTag(tag);
 
