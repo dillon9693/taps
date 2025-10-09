@@ -623,9 +623,9 @@ class AddTagsForBeerMutation(graphene.Mutation):
             beer.tags.add(*tags)
             beer.save()
         except Exception as e:
-            logger.error(f"Unsaving of beer failed: {str(e)}", exc_info=True)
+            logger.error(f"Adding tag to beer failed: {str(e)}", exc_info=True)
             return AddTagsForBeerMutation(
-                success=False, errors=["Unable to unsave beer."]
+                success=False, errors=["Unable to add tag to beer."]
             )
 
         return AddTagsForBeerMutation(success=True, errors=[])
