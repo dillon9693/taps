@@ -240,39 +240,42 @@ export default function BeerDetail() {
             <Text lh={1.7}>{beer.description}</Text>
           </Paper>
 
-          {beer.tagsWithVotes.length > 0 && (
-            <Paper p="lg" withBorder shadow="sm">
-              <Title order={4} mb="md">
-                Tags
-              </Title>
-              <Group gap="xs">
-                {beer.tagsWithVotes.map((tagWithVotes) => (
+          <Paper p="lg" withBorder shadow="sm">
+            <Title order={4} mb="md">
+              Tags
+            </Title>
+            <Group gap="xs">
+              {beer.tagsWithVotes.length > 0 &&
+                beer.tagsWithVotes.map((tagWithVotes) => (
                   <Tag
                     key={`${tagWithVotes.tagId}-${beer.id}`}
                     beer={beer}
                     tagWithVotes={tagWithVotes}
                   />
                 ))}
-              </Group>
 
-              <Group mt="xs">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  radius="xl"
-                  style={{
-                    borderColor: theme.colors.accent[5],
-                    color: theme.colors.accent[5],
-                    fontSize: "12px",
-                  }}
-                  onClick={handleAddTag}
-                  disabled={!isAuthenticated}
-                >
-                  Add Tag
-                </Button>
-              </Group>
-            </Paper>
-          )}
+              {beer.tagsWithVotes.length === 0 && (
+                <Text size="sm">No tags added yet!</Text>
+              )}
+            </Group>
+
+            <Group mt="xs">
+              <Button
+                variant="outline"
+                size="sm"
+                radius="xl"
+                style={{
+                  borderColor: theme.colors.accent[5],
+                  color: theme.colors.accent[5],
+                  fontSize: "12px",
+                }}
+                onClick={handleAddTag}
+                disabled={!isAuthenticated}
+              >
+                Add Tag
+              </Button>
+            </Group>
+          </Paper>
         </Grid.Col>
 
         {/* Right Column - Technical Specs */}
