@@ -41,16 +41,6 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     },
   );
 
-  // TODO change these to just tags
-  const tags =
-    newTagsForBeerData?.newTagsForBeer.map((tag) => ({
-      tagId: tag.id,
-      tagName: tag.name,
-      upvoteCount: 0,
-      downvoteCount: 0,
-      currentUserVote: null,
-    })) || [];
-
   const handleTagClick = (e: MouseEvent, tag: TagType) => {
     if (selectedTags.has(tag.id)) {
       setSelectedTags(
@@ -69,6 +59,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     close();
   };
 
+  // TODO re-fetch tags for beer as well
   const [addTagsForBeer] = useMutation<AddTagsForBeerResult>(
     ADD_TAGS_FOR_BEER,
     {
@@ -122,14 +113,14 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
         )}
 
         {!loading &&
-          tags.map((tag) => (
+          newTagsForBeerData?.newTagsForBeer.map((tag) => (
             <Tag
-              key={`add-${tag.tagId}-${beer.id}`}
+              key={`add-tags-${tag.id}-${beer.id}`}
               beer={beer}
-              tagWithVotes={tag}
+              tag={tag}
               withVotes={false}
               onClick={handleTagClick}
-              variant={selectedTags.has(tag.tagId) ? "filled" : "outline"}
+              variant={selectedTags.has(tag.id) ? "filled" : "outline"}
             />
           ))}
       </Group>

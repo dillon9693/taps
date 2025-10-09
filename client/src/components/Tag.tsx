@@ -6,14 +6,20 @@ import {
 } from "@tabler/icons-react";
 import { useMutation } from "@apollo/client";
 import { notifications } from "@mantine/notifications";
-import type { Beer, Tag as TagType, TagWithVotes } from "../types";
+import {
+  isTagWithVotes,
+  toNormalizedTag,
+  type Beer,
+  type Tag as TagType,
+  type TagWithVotes,
+} from "../types";
 import { TAG_VOTE, type TagVoteResult } from "../graphql/mutations";
 import { useAuth } from "../contexts/AuthContext";
 import styles from "./Tag.module.css";
 
 interface TagProps {
   beer: Beer;
-  tagWithVotes: TagWithVotes;
+  tag: TagWithVotes | TagType;
   withVotes?: boolean;
   onClick?: (e: MouseEvent, tag: TagType) => void;
   variant?: string; // TODO type using mantine
@@ -22,26 +28,40 @@ interface TagProps {
 // TODO if on-click, add hover styles
 export default function Tag({
   beer,
-  tagWithVotes,
+  tag,
   withVotes = true,
   onClick = undefined,
   variant = "outline",
 }: TagProps) {
+  if (withVotes && !isTagWithVotes(tag)) {
+    throw new Error(
+      "`tag` prop must be of type `TagWithVotes` if `withVotes` prop is `true`",
+    );
+  }
+
   const theme = useMantineTheme();
+  const normalizedTag = toNormalizedTag(tag);
+
   const [userVoteType, setUserVoteType] = useState(
-    tagWithVotes.currentUserVote,
+    isTagWithVotes(tag) ? tag.currentUserVote : null,
   );
 
   const { isAuthenticated } = useAuth();
 
   const [voteForTag, { data, loading }] = useMutation<TagVoteResult>(TAG_VOTE);
 
-  const upvoteCount = data?.tagVote?.success
-    ? data.tagVote.newUpvoteCount
-    : tagWithVotes.upvoteCount;
-  const downvoteCount = data?.tagVote?.success
-    ? data.tagVote.newDownvoteCount
-    : tagWithVotes.downvoteCount;
+  let upvoteCount = 0;
+  let downvoteCount = 0;
+
+  if (isTagWithVotes(tag)) {
+    upvoteCount = data?.tagVote?.success
+      ? data.tagVote.newUpvoteCount
+      : tag.upvoteCount;
+
+    downvoteCount = data?.tagVote?.success
+      ? data.tagVote.newDownvoteCount
+      : tag.downvoteCount;
+  }
 
   const performVoteFunc =
     (upvote: boolean) => async (e: MouseEvent<HTMLButtonElement>) => {
@@ -50,9 +70,13 @@ export default function Tag({
       e.preventDefault();
       e.stopPropagation();
 
+      if (!isTagWithVotes(tag)) {
+        throw new Error("Can only vote when `tag` is of type `TagWithVotes`");
+      }
+
       const result = await voteForTag({
         variables: {
-          tagId: tagWithVotes.tagId,
+          tagId: tag.tagId,
           beerId: beer.id,
           upvote,
         },
@@ -71,13 +95,13 @@ export default function Tag({
 
   const handleBadgeClick = (e: MouseEvent) => {
     if (onClick) {
-      onClick(e, { id: tagWithVotes.tagId, name: tagWithVotes.tagName });
+      onClick(e, normalizedTag);
     }
   };
 
   return (
     <Badge
-      key={tagWithVotes.tagName}
+      key={normalizedTag.name}
       variant={variant}
       size="sm"
       style={{
@@ -104,7 +128,7 @@ export default function Tag({
         </Button>
       )}
 
-      {tagWithVotes.tagName}
+      {normalizedTag.name}
 
       {withVotes && (
         <Button

@@ -22,6 +22,26 @@ export interface TagWithVotes {
   currentUserVote: boolean | null; // null indicates user has not voted yet
 }
 
+export function isTag(tag: Tag | TagWithVotes): tag is Tag {
+  return "id" in tag && "name" in tag;
+}
+
+export function isTagWithVotes(tag: Tag | TagWithVotes): tag is TagWithVotes {
+  return "tagId" in tag && "tagName" in tag;
+}
+
+export function toNormalizedTag(tag: Tag | TagWithVotes): Tag {
+  if (isTagWithVotes(tag)) {
+    return { id: tag.tagId, name: tag.tagName };
+  }
+
+  if (isTag(tag)) {
+    return tag;
+  }
+
+  throw new Error("Unexpected type");
+}
+
 // Base beer information
 export interface BeerSummary {
   id: string;

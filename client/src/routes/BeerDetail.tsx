@@ -250,7 +250,7 @@ export default function BeerDetail() {
                   <Tag
                     key={`${tagWithVotes.tagId}-${beer.id}`}
                     beer={beer}
-                    tagWithVotes={tagWithVotes}
+                    tag={tagWithVotes}
                   />
                 ))}
 
