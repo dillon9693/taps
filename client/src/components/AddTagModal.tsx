@@ -100,6 +100,9 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
     });
   };
 
+  const hasNoTagsToAdd =
+    newTagsForBeerData && newTagsForBeerData.newTagsForBeer.length === 0;
+
   // TODO display tags staggered?
   return (
     <Modal
@@ -126,6 +129,8 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
             />
           ))}
 
+        {hasNoTagsToAdd && <Text size="xs">No tags available to add.</Text>}
+
         {newTagsForBeerError && (
           <Text size="xs" c="red">
             Something went wrong loading tags.
@@ -149,6 +154,7 @@ export default function AddTagModal({ beer, opened, close }: AddTagModalProps) {
             color: theme.colors.accent[5],
           }}
           onClick={handleAddTagsClick}
+          disabled={hasNoTagsToAdd || selectedTags.size === 0}
         >
           Add Selected Tags
         </Button>
