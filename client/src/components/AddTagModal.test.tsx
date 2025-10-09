@@ -21,7 +21,7 @@ const mockBeer: Beer = {
   abv: 6.5,
   ibu: 60,
   description: "A hoppy IPA",
-  averageRating: "4.5",
+  averageRating: 4.5,
   imageUrl: "",
   isSaved: false,
   tags: [],
@@ -66,7 +66,7 @@ describe("AddTagModal", () => {
       <MockedProvider mocks={mocks} addTypename={false}>
         <AuthProvider>
           <MantineProvider theme={theme}>
-            <AddTagModal beer={mockBeer} opened={true} close={mockClose} />
+            <AddTagModal beer={mockBeer} opened close={mockClose} />
           </MantineProvider>
         </AuthProvider>
       </MockedProvider>,
@@ -97,7 +97,7 @@ describe("AddTagModal", () => {
       <MockedProvider mocks={mocks} addTypename={false}>
         <AuthProvider>
           <MantineProvider theme={theme}>
-            <AddTagModal beer={mockBeer} opened={true} close={mockClose} />
+            <AddTagModal beer={mockBeer} opened close={mockClose} />
           </MantineProvider>
         </AuthProvider>
       </MockedProvider>,
@@ -129,7 +129,7 @@ describe("AddTagModal", () => {
       <MockedProvider mocks={mocks} addTypename={false}>
         <AuthProvider>
           <MantineProvider theme={theme}>
-            <AddTagModal beer={mockBeer} opened={true} close={mockClose} />
+            <AddTagModal beer={mockBeer} opened close={mockClose} />
           </MantineProvider>
         </AuthProvider>
       </MockedProvider>,
@@ -164,17 +164,14 @@ describe("AddTagModal", () => {
       <MockedProvider mocks={mocks} addTypename={false}>
         <AuthProvider>
           <MantineProvider theme={theme}>
-            <AddTagModal beer={mockBeer} opened={true} close={mockClose} />
+            <AddTagModal beer={mockBeer} opened close={mockClose} />
           </MantineProvider>
         </AuthProvider>
       </MockedProvider>,
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByText("No tags available to add."),
-      ).toBeInTheDocument();
+      expect(screen.getByText("No tags available to add.")).toBeInTheDocument();
     });
   });
-
 });
