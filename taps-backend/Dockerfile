@@ -31,6 +31,8 @@ COPY pyproject.toml poetry.lock ./
 
 # Configure poetry to not use a virtual environment
 ENV POETRY_VIRTUALENVS_CREATE=false
+# Needed to avoid using mounted .venv/ directory in project in local docker compose setup
+ENV POETRY_VIRTUALENVS_IN_PROJECT=false
 
 # Development stage
 FROM base AS dev
