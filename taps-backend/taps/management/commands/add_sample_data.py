@@ -159,7 +159,7 @@ class Command(BaseCommand):
                 ibu=15,
                 description="Belgian-style witbier with a Chicago twist. Brewed with orange peel, coriander, and a hint of chamomile.",
                 average_rating=4.1,
-                image_url="https://images.unsplash.com/photo-1567696911980-2c295b5df157?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Loop DIPA",
@@ -189,7 +189,7 @@ class Command(BaseCommand):
                 ibu=55,
                 description="Pacific Northwest hazy IPA featuring locally grown hops. Notes of pine, citrus, and tropical fruit.",
                 average_rating=4.5,
-                image_url="https://images.unsplash.com/photo-1596424927240-b3876c677566?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Rainier Red",
@@ -239,7 +239,7 @@ class Command(BaseCommand):
                 ibu=12,
                 description="Hefeweizen with traditional banana and clove notes. Smooth, creamy, and perfect for brunch.",
                 average_rating=4.1,
-                image_url="https://images.unsplash.com/photo-1567696911980-e8f7c02f4084?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Barrel-Aged Imperial Porter",
@@ -249,7 +249,7 @@ class Command(BaseCommand):
                 ibu=40,
                 description="Robust porter aged in rye whiskey barrels. Complex flavors of chocolate, coffee, vanilla, and spice.",
                 average_rating=4.9,
-                image_url="https://images.unsplash.com/photo-1567696911980-e8f7c02f4084?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Sunset Saison",
