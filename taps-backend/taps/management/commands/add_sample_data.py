@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 ibu=50,
                 description="New England Pale Ale with a hazy blonde pour and nose of ripe peach and clementine. Sips citrusy and vibrant.",
                 average_rating=4.4,
-                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://nightshiftbrewing.com/wp-content/uploads/2024/01/Whirlpool_16_CanRender-e1706755968895.png",
             ),
             Beer.objects.create(
                 name="Fluffy",
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 ibu=55,
                 description="Flagship hazy IPA that sips like fresh-squeezed hoppy orange juice with flavors of sweet clementine, fresh apricot, and ripe mango.",
                 average_rating=4.6,
-                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://nightshiftbrewing.com/wp-content/uploads/2024/01/Fluffy_16_CanRender-e1706754993283.png",
             ),
             Beer.objects.create(
                 name="Santilli",
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                 ibu=60,
                 description="Flagship American IPA named after Santilli Highway in Everett. Features tasting notes of pine and orange zest.",
                 average_rating=4.3,
-                image_url="https://images.unsplash.com/photo-1532634922-8fe0b757fb13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://nightshiftbrewing.com/wp-content/uploads/2024/01/Santilli_16_CanRender-e1706755912421.png",
             ),
             Beer.objects.create(
                 name="Lime Lite",
@@ -73,7 +73,7 @@ class Command(BaseCommand):
                 ibu=18,
                 description="Craft light lager with only 120 calories. Light, refreshing, and easy-drinking.",
                 average_rating=4.0,
-                image_url="https://images.unsplash.com/photo-1566633806327-68e152aaf26d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://nightshiftbrewing.com/wp-content/uploads/2022/11/LimeLite_WebImage-150x300.png",
             ),
             # Castle Island Brewing beers
             Beer.objects.create(
@@ -84,15 +84,15 @@ class Command(BaseCommand):
                 ibu=60,
                 description="Flagship American IPA brewed with Simcoe and Cascade hops. Balanced and approachable with citrus and pine notes.",
                 average_rating=4.4,
-                image_url="https://images.unsplash.com/photo-1523567830207-96731740fa71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/68137a7ade1b7b4f731c238c/c81fb14d-4ec7-46c5-972c-b1cb3ed31de5/Keeper+16oz+Can+Vertical+Mockup.png",
             ),
             Beer.objects.create(
                 name="Winner",
                 brewery=brewery_castle_island,
-                style="LAGER",
-                abv=4.7,
-                ibu=20,
-                description="Award-winning American lager. Silver Medal at 2018 Great American Beer Festival and Gold Medal at 2018 U.S. Open Beer Championship.",
+                style="IPA",
+                abv=6.5,
+                ibu=55,
+                description="Flagship American IPA with notes of grapefruit, citrus, and pine. West coast inspired, Castle Island engineered.",
                 average_rating=4.5,
                 image_url="https://images.unsplash.com/photo-1504502350688-00f5d59bbdeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
@@ -104,7 +104,7 @@ class Command(BaseCommand):
                 ibu=50,
                 description="Juicy, hazy IPA featuring Citra, Simcoe, and El Dorado hops. Bursting with tropical fruit flavors.",
                 average_rating=4.5,
-                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/68137a7ade1b7b4f731c238c/c9d9e9fa-381d-4b2d-9aad-9a3d71f2bae5/Fiver+16oz+Can+Vertical+Mockup.png",
             ),
             Beer.objects.create(
                 name="Hi-Def",
@@ -114,7 +114,7 @@ class Command(BaseCommand):
                 ibu=70,
                 description="Hazy Double IPA featuring Citra, Mosaic, and Idaho 7 hops. Bold and intensely flavorful.",
                 average_rating=4.7,
-                image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/68137a7ade1b7b4f731c238c/05b75cb9-6012-45d0-a386-3b1101d9174e/Hi-Def+16oz+Can+Vertical+Mockup.png",
             ),
             Beer.objects.create(
                 name="Bohemian Shine",
@@ -124,7 +124,7 @@ class Command(BaseCommand):
                 ibu=35,
                 description="Award-winning Czech Pilsner with a crisp, clean finish and classic noble hop character.",
                 average_rating=4.4,
-                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/68137a7ade1b7b4f731c238c/1756138376330-S0AKASUW1LF3RKOL1WQ8/Bo%27+Shine+16oz+Can+Vertical+Mockup.png",
             ),
             # Tree House Brewery beers
             Beer.objects.create(
@@ -135,17 +135,17 @@ class Command(BaseCommand):
                 ibu=55,
                 description="Flagship IPA that's bright and juicy, filled with flavors and aromas of mango, peach, passionfruit, and citrus juice.",
                 average_rating=4.8,
-                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/96b4593b-42d0-4235-822c-74c3affc6c23/Julius+Whitebox.jpg",
             ),
             Beer.objects.create(
                 name="Haze",
                 brewery=brewery_tree_house,
-                style="IPA",
-                abv=6.7,
-                ibu=50,
-                description="Peach-forward hazy IPA with beautiful hop aromatics and a smooth, juicy character.",
+                style="DIPA",
+                abv=8.2,
+                ibu=60,
+                description="Double IPA that's a true juice bomb with peach, orange, and passionfruit aromas.",
                 average_rating=4.7,
-                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/67c3f209-d603-4360-a7df-4a3e56e187e1/01.23.24+Beer+-+Haze.jpg",
             ),
             Beer.objects.create(
                 name="Green",
@@ -153,9 +153,9 @@ class Command(BaseCommand):
                 style="IPA",
                 abv=6.9,
                 ibu=52,
-                description="Pineapple-forward IPA with tropical fruit flavors and a hazy, juicy profile.",
+                description="Cross-continental IPA with tropical notes of pineapple, orange sorbet, lemon-lime, and tangerine.",
                 average_rating=4.7,
-                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/1595444435647-Q30KXMD2H4SJNDX3CHNJ/Green.jpg",
             ),
             Beer.objects.create(
                 name="Very Hazy",
@@ -163,9 +163,9 @@ class Command(BaseCommand):
                 style="DIPA",
                 abv=8.6,
                 ibu=65,
-                description="Double IPA that conveys all the beautiful flavors of Haze with even greater depth and potency.",
+                description="Double IPA that pushes the flavor profile of Haze to the limit with intense hop saturation.",
                 average_rating=4.8,
-                image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/1597411491931-H97F2UT5WKGWDYO6VVLZ/Very%2BHazy-11.jpg",
             ),
             Beer.objects.create(
                 name="Hurricane",
@@ -175,7 +175,7 @@ class Command(BaseCommand):
                 ibu=70,
                 description="Double IPA with intense Simcoe and Citra hop doses. Pungent aroma of earthy citrus with papaya, melon, and stone fruit.",
                 average_rating=4.7,
-                image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/1595446196955-ERE3JOL11PIJRYTD6ER6/Hurricane.jpg",
             ),
             Beer.objects.create(
                 name="Lights On",
@@ -185,15 +185,15 @@ class Command(BaseCommand):
                 ibu=40,
                 description="Modern American Pale Ale with a hazy orange pour and an aroma filled with sweet fresh citrus fruit.",
                 average_rating=4.5,
-                image_url="https://images.unsplash.com/photo-1523567830207-96731740fa71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/1595446421227-X1JVOMWPLQ7DPOVVAXKT/Lights+On.jpg",
             ),
             Beer.objects.create(
                 name="Super Treat",
                 brewery=brewery_tree_house,
-                style="IPA",
+                style="DIPA",
                 abv=8.3,
                 ibu=60,
-                description="Intensely hoppy IPA with big tropical fruit character and a dangerously drinkable finish.",
+                description="Double IPA with saturated flavors of orange starburst, sweet tangerine, lychee, and fresh squeezed orange juice.",
                 average_rating=4.6,
                 image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
@@ -205,7 +205,7 @@ class Command(BaseCommand):
                 ibu=58,
                 description="Bright and refreshing IPA with vibrant hop aromatics perfect for warm weather.",
                 average_rating=4.5,
-                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.squarespace-cdn.com/content/v1/5e7219f88ebaa26f2c4795c0/1595444831521-BP7XSNK8CABXK8HJSG38/Summer.jpg",
             ),
         ]
 
@@ -217,7 +217,7 @@ class Command(BaseCommand):
         beers[3].tags.add(tags["Smooth"])  # Lime Lite
         # Castle Island beers
         beers[4].tags.add(tags["Hoppy"], tags["Citrus"])  # Keeper
-        beers[5].tags.add(tags["Smooth"])  # Winner
+        beers[5].tags.add(tags["Hoppy"], tags["Citrus"])  # Winner
         beers[6].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Fiver
         beers[7].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Hi-Def
         beers[8].tags.add(tags["Smooth"])  # Bohemian Shine
