@@ -29,7 +29,7 @@ class Brewery(models.Model):
     year_founded = models.IntegerField(null=True, blank=True)
     website = models.URLField(max_length=200)
     external_id = models.CharField(max_length=50, blank=True)
-    external_source = models.CharField(choices=BrewerySource, blank=True)
+    external_source = models.CharField(max_length=50, choices=BrewerySource, blank=True)
 
     class Meta:
         verbose_name_plural = "Breweries"
