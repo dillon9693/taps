@@ -16,6 +16,7 @@
   ],
 
   // Python settings
+  "python.defaultInterpreterPath": "${workspaceFolder}/taps-backend/.venv/bin/python",
   "python.testing.pytestEnabled": true,
   "files.exclude": {
     "**/__pycache__": true,
