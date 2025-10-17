@@ -4,13 +4,32 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
+class BrewerySource(models.TextChoices):
+    OPEN_BREWERY_DB = "OPEN_BREWERY_DB"
+
+
 class Brewery(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)
+    location = models.CharField(max_length=200)  # DEPRECATED
+    address_1 = models.CharField(max_length=100, blank=True)
+    address_2 = models.CharField(max_length=100, blank=True)
+    city = models.CharField(max_length=50)
+    state_province = models.CharField(max_length=30)
+    postal_code = models.CharField(max_length=20, blank=True)
+    country = models.CharField(max_length=50)
+    longitude = models.DecimalField(
+        max_digits=10, decimal_places=7, blank=True, null=True
+    )
+    latitude = models.DecimalField(
+        max_digits=10, decimal_places=7, blank=True, null=True
+    )
+    phone = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
     year_founded = models.IntegerField(null=True, blank=True)
-    website = models.URLField(max_length=200, blank=True)
+    website = models.URLField(max_length=200)
+    external_id = models.CharField(max_length=50, blank=True)
+    external_source = models.CharField(max_length=50, choices=BrewerySource, blank=True)
 
     class Meta:
         verbose_name_plural = "Breweries"

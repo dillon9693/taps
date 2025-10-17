@@ -97,6 +97,7 @@ To run back-end:
 
 ```bash
 cd taps-backend
+poetry config virtualenvs.in-project true
 poetry install
 poetry run ./manage.py migrate
 poetry run ./manage.py runserver 8000
