@@ -106,6 +106,12 @@ class Command(BaseCommand):
 
             brewery_raw = {"external_id": row["id"], "name": row["name"]}
 
+            exists = Brewery.objects.filter(external_id=row["id"]).exists()
+            if exists:
+                # TODO handle data updates?
+                breweries_existing.append(brewery_raw)
+                continue
+
             invalid_reasons = self.validate_brewery(row)
             if len(invalid_reasons) > 0:
                 self.stdout.write(
@@ -114,32 +120,24 @@ class Command(BaseCommand):
                 breweries_invalid.append(brewery_raw)
                 continue
 
-            brewery, created = Brewery.objects.get_or_create(
+            Brewery.objects.create(
+                name=row["name"],
+                location=f"{row['city']}, {row['state_province']}",
+                address_1=row["address_1"],
+                address_2=row["address_2"],
+                city=row["city"],
+                state_province=row["state_province"],
+                postal_code=row["postal_code"],
+                country=row["country"],
+                longitude=row["longitude"] if row["longitude"] else None,
+                latitude=row["latitude"] if row["latitude"] else None,
+                phone=row["phone"],
+                website=row["website_url"],
                 external_id=row["id"],
-                defaults={
-                    "name": row["name"],
-                    "location": f"{row['city']}, {row['state_province']}",
-                    "address_1": row["address_1"],
-                    "address_2": row["address_2"],
-                    "city": row["city"],
-                    "state_province": row["state_province"],
-                    "postal_code": row["postal_code"],
-                    "country": row["country"],
-                    "longitude": row["longitude"] if row["longitude"] else None,
-                    "latitude": row["latitude"] if row["latitude"] else None,
-                    "phone": row["phone"],
-                    "website": row["website_url"],
-                    "external_id": row["id"],
-                    "external_source": BrewerySource.OPEN_BREWERY_DB,
-                },
+                external_source=BrewerySource.OPEN_BREWERY_DB,
             )
 
-            # TODO handle data updates?
-
-            if created:
-                breweries_created.append(brewery_raw)
-            else:
-                breweries_existing.append(brewery_raw)
+            breweries_created.append(brewery_raw)
 
         total_processed = (
             len(breweries_created) + len(breweries_existing) + len(breweries_invalid)
