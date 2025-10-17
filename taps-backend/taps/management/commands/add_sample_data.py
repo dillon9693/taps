@@ -32,232 +32,203 @@ class Command(BaseCommand):
             "Barrel Aged": Tag.objects.create(name="Barrel Aged"),
         }
 
-        # Create some beers
+        # Create some beers from real Massachusetts breweries
         beers = [
+            # Night Shift Brewing beers
             Beer.objects.create(
-                name="Hazy Daydream",
+                name="Whirlpool",
                 brewery=brewery_night_shift,
-                style="IPA",
-                abv=6.8,
-                ibu=65,
-                description="A juicy, hazy IPA bursting with tropical fruit notes. Heavy on Citra and Mosaic hops.",
-                average_rating=4.5,
+                style="OTHER",
+                abv=4.5,
+                ibu=50,
+                description="New England Pale Ale with a hazy blonde pour and nose of ripe peach and clementine. Sips citrusy and vibrant.",
+                average_rating=4.4,
                 image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Midnight Velvet",
-                brewery=brewery_night_shift,
-                style="STOUT",
-                abv=9.2,
-                ibu=45,
-                description="Imperial stout aged in bourbon barrels. Rich chocolate and coffee notes with a smooth finish.",
-                average_rating=4.7,
-                image_url="https://images.unsplash.com/photo-1518176258769-f227c798150e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="West Coast Wonder",
+                name="Fluffy",
                 brewery=brewery_night_shift,
                 style="IPA",
-                abv=7.2,
-                ibu=75,
-                description="Classic West Coast IPA with bold pine and citrus character. Clean, crisp, and assertively hopped.",
+                abv=7.0,
+                ibu=55,
+                description="Flagship hazy IPA that sips like fresh-squeezed hoppy orange juice with flavors of sweet clementine, fresh apricot, and ripe mango.",
+                average_rating=4.6,
+                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ),
+            Beer.objects.create(
+                name="Santilli",
+                brewery=brewery_night_shift,
+                style="IPA",
+                abv=6.0,
+                ibu=60,
+                description="Flagship American IPA named after Santilli Highway in Everett. Features tasting notes of pine and orange zest.",
                 average_rating=4.3,
                 image_url="https://images.unsplash.com/photo-1532634922-8fe0b757fb13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Alpine Sunrise",
+                name="Lime Lite",
                 brewery=brewery_night_shift,
-                style="WHEAT",
-                abv=5.4,
+                style="LAGER",
+                abv=4.3,
                 ibu=18,
-                description="Light and refreshing wheat beer with notes of orange peel and coriander. Perfect for summer days.",
-                average_rating=4.2,
+                description="Craft light lager with only 120 calories. Light, refreshing, and easy-drinking.",
+                average_rating=4.0,
                 image_url="https://images.unsplash.com/photo-1566633806327-68e152aaf26d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
+            # Castle Island Brewing beers
             Beer.objects.create(
-                name="Evergreen IPA",
+                name="Keeper",
                 brewery=brewery_castle_island,
                 style="IPA",
                 abv=6.5,
                 ibu=60,
-                description="Pine-forward IPA with a balanced malt backbone. Brewed with locally sourced mountain water.",
+                description="Flagship American IPA brewed with Simcoe and Cascade hops. Balanced and approachable with citrus and pine notes.",
                 average_rating=4.4,
                 image_url="https://images.unsplash.com/photo-1523567830207-96731740fa71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Lone Star Lager",
+                name="Winner",
                 brewery=brewery_castle_island,
                 style="LAGER",
-                abv=4.8,
-                ibu=22,
-                description="Crisp, clean lager with a touch of Texas wildflower honey. Easy drinking for hot summer days.",
-                average_rating=4.0,
+                abv=4.7,
+                ibu=20,
+                description="Award-winning American lager. Silver Medal at 2018 Great American Beer Festival and Gold Medal at 2018 U.S. Open Beer Championship.",
+                average_rating=4.5,
                 image_url="https://images.unsplash.com/photo-1504502350688-00f5d59bbdeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Pecan Porter",
+                name="Fiver",
                 brewery=brewery_castle_island,
-                style="PORTER",
-                abv=6.2,
-                ibu=30,
-                description="Robust porter brewed with Texas pecans. Notes of chocolate, coffee, and toasted nuts.",
-                average_rating=4.6,
-                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                style="IPA",
+                abv=6.3,
+                ibu=50,
+                description="Juicy, hazy IPA featuring Citra, Simcoe, and El Dorado hops. Bursting with tropical fruit flavors.",
+                average_rating=4.5,
+                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Windy City Wit",
-                brewery=brewery_castle_island,
-                style="WHEAT",
-                abv=5.0,
-                ibu=15,
-                description="Belgian-style witbier with a Chicago twist. Brewed with orange peel, coriander, and a hint of chamomile.",
-                average_rating=4.1,
-                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Loop DIPA",
+                name="Hi-Def",
                 brewery=brewery_castle_island,
                 style="DIPA",
-                abv=8.5,
-                ibu=85,
-                description="Bold, juicy double IPA with intense tropical fruit flavors. Named after Chicago's famous Loop district.",
+                abv=8.4,
+                ibu=70,
+                description="Hazy Double IPA featuring Citra, Mosaic, and Idaho 7 hops. Bold and intensely flavorful.",
                 average_rating=4.7,
                 image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Lakefront Pilsner",
-                brewery=brewery_tree_house,
+                name="Bohemian Shine",
+                brewery=brewery_castle_island,
                 style="PILSNER",
-                abv=5.2,
+                abv=4.9,
                 ibu=35,
-                description="Classic German-style pilsner with a crisp, clean finish. Brewed with imported German malt and hops.",
-                average_rating=4.3,
+                description="Award-winning Czech Pilsner with a crisp, clean finish and classic noble hop character.",
+                average_rating=4.4,
                 image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
+            # Tree House Brewery beers
             Beer.objects.create(
-                name="Emerald Haze",
+                name="Julius",
+                brewery=brewery_tree_house,
+                style="IPA",
+                abv=6.8,
+                ibu=55,
+                description="Flagship IPA that's bright and juicy, filled with flavors and aromas of mango, peach, passionfruit, and citrus juice.",
+                average_rating=4.8,
+                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ),
+            Beer.objects.create(
+                name="Haze",
                 brewery=brewery_tree_house,
                 style="IPA",
                 abv=6.7,
-                ibu=55,
-                description="Pacific Northwest hazy IPA featuring locally grown hops. Notes of pine, citrus, and tropical fruit.",
-                average_rating=4.5,
+                ibu=50,
+                description="Peach-forward hazy IPA with beautiful hop aromatics and a smooth, juicy character.",
+                average_rating=4.7,
                 image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Rainier Red",
+                name="Green",
                 brewery=brewery_tree_house,
-                style="OTHER",
-                abv=5.8,
-                ibu=40,
-                description="Amber ale with caramel malt sweetness balanced by Pacific Northwest hops. Smooth and approachable.",
-                average_rating=4.2,
-                image_url="https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                style="IPA",
+                abv=6.9,
+                ibu=52,
+                description="Pineapple-forward IPA with tropical fruit flavors and a hazy, juicy profile.",
+                average_rating=4.7,
+                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Puget Sour",
+                name="Very Hazy",
                 brewery=brewery_tree_house,
-                style="SOUR",
-                abv=4.5,
-                ibu=10,
-                description="Kettle sour with blackberries and raspberries. Tart, fruity, and refreshing.",
-                average_rating=4.4,
-                image_url="https://images.unsplash.com/photo-1558642084-fd07fae5282e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Bourbon Barrel Quad",
-                brewery=brewery_tree_house,
-                style="OTHER",
-                abv=10.5,
-                ibu=25,
-                description="Belgian-style quadrupel aged in bourbon barrels. Rich, complex, with notes of dark fruit, caramel, and vanilla.",
+                style="DIPA",
+                abv=8.6,
+                ibu=65,
+                description="Double IPA that conveys all the beautiful flavors of Haze with even greater depth and potency.",
                 average_rating=4.8,
-                image_url="https://images.unsplash.com/photo-1584225064785-c62a8b43d148?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
-                name="Nashville Brown",
+                name="Hurricane",
+                brewery=brewery_tree_house,
+                style="DIPA",
+                abv=8.3,
+                ibu=70,
+                description="Double IPA with intense Simcoe and Citra hop doses. Pungent aroma of earthy citrus with papaya, melon, and stone fruit.",
+                average_rating=4.7,
+                image_url="https://images.unsplash.com/photo-1558642891-54be180ea339?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ),
+            Beer.objects.create(
+                name="Lights On",
                 brewery=brewery_tree_house,
                 style="OTHER",
                 abv=5.5,
-                ibu=28,
-                description="English-style brown ale with a Southern twist. Notes of toffee, nuts, and a hint of chocolate.",
-                average_rating=4.3,
-                image_url="https://images.unsplash.com/photo-1518099074172-2e47ee6cfdc0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Foggy Morning",
-                brewery=brewery_tree_house,
-                style="WHEAT",
-                abv=5.2,
-                ibu=12,
-                description="Hefeweizen with traditional banana and clove notes. Smooth, creamy, and perfect for brunch.",
-                average_rating=4.1,
-                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Barrel-Aged Imperial Porter",
-                brewery=brewery_tree_house,
-                style="PORTER",
-                abv=9.8,
                 ibu=40,
-                description="Robust porter aged in rye whiskey barrels. Complex flavors of chocolate, coffee, vanilla, and spice.",
-                average_rating=4.9,
-                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Sunset Saison",
-                brewery=brewery_tree_house,
-                style="OTHER",
-                abv=6.2,
-                ibu=25,
-                description="Farmhouse saison with notes of pepper, citrus, and a hint of honey. Dry finish with a touch of funk.",
-                average_rating=4.4,
-                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Music City Pilsner",
-                brewery=brewery_tree_house,
-                style="PILSNER",
-                abv=4.9,
-                ibu=32,
-                description="Czech-style pilsner with a crisp, clean finish. Traditional noble hops provide a spicy, floral character.",
-                average_rating=4.2,
-                image_url="https://images.unsplash.com/photo-1586993451228-09818021e309?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-            ),
-            Beer.objects.create(
-                name="Riverside Honey Wheat",
-                brewery=brewery_tree_house,
-                style="WHEAT",
-                abv=5.1,
-                ibu=20,
-                description="Smooth wheat beer brewed with local Texas honey. Light, refreshing, with subtle honey sweetness.",
-                average_rating=4.3,
+                description="Modern American Pale Ale with a hazy orange pour and an aroma filled with sweet fresh citrus fruit.",
+                average_rating=4.5,
                 image_url="https://images.unsplash.com/photo-1523567830207-96731740fa71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ),
+            Beer.objects.create(
+                name="Super Treat",
+                brewery=brewery_tree_house,
+                style="IPA",
+                abv=8.3,
+                ibu=60,
+                description="Intensely hoppy IPA with big tropical fruit character and a dangerously drinkable finish.",
+                average_rating=4.6,
+                image_url="https://images.unsplash.com/photo-1535958636474-b021ee887b13?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            ),
+            Beer.objects.create(
+                name="Summer",
+                brewery=brewery_tree_house,
+                style="IPA",
+                abv=8.1,
+                ibu=58,
+                description="Bright and refreshing IPA with vibrant hop aromatics perfect for warm weather.",
+                average_rating=4.5,
+                image_url="https://images.unsplash.com/photo-1600788886242-5c96aabe3757?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
         ]
 
         # Add tags to beers
-        beers[0].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])
-        beers[1].tags.add(tags["Dark"], tags["Roasted"], tags["Barrel Aged"])
-        beers[2].tags.add(tags["Hoppy"], tags["Citrus"])
-
-        # Add tags to new beers
-        beers[3].tags.add(tags["Fruity"], tags["Smooth"])
-        beers[4].tags.add(tags["Hoppy"], tags["Citrus"])
-        beers[5].tags.add(tags["Smooth"])
-        beers[6].tags.add(tags["Dark"], tags["Roasted"])
-        beers[7].tags.add(tags["Fruity"], tags["Smooth"])
-        beers[8].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])
-        beers[9].tags.add(tags["Smooth"])
-        beers[10].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])
-        beers[11].tags.add(tags["Smooth"])
-        beers[12].tags.add(tags["Fruity"])
-        beers[13].tags.add(tags["Dark"], tags["Barrel Aged"])
-        beers[14].tags.add(tags["Dark"], tags["Smooth"])
-        beers[15].tags.add(tags["Fruity"], tags["Smooth"])
-        beers[16].tags.add(tags["Dark"], tags["Roasted"], tags["Barrel Aged"])
-        beers[17].tags.add(tags["Fruity"], tags["Smooth"])
-        beers[18].tags.add(tags["Smooth"])
-        beers[19].tags.add(tags["Fruity"], tags["Smooth"])
+        # Night Shift beers
+        beers[0].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Whirlpool
+        beers[1].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Fluffy
+        beers[2].tags.add(tags["Hoppy"], tags["Citrus"])  # Santilli
+        beers[3].tags.add(tags["Smooth"])  # Lime Lite
+        # Castle Island beers
+        beers[4].tags.add(tags["Hoppy"], tags["Citrus"])  # Keeper
+        beers[5].tags.add(tags["Smooth"])  # Winner
+        beers[6].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Fiver
+        beers[7].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Hi-Def
+        beers[8].tags.add(tags["Smooth"])  # Bohemian Shine
+        # Tree House beers
+        beers[9].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Julius
+        beers[10].tags.add(tags["Hoppy"], tags["Fruity"])  # Haze
+        beers[11].tags.add(tags["Hoppy"], tags["Fruity"])  # Green
+        beers[12].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Very Hazy
+        beers[13].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Hurricane
+        beers[14].tags.add(tags["Hoppy"], tags["Citrus"])  # Lights On
+        beers[15].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Super Treat
+        beers[16].tags.add(tags["Hoppy"], tags["Citrus"], tags["Fruity"])  # Summer
 
         self.stdout.write(self.style.SUCCESS("Successfully added sample data"))
