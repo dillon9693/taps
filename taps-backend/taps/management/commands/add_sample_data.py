@@ -16,7 +16,6 @@ class Command(BaseCommand):
             brewery_night_shift = Brewery.objects.get(name="Night Shift Brewing, Inc")
             brewery_tree_house = Brewery.objects.get(name="Tree House Brewery")
         except Brewery.DoesNotExist as e:
-            print(str(e))
             self.stderr.write(
                 "Missing brewery data. Run import_brewery_data command first!"
             )
