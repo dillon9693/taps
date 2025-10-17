@@ -18,8 +18,12 @@ class Brewery(models.Model):
     state_province = models.CharField(max_length=30)
     postal_code = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=50)
-    longitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
-    latitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
+    longitude = models.DecimalField(
+        max_digits=10, decimal_places=7, blank=True, null=True
+    )
+    latitude = models.DecimalField(
+        max_digits=10, decimal_places=7, blank=True, null=True
+    )
     phone = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
     year_founded = models.IntegerField(null=True, blank=True)
