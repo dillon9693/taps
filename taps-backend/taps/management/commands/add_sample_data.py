@@ -149,7 +149,7 @@ class Command(BaseCommand):
                 ibu=30,
                 description="Robust porter brewed with Texas pecans. Notes of chocolate, coffee, and toasted nuts.",
                 average_rating=4.6,
-                image_url="https://images.unsplash.com/photo-1527604931762-1fae91de0f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1587582345426-bf07d078f622?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Windy City Wit",
@@ -249,7 +249,7 @@ class Command(BaseCommand):
                 ibu=40,
                 description="Robust porter aged in rye whiskey barrels. Complex flavors of chocolate, coffee, vanilla, and spice.",
                 average_rating=4.9,
-                image_url="https://images.unsplash.com/photo-1571989569011-0aa99b3e8d8a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                image_url="https://images.unsplash.com/photo-1567696911980-e8f7c02f4084?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
             ),
             Beer.objects.create(
                 name="Sunset Saison",
