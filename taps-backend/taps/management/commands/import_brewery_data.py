@@ -1,6 +1,7 @@
 import csv
 import io
 import urllib.request
+import requests
 
 from django.core.management.base import BaseCommand
 
@@ -23,12 +24,27 @@ class Command(BaseCommand):
 
         breweries_created = []
         breweries_existing = []
+        breweries_invalid = []
 
         for row in reader:
-            total_processed = len(breweries_created) + len(breweries_existing)
+            total_processed = (
+                len(breweries_created)
+                + len(breweries_existing)
+                + len(breweries_invalid)
+            )
 
-            if total_processed % 10 == 0:
+            if total_processed != 0 and total_processed % 10 == 0:
                 self.stdout.write(f"Processed {total_processed} / {total_count}...")
+
+            brewery_raw = {"external_id": row["id"], "name": row["name"]}
+
+            invalid_reasons = self.validate_brewery(row)
+            if len(invalid_reasons) > 0:
+                self.stdout.write(
+                    f'Skipping brewery "{row["name"]}" b/c invalid. Reasons: {", ".join(invalid_reasons)} '
+                )
+                breweries_invalid.append(brewery_raw)
+                continue
 
             brewery, created = Brewery.objects.get_or_create(
                 external_id=row["id"],
@@ -53,12 +69,33 @@ class Command(BaseCommand):
             # TODO handle data updates?
 
             if created:
-                breweries_created.append(brewery)
+                breweries_created.append(brewery_raw)
             else:
-                breweries_existing.append(brewery)
+                breweries_existing.append(brewery_raw)
 
         self.stdout.write(
-            f"Total processed: {len(breweries_created) + len(breweries_existing)}"
+            f"Total processed: {len(breweries_created) + len(breweries_existing) + len(breweries_invalid)}"
         )
         self.stdout.write(f"Total created: {len(breweries_created)}")
         self.stdout.write(f"Total existing: {len(breweries_existing)}")
+        self.stdout.write(f"Total invalid: {len(breweries_invalid)}")
+
+    def validate_brewery(self, brewery_row):
+        """Performs validations on raw brewery data before inserting."""
+        invalid_reasons = []
+
+        website_url = brewery_row["website_url"]
+
+        if not website_url:
+            invalid_reasons.append("no_website_url")
+        else:
+            # Check if website loads
+            try:
+                requests.get(brewery_row["website_url"], timeout=10)
+            except (
+                requests.exceptions.ConnectionError,
+                requests.exceptions.ReadTimeout,
+            ):
+                invalid_reasons.append("website_not_loading")
+
+        return invalid_reasons
