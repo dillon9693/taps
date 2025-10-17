@@ -1,8 +1,8 @@
 import csv
 import io
 import urllib.request
-import requests
 
+import requests
 from django.core.management.base import BaseCommand
 
 from taps.models import Brewery, BrewerySource
@@ -110,7 +110,8 @@ class Command(BaseCommand):
             invalid_reasons = self.validate_brewery(row)
             if len(invalid_reasons) > 0:
                 self.stdout.write(
-                    f'Skipping brewery "{row["name"]}" b/c invalid. Reasons: {", ".join(invalid_reasons)} '
+                    f'Skipping brewery "{row["name"]}" b/c invalid.Reasons: {{',
+                    ".join(invalid_reasons)}",
                 )
                 breweries_invalid.append(brewery_raw)
                 continue
@@ -142,9 +143,10 @@ class Command(BaseCommand):
             else:
                 breweries_existing.append(brewery_raw)
 
-        self.stdout.write(
-            f"Total processed: {len(breweries_created) + len(breweries_existing) + len(breweries_invalid)}"
+        total_processed = (
+            len(breweries_created) + len(breweries_existing) + len(breweries_invalid)
         )
+        self.stdout.write(f"Total processed: {total_processed}")
         self.stdout.write(f"Total created: {len(breweries_created)}")
         self.stdout.write(f"Total existing: {len(breweries_existing)}")
         self.stdout.write(f"Total invalid: {len(breweries_invalid)}")
