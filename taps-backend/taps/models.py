@@ -11,7 +11,7 @@ class BrewerySource(models.TextChoices):
 class Brewery(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)  # TODO deprecate separately
+    location = models.CharField(max_length=200)  # DEPRECATED
     address_1 = models.CharField(max_length=100, blank=True)
     address_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=50)
