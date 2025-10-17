@@ -4,6 +4,10 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
+class BrewerySource(models.TextChoices):
+    OPEN_BREWERY_DB = "OPEN_BREWERY_DB"
+
+
 class Brewery(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
@@ -11,6 +15,8 @@ class Brewery(models.Model):
     description = models.TextField(blank=True)
     year_founded = models.IntegerField(null=True, blank=True)
     website = models.URLField(max_length=200, blank=True)
+    external_id = models.CharField(max_length=50, blank=True)
+    external_source = models.CharField(choices=BrewerySource, blank=True)
 
     class Meta:
         verbose_name_plural = "Breweries"
