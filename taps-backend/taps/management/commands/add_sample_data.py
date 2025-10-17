@@ -8,65 +8,19 @@ class Command(BaseCommand):
     help = "Adds sample beers, breweries, and tags to the database"
 
     def handle(self, *args, **kwargs):
-        # Create some breweries
-        breweries = {
-            "Cloudy Bay Brewing": Brewery.objects.create(
-                name="Cloudy Bay Brewing",
-                location="Portland, OR",
-                description="Craft brewery specializing in hazy IPAs and experimental brews",
-                year_founded=2018,
-                website="https://cloudybaybrewing.com",
-            ),
-            "Dark Horse": Brewery.objects.create(
-                name="Dark Horse",
-                location="Denver, CO",
-                description="Known for rich stouts and barrel-aged beers",
-                year_founded=2010,
-                website="https://darkhorsebrewery.com",
-            ),
-            "Golden Coast": Brewery.objects.create(
-                name="Golden Coast",
-                location="San Diego, CA",
-                description="West coast style beers with a modern twist",
-                year_founded=2015,
-                website="https://goldencoastbrews.com",
-            ),
-            "Mountain Peak": Brewery.objects.create(
-                name="Mountain Peak",
-                location="Boulder, CO",
-                description="High altitude brewing with locally sourced ingredients",
-                year_founded=2012,
-                website="https://mountainpeakbrews.com",
-            ),
-            "Riverside Ales": Brewery.objects.create(
-                name="Riverside Ales",
-                location="Austin, TX",
-                description="Traditional brewing techniques with a southern twist",
-                year_founded=2008,
-                website="https://riversideales.com",
-            ),
-            "Urban Fermentation": Brewery.objects.create(
-                name="Urban Fermentation",
-                location="Chicago, IL",
-                description="City-inspired craft beers with innovative flavors",
-                year_founded=2016,
-                website="https://urbanfermentation.com",
-            ),
-            "Coastal Brews": Brewery.objects.create(
-                name="Coastal Brews",
-                location="Seattle, WA",
-                description="Pacific Northwest brewery focusing on sustainable practices",
-                year_founded=2014,
-                website="https://coastalbrewsco.com",
-            ),
-            "Heritage Barrel": Brewery.objects.create(
-                name="Heritage Barrel",
-                location="Nashville, TN",
-                description="Specializing in barrel-aged and traditional European styles",
-                year_founded=2011,
-                website="https://heritagebarrel.com",
-            ),
-        }
+        # Get some breweries from imported data (from import_brewery_data command)
+        try:
+            brewery_castle_island = Brewery.objects.get(
+                name="Castle Island Brewing Co."
+            )
+            brewery_night_shift = Brewery.objects.get(name="Night Shift Brewing, Inc")
+            brewery_tree_house = Brewery.objects.get(name="Tree House Brewery")
+        except Brewery.DoesNotExist as e:
+            print(str(e))
+            self.stderr.write(
+                "Missing brewery data. Run import_brewery_data command first!"
+            )
+            return
 
         # Create some tags
         tags = {
@@ -83,7 +37,7 @@ class Command(BaseCommand):
         beers = [
             Beer.objects.create(
                 name="Hazy Daydream",
-                brewery=breweries["Cloudy Bay Brewing"],
+                brewery=brewery_night_shift,
                 style="IPA",
                 abv=6.8,
                 ibu=65,
@@ -93,7 +47,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Midnight Velvet",
-                brewery=breweries["Dark Horse"],
+                brewery=brewery_night_shift,
                 style="STOUT",
                 abv=9.2,
                 ibu=45,
@@ -103,7 +57,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="West Coast Wonder",
-                brewery=breweries["Golden Coast"],
+                brewery=brewery_night_shift,
                 style="IPA",
                 abv=7.2,
                 ibu=75,
@@ -113,7 +67,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Alpine Sunrise",
-                brewery=breweries["Mountain Peak"],
+                brewery=brewery_night_shift,
                 style="WHEAT",
                 abv=5.4,
                 ibu=18,
@@ -123,7 +77,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Evergreen IPA",
-                brewery=breweries["Mountain Peak"],
+                brewery=brewery_castle_island,
                 style="IPA",
                 abv=6.5,
                 ibu=60,
@@ -133,7 +87,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Lone Star Lager",
-                brewery=breweries["Riverside Ales"],
+                brewery=brewery_castle_island,
                 style="LAGER",
                 abv=4.8,
                 ibu=22,
@@ -143,7 +97,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Pecan Porter",
-                brewery=breweries["Riverside Ales"],
+                brewery=brewery_castle_island,
                 style="PORTER",
                 abv=6.2,
                 ibu=30,
@@ -153,7 +107,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Windy City Wit",
-                brewery=breweries["Urban Fermentation"],
+                brewery=brewery_castle_island,
                 style="WHEAT",
                 abv=5.0,
                 ibu=15,
@@ -163,7 +117,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Loop DIPA",
-                brewery=breweries["Urban Fermentation"],
+                brewery=brewery_castle_island,
                 style="DIPA",
                 abv=8.5,
                 ibu=85,
@@ -173,7 +127,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Lakefront Pilsner",
-                brewery=breweries["Urban Fermentation"],
+                brewery=brewery_tree_house,
                 style="PILSNER",
                 abv=5.2,
                 ibu=35,
@@ -183,7 +137,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Emerald Haze",
-                brewery=breweries["Coastal Brews"],
+                brewery=brewery_tree_house,
                 style="IPA",
                 abv=6.7,
                 ibu=55,
@@ -193,7 +147,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Rainier Red",
-                brewery=breweries["Coastal Brews"],
+                brewery=brewery_tree_house,
                 style="OTHER",
                 abv=5.8,
                 ibu=40,
@@ -203,7 +157,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Puget Sour",
-                brewery=breweries["Coastal Brews"],
+                brewery=brewery_tree_house,
                 style="SOUR",
                 abv=4.5,
                 ibu=10,
@@ -213,7 +167,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Bourbon Barrel Quad",
-                brewery=breweries["Heritage Barrel"],
+                brewery=brewery_tree_house,
                 style="OTHER",
                 abv=10.5,
                 ibu=25,
@@ -223,7 +177,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Nashville Brown",
-                brewery=breweries["Heritage Barrel"],
+                brewery=brewery_tree_house,
                 style="OTHER",
                 abv=5.5,
                 ibu=28,
@@ -233,7 +187,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Foggy Morning",
-                brewery=breweries["Cloudy Bay Brewing"],
+                brewery=brewery_tree_house,
                 style="WHEAT",
                 abv=5.2,
                 ibu=12,
@@ -243,7 +197,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Barrel-Aged Imperial Porter",
-                brewery=breweries["Dark Horse"],
+                brewery=brewery_tree_house,
                 style="PORTER",
                 abv=9.8,
                 ibu=40,
@@ -253,7 +207,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Sunset Saison",
-                brewery=breweries["Golden Coast"],
+                brewery=brewery_tree_house,
                 style="OTHER",
                 abv=6.2,
                 ibu=25,
@@ -263,7 +217,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Music City Pilsner",
-                brewery=breweries["Heritage Barrel"],
+                brewery=brewery_tree_house,
                 style="PILSNER",
                 abv=4.9,
                 ibu=32,
@@ -273,7 +227,7 @@ class Command(BaseCommand):
             ),
             Beer.objects.create(
                 name="Riverside Honey Wheat",
-                brewery=breweries["Riverside Ales"],
+                brewery=brewery_tree_house,
                 style="WHEAT",
                 abv=5.1,
                 ibu=20,
