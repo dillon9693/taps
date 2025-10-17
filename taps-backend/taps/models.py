@@ -15,7 +15,7 @@ class Brewery(models.Model):
     address_1 = models.CharField(max_length=100, blank=True)
     address_2 = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=50)
-    state_province = models.CharField(max_length=10)
+    state_province = models.CharField(max_length=30)
     postal_code = models.CharField(max_length=20, blank=True)
     country = models.CharField(max_length=50)
     longitude = models.DecimalField(max_digits=10, decimal_places=7, blank=True)
