@@ -27,7 +27,7 @@ class Brewery(models.Model):
     phone = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
     year_founded = models.IntegerField(null=True, blank=True)
-    website = models.URLField(max_length=200, blank=True)
+    website = models.URLField(max_length=200)
     external_id = models.CharField(max_length=50, blank=True)
     external_source = models.CharField(choices=BrewerySource, blank=True)
 
