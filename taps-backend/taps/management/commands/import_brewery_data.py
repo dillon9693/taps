@@ -1,6 +1,5 @@
 import csv
 import io
-import urllib.request
 
 import requests
 from django.core.management.base import BaseCommand
@@ -86,7 +85,7 @@ class Command(BaseCommand):
 
         self.stdout.write(f"\nStarting data import for {state} from {import_url}!\n")
 
-        contents = urllib.request.urlopen(import_url).read().decode("utf-8")
+        contents = requests.get(import_url).text
         total_count = contents.count("\n") - 1
 
         reader = csv.DictReader(io.StringIO(contents))
@@ -110,8 +109,7 @@ class Command(BaseCommand):
             invalid_reasons = self.validate_brewery(row)
             if len(invalid_reasons) > 0:
                 self.stdout.write(
-                    f'Skipping brewery "{row["name"]}" b/c invalid.Reasons: {{',
-                    ".join(invalid_reasons)}",
+                    f'Skipping brewery "{row["name"]}" b/c invalid. Reasons: {", ".join(invalid_reasons)}',  # noqa: E501
                 )
                 breweries_invalid.append(brewery_raw)
                 continue
