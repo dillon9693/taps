@@ -775,7 +775,11 @@ class TagVoteMutationTestCase(TestCase):
 
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     errors
                     newUpvoteCount
@@ -803,7 +807,11 @@ class TagVoteMutationTestCase(TestCase):
 
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: false) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: false
+                ) {{
                     success
                     errors
                     newUpvoteCount
@@ -829,7 +837,11 @@ class TagVoteMutationTestCase(TestCase):
         """Test that unauthenticated user receives authentication error."""
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     errors
                 }}
@@ -853,7 +865,11 @@ class TagVoteMutationTestCase(TestCase):
 
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "99999999-9999-9999-9999-999999999999", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "99999999-9999-9999-9999-999999999999"
+                    upvote: true
+                ) {{
                     success
                     errors
                 }}
@@ -877,7 +893,11 @@ class TagVoteMutationTestCase(TestCase):
 
         mutation = f"""
             mutation {{
-                tagVote(tagId: "99999999-9999-9999-9999-999999999999", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "99999999-9999-9999-9999-999999999999"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     errors
                 }}
@@ -902,7 +922,11 @@ class TagVoteMutationTestCase(TestCase):
         # tag2 is not associated with the beer
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag2.id}", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag2.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     errors
                 }}
@@ -927,7 +951,11 @@ class TagVoteMutationTestCase(TestCase):
         # First, upvote
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     newUpvoteCount
                     newDownvoteCount
@@ -950,7 +978,11 @@ class TagVoteMutationTestCase(TestCase):
         # Then, change to downvote
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: false) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: false
+                ) {{
                     success
                     newUpvoteCount
                     newDownvoteCount
@@ -977,7 +1009,11 @@ class TagVoteMutationTestCase(TestCase):
         # First, downvote
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: false) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: false
+                ) {{
                     success
                     newUpvoteCount
                     newDownvoteCount
@@ -1000,7 +1036,11 @@ class TagVoteMutationTestCase(TestCase):
         # Then, change to upvote
         mutation = f"""
             mutation {{
-                tagVote(tagId: "{self.tag1.id}", beerId: "{self.beer.id}", upvote: true) {{
+                tagVote(
+                    tagId: "{self.tag1.id}"
+                    beerId: "{self.beer.id}"
+                    upvote: true
+                ) {{
                     success
                     newUpvoteCount
                     newDownvoteCount
