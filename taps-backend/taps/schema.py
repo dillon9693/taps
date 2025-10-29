@@ -14,6 +14,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
 
+from taps.decorators import login_required
 from taps.models import Beer, Brewery, SavedBeer, Tag, TagVote
 
 logger = logging.getLogger(__name__)
@@ -195,10 +196,9 @@ class Query(graphene.ObjectType):
             .order_by("-average_rating")[:count]
         )
 
+    @login_required
     def resolve_saved_beers(self, info, count=10):
         user = info.context.user
-        if not user.is_authenticated:
-            raise Exception("Authenticated required.")
 
         saved_beers = (
             SavedBeer.objects.filter(user=user)
@@ -447,10 +447,9 @@ class TagVoteMutation(graphene.Mutation):
     new_downvote_count = graphene.Int()
     errors = graphene.List(graphene.String)
 
+    @login_required
     def mutate(self, info, tag_id, beer_id, upvote):
         user = info.context.user
-        if not user.is_authenticated:
-            return TagVoteMutation(success=False, errors=["Authentication required."])
 
         logger.debug(
             f"TagVoteMutation called by user {user.id} for tag {tag_id} on beer "
