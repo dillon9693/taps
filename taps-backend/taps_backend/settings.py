@@ -60,6 +60,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "taps_backend.middleware.GraphQLRateLimitMiddleware",  # After auth middleware
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -167,3 +168,6 @@ SOCIALACCOUNT_EMAIL_REQUIRED = True
 SESSION_COOKIE_AGE = 604800  # 1 week (reduced from 2 weeks for security)
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
+
+# Testing flag (overridden in test_settings.py)
+TESTING = False

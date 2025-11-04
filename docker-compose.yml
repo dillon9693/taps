@@ -21,6 +21,18 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   backend:
     env_file: .env
     build:
@@ -33,6 +45,7 @@ services:
         DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE}
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: redis://redis:6379/0
     volumes:
       - ./taps-backend:/app
       - /app/.venv # Exclude host .venv from mount
@@ -40,6 +53,8 @@ services:
       - "8000:8000"
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   frontend:
@@ -58,3 +73,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

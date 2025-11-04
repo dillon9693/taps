@@ -89,6 +89,16 @@ LOGGING = {
 
 DATABASES = {"default": env.db("DATABASE_URL")}  # noqa: F405
 
+# Redis cache configuration for rate limiting
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env.str("REDIS_URL"),  # noqa: F405
+        "KEY_PREFIX": "taps_rate_limit",
+        "TIMEOUT": 900,  # 15 minutes default
+    }
+}
+
 # Email backend for production (SMTP - configure when needed)
 EMAIL_BACKEND = env.str(
     "EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
