@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useMutation } from "@apollo/client";
+import { useRef } from "react";
 import {
   AppShell,
   Container,
@@ -23,7 +24,13 @@ export default function App() {
   const theme = useMantineTheme();
   const loc = useLocation();
   const [mobileMenuOpen, { toggle, close }] = useDisclosure(false);
-  const mobileMenuRef = useClickOutside(close);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useClickOutside((event) => {
+    if (burgerRef.current?.contains(event.target as Node)) {
+      return;
+    }
+    close();
+  });
 
   const { isAuthenticated, loading: loadingCurrentUser } = useAuth();
 
@@ -52,6 +59,7 @@ export default function App() {
           </Box>
 
           <Burger
+            ref={burgerRef}
             opened={mobileMenuOpen}
             onClick={toggle}
             hiddenFrom="sm"
