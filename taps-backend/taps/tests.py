@@ -914,7 +914,9 @@ class SaveBeerMutationTestCase(TestCase):
         self.assertEqual(data["errors"], [])
 
         # Verify the beer was saved
-        self.assertTrue(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+        self.assertTrue(
+            SavedBeer.objects.filter(user=self.user, beer=self.beer).exists()
+        )
 
     def test_save_beer_unauthenticated_user(self):
         """Test that unauthenticated user receives authentication error."""
@@ -924,7 +926,9 @@ class SaveBeerMutationTestCase(TestCase):
         self.assertIn("Authentication required.", data["errors"])
 
         # Verify the beer was not saved
-        self.assertFalse(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+        self.assertFalse(
+            SavedBeer.objects.filter(user=self.user, beer=self.beer).exists()
+        )
 
     def test_save_beer_duplicate(self):
         """Test that saving a beer twice returns error."""
@@ -1005,7 +1009,9 @@ class UnsaveBeerMutationTestCase(TestCase):
 
         # First save the beer
         SavedBeer.objects.create(user=self.user, beer=self.beer)
-        self.assertTrue(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+        self.assertTrue(
+            SavedBeer.objects.filter(user=self.user, beer=self.beer).exists()
+        )
 
         # Now unsave it
         data = self.execute_unsave_beer_mutation(self.beer.id)
@@ -1014,7 +1020,9 @@ class UnsaveBeerMutationTestCase(TestCase):
         self.assertEqual(data["errors"], [])
 
         # Verify the beer was unsaved
-        self.assertFalse(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+        self.assertFalse(
+            SavedBeer.objects.filter(user=self.user, beer=self.beer).exists()
+        )
 
     def test_unsave_beer_unauthenticated_user(self):
         """Test that unauthenticated user receives authentication error."""
@@ -1103,7 +1111,9 @@ class AddTagsForBeerMutationTestCase(TestCase):
         """Test that authenticated user can add tags to a beer."""
         self.client.force_login(self.user)
 
-        data = self.execute_add_tags_mutation(self.beer.id, [self.tag1.id, self.tag2.id])
+        data = self.execute_add_tags_mutation(
+            self.beer.id, [self.tag1.id, self.tag2.id]
+        )
 
         self.assertTrue(data["success"])
         self.assertEqual(data["errors"], [])
