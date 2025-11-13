@@ -7,7 +7,7 @@ from django.test import Client, TestCase
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from taps.models import Beer, Brewery, Tag
+from taps.models import Beer, Brewery, SavedBeer, Tag
 
 
 class RegisterUserTestCase(TestCase):
@@ -767,3 +767,400 @@ class TagVoteMutationTestCase(TestCase):
         self.assertTrue(data["success"])
         self.assertEqual(data["newUpvoteCount"], 1)
         self.assertEqual(data["newDownvoteCount"], 0)
+
+
+class UpdateAccountDetailsMutationTestCase(TestCase):
+    """Test the UpdateAccountDetailsMutation GraphQL mutation."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="testPassword123!",
+            first_name="Original",
+            last_name="Name",
+        )
+
+    def execute_update_account_details_mutation(self, first_name, last_name):
+        """
+        Helper method to execute update account details mutation.
+
+        Args:
+            first_name: The new first name
+            last_name: The new last name
+
+        Returns:
+            The data from the mutation response
+        """
+        mutation = f"""
+            mutation {{
+                updateAccountDetails(
+                    firstName: "{first_name}"
+                    lastName: "{last_name}"
+                ) {{
+                    success
+                    errors
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": mutation}),
+            content_type="application/json",
+        )
+        result = response.json()
+        return result["data"]["updateAccountDetails"]
+
+    def test_update_account_details_authenticated_user(self):
+        """Test that authenticated user can update account details."""
+        self.client.force_login(self.user)
+
+        data = self.execute_update_account_details_mutation("John", "Doe")
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+
+        # Verify the database was updated
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "John")
+        self.assertEqual(self.user.last_name, "Doe")
+
+    def test_update_account_details_unauthenticated_user(self):
+        """Test that unauthenticated user receives authentication error."""
+        data = self.execute_update_account_details_mutation("John", "Doe")
+
+        self.assertFalse(data["success"])
+        self.assertIn("Authentication required.", data["errors"])
+
+        # Verify the database was not updated
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "Original")
+        self.assertEqual(self.user.last_name, "Name")
+
+    def test_update_account_details_with_empty_strings(self):
+        """Test that account details can be set to empty strings."""
+        self.client.force_login(self.user)
+
+        data = self.execute_update_account_details_mutation("", "")
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+
+        # Verify the database was updated
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, "")
+        self.assertEqual(self.user.last_name, "")
+
+
+class SaveBeerMutationTestCase(TestCase):
+    """Test the SaveBeerMutation GraphQL mutation."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="testPassword123!",
+        )
+
+        # Create a brewery
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+
+        # Create a beer
+        self.beer = Beer.objects.create(
+            name="Test Beer",
+            brewery=self.brewery,
+            style="IPA",
+            abv=5.5,
+            description="Test description",
+        )
+
+    def execute_save_beer_mutation(self, beer_id):
+        """
+        Helper method to execute save beer mutation.
+
+        Args:
+            beer_id: The beer ID to save
+
+        Returns:
+            The data from the mutation response
+        """
+        mutation = f"""
+            mutation {{
+                saveBeer(beerId: "{beer_id}") {{
+                    success
+                    errors
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": mutation}),
+            content_type="application/json",
+        )
+        result = response.json()
+        return result["data"]["saveBeer"]
+
+    def test_save_beer_authenticated_user(self):
+        """Test that authenticated user can save a beer."""
+        self.client.force_login(self.user)
+
+        data = self.execute_save_beer_mutation(self.beer.id)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+
+        # Verify the beer was saved
+        self.assertTrue(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+
+    def test_save_beer_unauthenticated_user(self):
+        """Test that unauthenticated user receives authentication error."""
+        data = self.execute_save_beer_mutation(self.beer.id)
+
+        self.assertFalse(data["success"])
+        self.assertIn("Authentication required.", data["errors"])
+
+        # Verify the beer was not saved
+        self.assertFalse(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+
+    def test_save_beer_duplicate(self):
+        """Test that saving a beer twice returns error."""
+        self.client.force_login(self.user)
+
+        # First save
+        data = self.execute_save_beer_mutation(self.beer.id)
+        self.assertTrue(data["success"])
+
+        # Second save (duplicate)
+        data = self.execute_save_beer_mutation(self.beer.id)
+        self.assertFalse(data["success"])
+        self.assertIn("Beer has already been saved.", data["errors"])
+
+    def test_save_beer_invalid_beer_id(self):
+        """Test that saving with invalid beer ID returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_save_beer_mutation("99999999-9999-9999-9999-999999999999")
+
+        self.assertFalse(data["success"])
+        self.assertIn("Beer does not exist.", data["errors"])
+
+
+class UnsaveBeerMutationTestCase(TestCase):
+    """Test the UnsaveBeerMutation GraphQL mutation."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="testPassword123!",
+        )
+
+        # Create a brewery
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+
+        # Create a beer
+        self.beer = Beer.objects.create(
+            name="Test Beer",
+            brewery=self.brewery,
+            style="IPA",
+            abv=5.5,
+            description="Test description",
+        )
+
+    def execute_unsave_beer_mutation(self, beer_id):
+        """
+        Helper method to execute unsave beer mutation.
+
+        Args:
+            beer_id: The beer ID to unsave
+
+        Returns:
+            The data from the mutation response
+        """
+        mutation = f"""
+            mutation {{
+                unsaveBeer(beerId: "{beer_id}") {{
+                    success
+                    errors
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": mutation}),
+            content_type="application/json",
+        )
+        result = response.json()
+        return result["data"]["unsaveBeer"]
+
+    def test_unsave_beer_authenticated_user(self):
+        """Test that authenticated user can unsave a beer."""
+        self.client.force_login(self.user)
+
+        # First save the beer
+        SavedBeer.objects.create(user=self.user, beer=self.beer)
+        self.assertTrue(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+
+        # Now unsave it
+        data = self.execute_unsave_beer_mutation(self.beer.id)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+
+        # Verify the beer was unsaved
+        self.assertFalse(SavedBeer.objects.filter(user=self.user, beer=self.beer).exists())
+
+    def test_unsave_beer_unauthenticated_user(self):
+        """Test that unauthenticated user receives authentication error."""
+        data = self.execute_unsave_beer_mutation(self.beer.id)
+
+        self.assertFalse(data["success"])
+        self.assertIn("Authentication required.", data["errors"])
+
+    def test_unsave_beer_not_saved(self):
+        """Test that unsaving a beer that was not saved returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_unsave_beer_mutation(self.beer.id)
+
+        self.assertFalse(data["success"])
+        self.assertIn("Beer has not yet been saved.", data["errors"])
+
+    def test_unsave_beer_invalid_beer_id(self):
+        """Test that unsaving with invalid beer ID returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_unsave_beer_mutation("99999999-9999-9999-9999-999999999999")
+
+        self.assertFalse(data["success"])
+        self.assertIn("Beer does not exist.", data["errors"])
+
+
+class AddTagsForBeerMutationTestCase(TestCase):
+    """Test the AddTagsForBeerMutation GraphQL mutation."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="testPassword123!",
+        )
+
+        # Create a brewery
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+
+        # Create a beer
+        self.beer = Beer.objects.create(
+            name="Test Beer",
+            brewery=self.brewery,
+            style="IPA",
+            abv=5.5,
+            description="Test description",
+        )
+
+        # Create tags
+        self.tag1 = Tag.objects.create(name="hoppy")
+        self.tag2 = Tag.objects.create(name="bitter")
+        self.tag3 = Tag.objects.create(name="citrus")
+
+    def execute_add_tags_mutation(self, beer_id, tag_ids):
+        """
+        Helper method to execute add tags for beer mutation.
+
+        Args:
+            beer_id: The beer ID to add tags to
+            tag_ids: List of tag IDs to add
+
+        Returns:
+            The data from the mutation response
+        """
+        tag_ids_str = ", ".join([f'"{tag_id}"' for tag_id in tag_ids])
+        mutation = f"""
+            mutation {{
+                addTagsForBeer(beerId: "{beer_id}", tagIds: [{tag_ids_str}]) {{
+                    success
+                    errors
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": mutation}),
+            content_type="application/json",
+        )
+        result = response.json()
+        return result["data"]["addTagsForBeer"]
+
+    def test_add_tags_authenticated_user(self):
+        """Test that authenticated user can add tags to a beer."""
+        self.client.force_login(self.user)
+
+        data = self.execute_add_tags_mutation(self.beer.id, [self.tag1.id, self.tag2.id])
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+
+        # Verify the tags were added
+        self.assertTrue(self.beer.tags.filter(id=self.tag1.id).exists())
+        self.assertTrue(self.beer.tags.filter(id=self.tag2.id).exists())
+
+    def test_add_tags_unauthenticated_user(self):
+        """Test that unauthenticated user receives authentication error."""
+        data = self.execute_add_tags_mutation(self.beer.id, [self.tag1.id])
+
+        self.assertFalse(data["success"])
+        self.assertIn("Authentication required.", data["errors"])
+
+        # Verify the tags were not added
+        self.assertFalse(self.beer.tags.filter(id=self.tag1.id).exists())
+
+    def test_add_tags_empty_list(self):
+        """Test that adding empty tag list returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_add_tags_mutation(self.beer.id, [])
+
+        self.assertFalse(data["success"])
+        self.assertIn("Must specify at least one tag ID.", data["errors"])
+
+    def test_add_tags_invalid_tag_ids(self):
+        """Test that adding invalid tag IDs returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_add_tags_mutation(
+            self.beer.id, ["99999999-9999-9999-9999-999999999999"]
+        )
+
+        self.assertFalse(data["success"])
+        self.assertIn("Invalid tag IDs specified.", data["errors"])
+
+    def test_add_tags_invalid_beer_id(self):
+        """Test that adding tags to invalid beer ID returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_add_tags_mutation(
+            "99999999-9999-9999-9999-999999999999", [self.tag1.id]
+        )
+
+        self.assertFalse(data["success"])
+        self.assertIn("Beer does not exist.", data["errors"])
+
+    def test_add_tags_duplicate(self):
+        """Test that adding same tag twice works without error."""
+        self.client.force_login(self.user)
+
+        # Add tag once
+        data = self.execute_add_tags_mutation(self.beer.id, [self.tag1.id])
+        self.assertTrue(data["success"])
+
+        # Add same tag again (should succeed, just no change)
+        data = self.execute_add_tags_mutation(self.beer.id, [self.tag1.id])
+        self.assertTrue(data["success"])
