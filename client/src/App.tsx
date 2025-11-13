@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useMutation } from "@apollo/client";
+import { useRef } from "react";
 import {
   AppShell,
   Container,
@@ -9,7 +10,10 @@ import {
   Box,
   useMantineTheme,
   Loader,
+  Burger,
+  Stack,
 } from "@mantine/core";
+import { useClickOutside, useDisclosure } from "@mantine/hooks";
 import client from "./apollo-client";
 import TapsLogo from "./components/TapsLogo";
 import "./App.css";
@@ -19,6 +23,14 @@ import { useAuth } from "./contexts/AuthContext";
 export default function App() {
   const theme = useMantineTheme();
   const loc = useLocation();
+  const [mobileMenuOpen, { toggle, close }] = useDisclosure(false);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useClickOutside((event) => {
+    if (burgerRef.current?.contains(event.target as Node)) {
+      return;
+    }
+    close();
+  });
 
   const { isAuthenticated, loading: loadingCurrentUser } = useAuth();
 
@@ -45,7 +57,17 @@ export default function App() {
               </Text>
             </Group>
           </Box>
-          <Group gap="xs">
+
+          <Burger
+            ref={burgerRef}
+            opened={mobileMenuOpen}
+            onClick={toggle}
+            hiddenFrom="sm"
+            color="white"
+            aria-label="Toggle navigation"
+          />
+
+          <Group gap="xs" visibleFrom="sm">
             <Button
               variant="subtle"
               component={Link}
@@ -109,6 +131,99 @@ export default function App() {
             )}
           </Group>
         </Group>
+
+        {mobileMenuOpen && (
+          <Box
+            ref={mobileMenuRef}
+            hiddenFrom="sm"
+            style={{
+              position: "fixed",
+              top: 64,
+              left: 0,
+              right: 0,
+              backgroundColor: theme.colors.accent[5],
+              borderTop: `1px solid ${theme.colors.accent[6]}`,
+              zIndex: 100,
+              padding: theme.spacing.md,
+            }}
+          >
+            <Stack gap="xs">
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/home"
+                onClick={close}
+                style={{ color: "white" }}
+                fullWidth
+              >
+                Home
+              </Button>
+              <Button
+                variant="subtle"
+                component={Link}
+                to="/search"
+                onClick={close}
+                style={{ color: "white" }}
+                fullWidth
+              >
+                Search
+              </Button>
+
+              {isAuthenticated && (
+                <Button
+                  variant="subtle"
+                  component={Link}
+                  to="/account"
+                  onClick={close}
+                  style={{ color: "white" }}
+                  fullWidth
+                >
+                  Account
+                </Button>
+              )}
+
+              {loadingCurrentUser && (
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: theme.spacing.xs,
+                  }}
+                >
+                  <Loader size="xs" color="white" />
+                </Box>
+              )}
+
+              {!loadingCurrentUser && !isAuthenticated && (
+                <Button
+                  variant="subtle"
+                  component={Link}
+                  to={`/login?prev=${encodeURIComponent(loc.pathname)}`}
+                  onClick={close}
+                  style={{ color: "white" }}
+                  fullWidth
+                >
+                  Login
+                </Button>
+              )}
+
+              {!loadingCurrentUser && isAuthenticated && (
+                <Button
+                  variant="subtle"
+                  onClick={() => {
+                    logout();
+                    close();
+                  }}
+                  disabled={loadingLogout}
+                  style={{ color: "white" }}
+                  fullWidth
+                >
+                  Logout
+                </Button>
+              )}
+            </Stack>
+          </Box>
+        )}
       </AppShell.Header>
       <AppShell.Main>
         <Container>
