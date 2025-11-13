@@ -604,3 +604,166 @@ class NewTagsForBeerTestCase(TestCase):
         tag_names = [tag["name"] for tag in data]
         self.assertNotIn("hoppy", tag_names)
         self.assertNotIn("bitter", tag_names)
+
+
+class TagVoteMutationTestCase(TestCase):
+    """Test the TagVoteMutation GraphQL mutation."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username="test@example.com",
+            email="test@example.com",
+            password="testPassword123!",
+        )
+
+        # Create a brewery
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+
+        # Create a beer
+        self.beer = Beer.objects.create(
+            name="Test Beer",
+            brewery=self.brewery,
+            style="IPA",
+            abv=5.5,
+            description="Test description",
+        )
+
+        # Create tags
+        self.tag1 = Tag.objects.create(name="hoppy")
+        self.tag2 = Tag.objects.create(name="bitter")
+
+        # Associate tag1 with the beer
+        self.beer.tags.add(self.tag1)
+
+    def execute_tag_vote_mutation(self, tag_id, beer_id, upvote):
+        """
+        Helper method to execute tag vote mutation.
+
+        Args:
+            tag_id: The tag ID to vote on
+            beer_id: The beer ID the tag is associated with
+            upvote: True for upvote, False for downvote
+
+        Returns:
+            The data from the mutation response
+        """
+        mutation = f"""
+            mutation {{
+                tagVote(
+                    tagId: "{tag_id}"
+                    beerId: "{beer_id}"
+                    upvote: {"true" if upvote else "false"}
+                ) {{
+                    success
+                    errors
+                    newUpvoteCount
+                    newDownvoteCount
+                }}
+            }}
+        """
+
+        response = self.client.post(
+            "/graphql",
+            data=json.dumps({"query": mutation}),
+            content_type="application/json",
+        )
+        result = response.json()
+        return result["data"]["tagVote"]
+
+    def test_tag_vote_authenticated_user_upvote(self):
+        """Test that authenticated user can upvote a tag."""
+        self.client.force_login(self.user)
+
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+        self.assertEqual(data["newUpvoteCount"], 1)
+        self.assertEqual(data["newDownvoteCount"], 0)
+
+    def test_tag_vote_authenticated_user_downvote(self):
+        """Test that authenticated user can downvote a tag."""
+        self.client.force_login(self.user)
+
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["errors"], [])
+        self.assertEqual(data["newUpvoteCount"], 0)
+        self.assertEqual(data["newDownvoteCount"], 1)
+
+    def test_tag_vote_unauthenticated_user(self):
+        """Test that unauthenticated user receives authentication error."""
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
+
+        self.assertFalse(data["success"])
+        self.assertIn("Authentication required.", data["errors"])
+
+    def test_tag_vote_nonexistent_beer(self):
+        """Test that voting on non-existent beer returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_tag_vote_mutation(
+            self.tag1.id, "99999999-9999-9999-9999-999999999999", True
+        )
+
+        self.assertFalse(data["success"])
+        self.assertIn("Beer not found.", data["errors"])
+
+    def test_tag_vote_nonexistent_tag(self):
+        """Test that voting on non-existent tag returns error."""
+        self.client.force_login(self.user)
+
+        data = self.execute_tag_vote_mutation(
+            "99999999-9999-9999-9999-999999999999", self.beer.id, True
+        )
+
+        self.assertFalse(data["success"])
+        self.assertIn("Tag not found.", data["errors"])
+
+    def test_tag_vote_tag_not_associated_with_beer(self):
+        """Test that voting on tag not associated with beer returns error."""
+        self.client.force_login(self.user)
+
+        # tag2 is not associated with the beer
+        data = self.execute_tag_vote_mutation(self.tag2.id, self.beer.id, True)
+
+        self.assertFalse(data["success"])
+        self.assertIn("Tag is not associated with the specified beer.", data["errors"])
+
+    def test_tag_vote_change_upvote_to_downvote(self):
+        """Test changing vote from upvote to downvote."""
+        self.client.force_login(self.user)
+
+        # First, upvote
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["newUpvoteCount"], 1)
+        self.assertEqual(data["newDownvoteCount"], 0)
+
+        # Then, change to downvote
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["newUpvoteCount"], 0)
+        self.assertEqual(data["newDownvoteCount"], 1)
+
+    def test_tag_vote_change_downvote_to_upvote(self):
+        """Test changing vote from downvote to upvote."""
+        self.client.force_login(self.user)
+
+        # First, downvote
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["newUpvoteCount"], 0)
+        self.assertEqual(data["newDownvoteCount"], 1)
+
+        # Then, change to upvote
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
+
+        self.assertTrue(data["success"])
+        self.assertEqual(data["newUpvoteCount"], 1)
+        self.assertEqual(data["newDownvoteCount"], 0)
