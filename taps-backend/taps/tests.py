@@ -764,7 +764,7 @@ class TagVoteMutationTestCase(TestCase):
                 tagVote(
                     tagId: "{tag_id}"
                     beerId: "{beer_id}"
-                    upvote: {'true' if upvote else 'false'}
+                    upvote: {"true" if upvote else "false"}
                 ) {{
                     success
                     errors
