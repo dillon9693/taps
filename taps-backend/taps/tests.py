@@ -1,12 +1,13 @@
 import json
 
 import graphene
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.test import Client, TestCase
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from unittest.mock import Mock
 
 from taps.decorators import login_required
 from taps.models import Beer, Brewery, Tag
@@ -632,6 +633,13 @@ class NewTagsForBeerTestCase(TestCase):
         self.assertNotIn("bitter", tag_names)
 
 
+# Create a mock query resolver
+class MockQuery:
+    @login_required
+    def resolve_test_field(self, info):
+        return "test_result"
+
+
 class LoginRequiredDecoratorTestCase(TestCase):
     """Test the @login_required decorator for mutations and queries."""
 
@@ -644,11 +652,9 @@ class LoginRequiredDecoratorTestCase(TestCase):
 
     def test_decorator_on_mutation_with_authenticated_user(self):
         """Test that decorator allows authenticated users to execute mutations."""
-        from unittest.mock import Mock
 
         # Create mock info with authenticated user
-        mock_info = Mock()
-        mock_info.context.user = self.user
+        mock_info = init_mock_info(self.user)
 
         # Create mutation instance and call mutate
         mutation_instance = TestMutationForDecorator()
@@ -660,13 +666,9 @@ class LoginRequiredDecoratorTestCase(TestCase):
 
     def test_decorator_on_mutation_with_unauthenticated_user(self):
         """Test that decorator returns error for unauthenticated users on mutations."""
-        from unittest.mock import Mock
-
-        from django.contrib.auth.models import AnonymousUser
 
         # Create mock info with anonymous user
-        mock_info = Mock()
-        mock_info.context.user = AnonymousUser()
+        mock_info = init_mock_info(AnonymousUser())
 
         # Create mutation instance and call mutate
         mutation_instance = TestMutationForDecorator()
@@ -677,19 +679,9 @@ class LoginRequiredDecoratorTestCase(TestCase):
 
     def test_decorator_on_query_with_authenticated_user(self):
         """Test that decorator allows authenticated users to execute queries."""
-        from unittest.mock import Mock
-
-        from taps.decorators import login_required
-
-        # Create a mock query resolver
-        class MockQuery:
-            @login_required
-            def resolve_test_field(self, info):
-                return "test_result"
 
         # Create mock info with authenticated user
-        mock_info = Mock()
-        mock_info.context.user = self.user
+        mock_info = init_mock_info(self.user)
 
         # Call the resolver
         query_instance = MockQuery()
@@ -699,21 +691,9 @@ class LoginRequiredDecoratorTestCase(TestCase):
 
     def test_decorator_on_query_with_unauthenticated_user(self):
         """Test that decorator raises exception for unauthenticated users on queries."""
-        from unittest.mock import Mock
-
-        from django.contrib.auth.models import AnonymousUser
-
-        from taps.decorators import login_required
-
-        # Create a mock query resolver
-        class MockQuery:
-            @login_required
-            def resolve_test_field(self, info):
-                return "test_result"
 
         # Create mock info with anonymous user
-        mock_info = Mock()
-        mock_info.context.user = AnonymousUser()
+        mock_info = init_mock_info(AnonymousUser())
 
         # Call the resolver and expect exception
         query_instance = MockQuery()
@@ -724,11 +704,9 @@ class LoginRequiredDecoratorTestCase(TestCase):
 
     def test_decorator_preserves_function_arguments(self):
         """Test that decorator properly passes through arguments to wrapped function."""
-        from unittest.mock import Mock
 
         # Create mock info with authenticated user
-        mock_info = Mock()
-        mock_info.context.user = self.user
+        mock_info = init_mock_info(self.user)
 
         # Create mutation instance and call with arguments
         mutation_instance = TestMutationWithArgs()
@@ -769,16 +747,24 @@ class TagVoteMutationTestCase(TestCase):
         # Associate tag1 with the beer
         self.beer.tags.add(self.tag1)
 
-    def test_tag_vote_authenticated_user_upvote(self):
-        """Test that authenticated user can upvote a tag."""
-        self.client.force_login(self.user)
+    def execute_tag_vote_mutation(self, tag_id, beer_id, upvote):
+        """
+        Helper method to execute tag vote mutation.
 
+        Args:
+            tag_id: The tag ID to vote on
+            beer_id: The beer ID the tag is associated with
+            upvote: True for upvote, False for downvote
+
+        Returns:
+            The data from the mutation response
+        """
         mutation = f"""
             mutation {{
                 tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: true
+                    tagId: "{tag_id}"
+                    beerId: "{beer_id}"
+                    upvote: {'true' if upvote else 'false'}
                 ) {{
                     success
                     errors
@@ -794,7 +780,13 @@ class TagVoteMutationTestCase(TestCase):
             content_type="application/json",
         )
         result = response.json()
-        data = result["data"]["tagVote"]
+        return result["data"]["tagVote"]
+
+    def test_tag_vote_authenticated_user_upvote(self):
+        """Test that authenticated user can upvote a tag."""
+        self.client.force_login(self.user)
+
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["errors"], [])
@@ -805,28 +797,7 @@ class TagVoteMutationTestCase(TestCase):
         """Test that authenticated user can downvote a tag."""
         self.client.force_login(self.user)
 
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: false
-                ) {{
-                    success
-                    errors
-                    newUpvoteCount
-                    newDownvoteCount
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["errors"], [])
@@ -835,26 +806,7 @@ class TagVoteMutationTestCase(TestCase):
 
     def test_tag_vote_unauthenticated_user(self):
         """Test that unauthenticated user receives authentication error."""
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: true
-                ) {{
-                    success
-                    errors
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
 
         self.assertFalse(data["success"])
         self.assertIn("Authentication required.", data["errors"])
@@ -863,26 +815,9 @@ class TagVoteMutationTestCase(TestCase):
         """Test that voting on non-existent beer returns error."""
         self.client.force_login(self.user)
 
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "99999999-9999-9999-9999-999999999999"
-                    upvote: true
-                ) {{
-                    success
-                    errors
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
+        data = self.execute_tag_vote_mutation(
+            self.tag1.id, "99999999-9999-9999-9999-999999999999", True
         )
-        result = response.json()
-        data = result["data"]["tagVote"]
 
         self.assertFalse(data["success"])
         self.assertIn("Beer not found.", data["errors"])
@@ -891,26 +826,9 @@ class TagVoteMutationTestCase(TestCase):
         """Test that voting on non-existent tag returns error."""
         self.client.force_login(self.user)
 
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "99999999-9999-9999-9999-999999999999"
-                    beerId: "{self.beer.id}"
-                    upvote: true
-                ) {{
-                    success
-                    errors
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
+        data = self.execute_tag_vote_mutation(
+            "99999999-9999-9999-9999-999999999999", self.beer.id, True
         )
-        result = response.json()
-        data = result["data"]["tagVote"]
 
         self.assertFalse(data["success"])
         self.assertIn("Tag not found.", data["errors"])
@@ -920,26 +838,7 @@ class TagVoteMutationTestCase(TestCase):
         self.client.force_login(self.user)
 
         # tag2 is not associated with the beer
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag2.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: true
-                ) {{
-                    success
-                    errors
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag2.id, self.beer.id, True)
 
         self.assertFalse(data["success"])
         self.assertIn("Tag is not associated with the specified beer.", data["errors"])
@@ -949,54 +848,14 @@ class TagVoteMutationTestCase(TestCase):
         self.client.force_login(self.user)
 
         # First, upvote
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: true
-                ) {{
-                    success
-                    newUpvoteCount
-                    newDownvoteCount
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["newUpvoteCount"], 1)
         self.assertEqual(data["newDownvoteCount"], 0)
 
         # Then, change to downvote
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: false
-                ) {{
-                    success
-                    newUpvoteCount
-                    newDownvoteCount
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["newUpvoteCount"], 0)
@@ -1007,55 +866,24 @@ class TagVoteMutationTestCase(TestCase):
         self.client.force_login(self.user)
 
         # First, downvote
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: false
-                ) {{
-                    success
-                    newUpvoteCount
-                    newDownvoteCount
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, False)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["newUpvoteCount"], 0)
         self.assertEqual(data["newDownvoteCount"], 1)
 
         # Then, change to upvote
-        mutation = f"""
-            mutation {{
-                tagVote(
-                    tagId: "{self.tag1.id}"
-                    beerId: "{self.beer.id}"
-                    upvote: true
-                ) {{
-                    success
-                    newUpvoteCount
-                    newDownvoteCount
-                }}
-            }}
-        """
-
-        response = self.client.post(
-            "/graphql",
-            data=json.dumps({"query": mutation}),
-            content_type="application/json",
-        )
-        result = response.json()
-        data = result["data"]["tagVote"]
+        data = self.execute_tag_vote_mutation(self.tag1.id, self.beer.id, True)
 
         self.assertTrue(data["success"])
         self.assertEqual(data["newUpvoteCount"], 1)
         self.assertEqual(data["newDownvoteCount"], 0)
+
+
+def init_mock_info(user):
+    """
+    Initializes a mock object representing the `info` parameter in GraphQL resolvers.
+    """
+    mock_info = Mock()
+    mock_info.context.user = user
+    return mock_info
