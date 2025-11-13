@@ -56,6 +56,7 @@ def login_required(func):
 
         info = args[1]
         user = info.context.user
+        error_message = "Authentication required."
 
         if not user.is_authenticated:
             # For mutations, return error response
@@ -67,16 +68,14 @@ def login_required(func):
                     # Try to get the class from the function's globals
                     if class_name in func.__globals__:
                         mutation_class = func.__globals__[class_name]
-                        return mutation_class(
-                            success=False, errors=["Authentication required."]
-                        )
+                        return mutation_class(success=False, errors=[error_message])
 
             # For queries, raise an exception
             if func.__name__.startswith("resolve_"):
-                raise Exception("Authentication required.")
+                raise Exception(error_message)
 
             # For other methods, raise a generic exception
-            raise Exception("Authentication required.")
+            raise Exception(error_message)
 
         # User is authenticated, proceed with the original function
         return func(*args, **kwargs)
