@@ -499,12 +499,9 @@ class UpdateAccountDetailsMutation(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @login_required
     def mutate(self, info, first_name, last_name):
         user = info.context.user
-        if not user.is_authenticated:
-            return UpdateAccountDetailsMutation(
-                success=False, errors=["Authentication required."]
-            )
 
         try:
             user.first_name = first_name
@@ -525,10 +522,9 @@ class SaveBeerMutation(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @login_required
     def mutate(self, info, beer_id):
         user = info.context.user
-        if not user.is_authenticated:
-            return SaveBeerMutation(success=False, errors=["Authentication required."])
 
         try:
             beer = Beer.objects.get(id=beer_id)
@@ -562,12 +558,9 @@ class UnsaveBeerMutation(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @login_required
     def mutate(self, info, beer_id):
         user = info.context.user
-        if not user.is_authenticated:
-            return UnsaveBeerMutation(
-                success=False, errors=["Authentication required."]
-            )
 
         try:
             beer = Beer.objects.get(id=beer_id)
@@ -602,13 +595,8 @@ class AddTagsForBeerMutation(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
+    @login_required
     def mutate(self, info, beer_id, tag_ids):
-        user = info.context.user
-        if not user.is_authenticated:
-            return AddTagsForBeerMutation(
-                success=False, errors=["Authentication required."]
-            )
-
         try:
             beer = Beer.objects.get(id=beer_id)
         except Beer.DoesNotExist:
