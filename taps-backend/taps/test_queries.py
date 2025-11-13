@@ -18,9 +18,7 @@ class SavedBeersResolverTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(
-            name="Test Brewery", location="Test City"
-        )
+        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
 
         # Create multiple beers
         self.beer1 = Beer.objects.create(
@@ -127,9 +125,9 @@ class SavedBeersResolverTestCase(TestCase):
         self.client.force_login(self.user)
 
         # Save beers in specific order
-        saved1 = SavedBeer.objects.create(user=self.user, beer=self.beer1)
-        saved2 = SavedBeer.objects.create(user=self.user, beer=self.beer2)
-        saved3 = SavedBeer.objects.create(user=self.user, beer=self.beer3)
+        SavedBeer.objects.create(user=self.user, beer=self.beer1)
+        SavedBeer.objects.create(user=self.user, beer=self.beer2)
+        SavedBeer.objects.create(user=self.user, beer=self.beer3)
 
         result = self.execute_saved_beers_query()
         data = result["data"]["savedBeers"]

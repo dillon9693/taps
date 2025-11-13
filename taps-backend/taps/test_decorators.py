@@ -1,7 +1,8 @@
+from unittest.mock import Mock
+
 import graphene
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import TestCase
-from unittest.mock import Mock
 
 from taps.decorators import login_required
 
