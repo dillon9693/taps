@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-def index(request: HttpRequest) -> int:
+def index(request: HttpRequest) -> HttpResponse:
     """
     Index view.
     """
