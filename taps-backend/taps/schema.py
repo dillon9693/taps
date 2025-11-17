@@ -279,7 +279,8 @@ class Query(graphene.ObjectType):
     def resolve_current_user(self, info: ResolveInfo) -> Optional[User]:
         user = info.context.user
         if user.is_authenticated:
-            # Django request.user is typed as AbstractBaseUser | AnonymousUser in django-stubs
+            # Django request.user is typed as AbstractBaseUser | AnonymousUser
+            # in django-stubs
             return user  # type: ignore[no-any-return]
         return None
 
