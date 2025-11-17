@@ -46,31 +46,37 @@ lint.select = ["E", "F", "W", "I", "N", "DJ"]
 "*/migrations/*.py" = ["E501", "F401"]  # Relax rules for migrations
 
 [tool.mypy]
-# Mypy configuration for gradual type adoption
+# Strict mypy configuration
 python_version = "3.11"
 plugins = ["mypy_django_plugin.main"]
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-check_untyped_defs = true
 
-# Gradual adoption settings - can tighten these later
-allow_untyped_calls = true
-allow_incomplete_defs = false
+# Type checking strictness
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_return_any = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+disallow_incomplete_defs = true
+strict_equality = true
 
 # Django-specific settings
 [tool.django-stubs]
 django_settings_module = "taps_backend.settings"
 
 [[tool.mypy.overrides]]
-# Exclude migrations from type checking
+# Migrations are auto-generated and don't need type checking
 module = "*.migrations.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-# Third-party libraries without stubs
+# Third-party libraries that don't provide type stubs
+# graphene, graphene_django: GraphQL library - no official stubs available
+# graphql: Core GraphQL library - stubs exist but are incomplete
+# environ: django-environ for settings - no stubs available
 module = [
     "graphene",
+    "graphene.*",
     "graphene_django.*",
     "graphql.*",
     "environ",
@@ -78,7 +84,9 @@ module = [
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-# Test files - less strict checking
+# Test files use dynamic fixtures and mocks that are difficult to type strictly.
+# TestCase methods also have complex inheritance patterns from Django that would
+# require extensive stub typing to satisfy strict checks.
 module = [
     "taps.tests",
     "taps.test_decorators",
@@ -87,7 +95,10 @@ module = [
 disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
-# Settings and config files - less strict
+# Django settings files contain dynamic configuration loaded from environment
+# variables and have values that are set at import time. Strict typing these
+# would require type ignores throughout or complex runtime type checking.
+# apps.py contains Django AppConfig which has complex metaclass behavior.
 module = [
     "taps_backend.settings",
     "taps_backend.development_settings",
