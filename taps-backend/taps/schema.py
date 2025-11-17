@@ -172,7 +172,12 @@ class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
 
     def resolve_all_beers(
-        self, info: Any, style: str | None = None, min_abv: float | None = None, max_abv: float | None = None, search: str | None = None
+        self,
+        info: Any,
+        style: str | None = None,
+        min_abv: float | None = None,
+        max_abv: float | None = None,
+        search: str | None = None,
     ) -> QuerySet[Beer]:
         qs = Beer.objects.select_related("brewery").prefetch_related("tags")
 
@@ -219,7 +224,9 @@ class Query(graphene.ObjectType):
         except Beer.DoesNotExist:
             return None
 
-    def resolve_all_breweries(self, info: Any, location: str | None = None, search: str | None = None) -> QuerySet[Brewery]:
+    def resolve_all_breweries(
+        self, info: Any, location: str | None = None, search: str | None = None
+    ) -> QuerySet[Brewery]:
         qs = Brewery.objects.prefetch_related("beers")
 
         if location:
@@ -244,7 +251,9 @@ class Query(graphene.ObjectType):
             .order_by("-beer_count", "name")[:count]
         )
 
-    def resolve_new_tags_for_beer(self, info: Any, beer_id: str, count: int = 10, search: str | None = None) -> QuerySet[Tag]:
+    def resolve_new_tags_for_beer(
+        self, info: Any, beer_id: str, count: int = 10, search: str | None = None
+    ) -> QuerySet[Tag]:
         qs = Tag.objects.exclude(beers__id=beer_id)
 
         if search:
@@ -272,7 +281,9 @@ class RegisterUser(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info: Any, email: str, password: str, first_name: str, last_name: str) -> "RegisterUser":
+    def mutate(
+        self, info: Any, email: str, password: str, first_name: str, last_name: str
+    ) -> "RegisterUser":
         errors = []
 
         # Check for duplicate email
@@ -409,7 +420,9 @@ class ResetPassword(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info: Any, uid: str, token: str, new_password: str) -> "ResetPassword":
+    def mutate(
+        self, info: Any, uid: str, token: str, new_password: str
+    ) -> "ResetPassword":
         errors = []
 
         try:
@@ -449,7 +462,9 @@ class TagVoteMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info: Any, tag_id: str, beer_id: str, upvote: bool) -> "TagVoteMutation":
+    def mutate(
+        self, info: Any, tag_id: str, beer_id: str, upvote: bool
+    ) -> "TagVoteMutation":
         user = info.context.user
 
         logger.debug(
@@ -501,7 +516,9 @@ class UpdateAccountDetailsMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info: Any, first_name: str, last_name: str) -> "UpdateAccountDetailsMutation":
+    def mutate(
+        self, info: Any, first_name: str, last_name: str
+    ) -> "UpdateAccountDetailsMutation":
         user = info.context.user
 
         try:
@@ -597,7 +614,9 @@ class AddTagsForBeerMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info: Any, beer_id: str, tag_ids: list[str]) -> "AddTagsForBeerMutation":
+    def mutate(
+        self, info: Any, beer_id: str, tag_ids: list[str]
+    ) -> "AddTagsForBeerMutation":
         try:
             beer = Beer.objects.get(id=beer_id)
         except Beer.DoesNotExist:
