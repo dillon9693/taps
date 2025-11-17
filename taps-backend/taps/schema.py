@@ -9,7 +9,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
@@ -22,13 +22,24 @@ logger = logging.getLogger(__name__)
 
 class BreweryType(DjangoObjectType):
     beer_count = graphene.Int()
+    location = graphene.String(
+        deprecation_reason="Use city and state_province fields instead"
+    )
 
     class Meta:
         model = Brewery
         fields = (
             "id",
             "name",
-            "location",
+            "address_1",
+            "address_2",
+            "city",
+            "state_province",
+            "postal_code",
+            "country",
+            "longitude",
+            "latitude",
+            "phone",
             "description",
             "year_founded",
             "website",
@@ -37,6 +48,10 @@ class BreweryType(DjangoObjectType):
 
     def resolve_beer_count(self, info):
         return self.beers.count()
+
+    def resolve_location(self, info):
+        """Computed field for backward compatibility. Returns 'city, state_province'."""
+        return f"{self.city}, {self.state_province}"
 
 
 class BeerType(DjangoObjectType):
@@ -155,7 +170,10 @@ class Query(graphene.ObjectType):
 
     all_breweries = graphene.List(
         BreweryType,
-        location=graphene.String(required=False),
+        location=graphene.String(
+            required=False,
+            deprecation_reason="Use separate city/state filtering if needed",
+        ),
         search=graphene.String(required=False),
     )
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
@@ -222,7 +240,10 @@ class Query(graphene.ObjectType):
         qs = Brewery.objects.prefetch_related("beers")
 
         if location:
-            qs = qs.filter(location__icontains=location)
+            # Search across city and state_province for backward compatibility
+            qs = qs.filter(
+                Q(city__icontains=location) | Q(state_province__icontains=location)
+            )
         if search:
             qs = qs.filter(name__icontains=search) | qs.filter(
                 description__icontains=search
