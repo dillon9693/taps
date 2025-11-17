@@ -23,6 +23,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
 ruff = "^0.12.9"
+mypy = "^1.18.2"
+django-stubs = {extras = ["compatible-mypy"], version = "^5.2.7"}
+types-requests = "^2.32.4.20250913"
 
 [tool.ruff]
 # Exclude common Django directories
@@ -41,3 +44,54 @@ lint.select = ["E", "F", "W", "I", "N", "DJ"]
 [tool.ruff.lint.per-file-ignores]
 "*/settings*.py" = ["E501"]  # Allow long lines in settings files
 "*/migrations/*.py" = ["E501", "F401"]  # Relax rules for migrations
+
+[tool.mypy]
+# Mypy configuration for gradual type adoption
+python_version = "3.11"
+plugins = ["mypy_django_plugin.main"]
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+# Gradual adoption settings - can tighten these later
+allow_untyped_calls = true
+allow_incomplete_defs = false
+
+# Django-specific settings
+[tool.django-stubs]
+django_settings_module = "taps_backend.settings"
+
+[[tool.mypy.overrides]]
+# Exclude migrations from type checking
+module = "*.migrations.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+# Third-party libraries without stubs
+module = [
+    "graphene",
+    "graphene_django.*",
+    "graphql.*",
+    "environ",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Test files - less strict checking
+module = [
+    "taps.tests",
+    "taps.test_decorators",
+    "taps.test_queries",
+]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+# Settings and config files - less strict
+module = [
+    "taps_backend.settings",
+    "taps_backend.development_settings",
+    "taps_backend.production_settings",
+    "taps.apps",
+]
+disallow_untyped_defs = false
