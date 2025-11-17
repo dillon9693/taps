@@ -34,7 +34,7 @@ import {
 } from "../graphql/mutations";
 import AddTagModal from "../components/AddTagModal";
 import { useAuth } from "../contexts/AuthContext";
-import { formatBreweryLocation } from "../utils/brewery";
+import formatBreweryLocation from "../utils/brewery";
 
 const SAVE_ERROR_NOTIFICATION = {
   title: "Error!",
@@ -194,7 +194,7 @@ export default function BeerDetail() {
                   {" • "}
                   {formatBreweryLocation(
                     beer.brewery.city,
-                    beer.brewery.stateProvince
+                    beer.brewery.stateProvince,
                   )}
                 </Text>
                 <Group align="center" mb="lg">
@@ -338,7 +338,7 @@ export default function BeerDetail() {
               <Text size="sm" c="dimmed">
                 {formatBreweryLocation(
                   beer.brewery.city,
-                  beer.brewery.stateProvince
+                  beer.brewery.stateProvince,
                 )}
               </Text>
             </Stack>

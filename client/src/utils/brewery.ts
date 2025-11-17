@@ -1,6 +1,6 @@
-export function formatBreweryLocation(
+export default function formatBreweryLocation(
   city: string,
-  stateProvince: string
+  stateProvince: string,
 ): string {
   return `${city}, ${stateProvince}`;
 }

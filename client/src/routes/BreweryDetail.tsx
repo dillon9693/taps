@@ -22,7 +22,7 @@ import {
 import { GET_BREWERY_BY_ID } from "../graphql/queries";
 import type { Brewery } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
-import { formatBreweryLocation } from "../utils/brewery";
+import formatBreweryLocation from "../utils/brewery";
 
 type GetBreweryResult = {
   breweryById: Brewery;
