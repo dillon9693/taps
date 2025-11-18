@@ -91,7 +91,7 @@ docker compose exec backend poetry run python manage.py createsuperuser  # Creat
 
 - `allBeers`: Search and filter beers by style, ABV, search term
 - `featuredBeers`: Top-rated beers for homepage
-- `allBreweries`: Search breweries by location or name
+- `allBreweries`: Search breweries by name
 - `topTags`: Most popular beer tags
 
 ### Sample Query
