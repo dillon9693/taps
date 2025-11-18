@@ -9,7 +9,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Count, Q
+from django.db.models import Count
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene_django import DjangoObjectType
@@ -172,10 +172,6 @@ class Query(graphene.ObjectType):
 
     all_breweries = graphene.List(
         BreweryType,
-        location=graphene.String(
-            required=False,
-            deprecation_reason="Use separate city/state filtering if needed",
-        ),
         search=graphene.String(required=False),
     )
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
@@ -238,14 +234,9 @@ class Query(graphene.ObjectType):
         except Beer.DoesNotExist:
             return None
 
-    def resolve_all_breweries(self, info, location=None, search=None):
+    def resolve_all_breweries(self, info, search=None):
         qs = Brewery.objects.prefetch_related("beers")
 
-        if location:
-            # Search across city and state_province for backward compatibility
-            qs = qs.filter(
-                Q(city__icontains=location) | Q(state_province__icontains=location)
-            )
         if search:
             qs = qs.filter(name__icontains=search) | qs.filter(
                 description__icontains=search

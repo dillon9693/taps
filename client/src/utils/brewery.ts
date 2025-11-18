@@ -1,11 +1,9 @@
-export default function formatBreweryLocation(
-  city?: string,
-  stateProvince?: string,
-  location?: string,
-): string {
+import type { BreweryInfo } from "../types";
+
+export default function formatBreweryLocation(brewery: BreweryInfo): string {
   // Prefer new fields if available, fallback to deprecated location field
-  if (city && stateProvince) {
-    return `${city}, ${stateProvince}`;
+  if (brewery.city && brewery.stateProvince) {
+    return `${brewery.city}, ${brewery.stateProvince}`;
   }
-  return location || "";
+  return brewery.location || "";
 }

@@ -192,11 +192,7 @@ export default function BeerDetail() {
                     {beer.brewery.name}
                   </Anchor>
                   {" • "}
-                  {formatBreweryLocation(
-                    beer.brewery.city,
-                    beer.brewery.stateProvince,
-                    beer.brewery.location,
-                  )}
+                  {formatBreweryLocation(beer.brewery)}
                 </Text>
                 <Group align="center" mb="lg">
                   <Rating
@@ -337,11 +333,7 @@ export default function BeerDetail() {
                 {beer.brewery.name}
               </Anchor>
               <Text size="sm" c="dimmed">
-                {formatBreweryLocation(
-                  beer.brewery.city,
-                  beer.brewery.stateProvince,
-                  beer.brewery.location,
-                )}
+                {formatBreweryLocation(beer.brewery)}
               </Text>
             </Stack>
           </Paper>

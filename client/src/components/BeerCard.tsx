@@ -84,11 +84,7 @@ export default function BeerCard(props: BeerCardProps) {
                 {beer.brewery.name}
               </Anchor>
               {" • "}
-              {formatBreweryLocation(
-                beer.brewery.city,
-                beer.brewery.stateProvince,
-                beer.brewery.location,
-              )}
+              {formatBreweryLocation(beer.brewery)}
             </Text>
 
             <Rating
