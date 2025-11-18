@@ -123,7 +123,6 @@ class Command(BaseCommand):
 
             Brewery.objects.create(
                 name=row["name"],
-                location=f"{row['city']}, {row['state_province']}",
                 address_1=row["address_1"],
                 address_2=row["address_2"],
                 city=row["city"],
