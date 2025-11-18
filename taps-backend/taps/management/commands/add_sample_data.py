@@ -1,4 +1,6 @@
 # ruff: noqa: E501
+from typing import Any
+
 from django.core.management.base import BaseCommand
 
 from taps.models import Beer, Brewery, Tag
@@ -7,7 +9,7 @@ from taps.models import Beer, Brewery, Tag
 class Command(BaseCommand):
     help = "Adds sample beers, breweries, and tags to the database"
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args: Any, **kwargs: Any) -> None:
         # Get some breweries from imported data (from import_brewery_data command)
         try:
             brewery_castle_island = Brewery.objects.get(

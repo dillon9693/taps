@@ -1,8 +1,8 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-def index(request):
+def index(request: HttpRequest) -> HttpResponse:
     """
     Index view.
     """
@@ -10,7 +10,7 @@ def index(request):
 
 
 @csrf_exempt
-def health_check(request):
+def health_check(request: HttpRequest) -> JsonResponse:
     """
     Health check endpoint for AWS ECS and load balancer.
     """
