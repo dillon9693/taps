@@ -53,7 +53,7 @@ class BreweryType(DjangoObjectType):
     def resolve_beer_count(self, info: ResolveInfo) -> int:
         return cast(int, self.beers.count())
 
-    def resolve_location(self, info):
+    def resolve_location(self, info: ResolveInfo) -> str:
         """Computed field for backward compatibility. Returns 'city, state_province'."""
         return f"{self.city}, {self.state_province}"
 
