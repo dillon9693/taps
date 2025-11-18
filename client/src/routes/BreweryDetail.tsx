@@ -88,7 +88,11 @@ export default function BreweryDetail() {
           <Stack gap="md">
             <Title order={1}>{brewery.name}</Title>
             <Text size="xl" c="dimmed">
-              {formatBreweryLocation(brewery.city, brewery.stateProvince)}
+              {formatBreweryLocation(
+                brewery.city,
+                brewery.stateProvince,
+                brewery.location,
+              )}
             </Text>
             {brewery.beerCount && (
               <Group align="center">
@@ -193,7 +197,11 @@ export default function BreweryDetail() {
               <Group justify="space-between" align="center">
                 <Text fw={500}>Location</Text>
                 <Text>
-                  {formatBreweryLocation(brewery.city, brewery.stateProvince)}
+                  {formatBreweryLocation(
+                    brewery.city,
+                    brewery.stateProvince,
+                    brewery.location,
+                  )}
                 </Text>
               </Group>
               {brewery.yearFounded && (

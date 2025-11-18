@@ -6,6 +6,7 @@ const BREWERY_INFO_FRAGMENT = gql`
   fragment BreweryInfo on BreweryType {
     id
     name
+    location
     city
     stateProvince
     address1
@@ -85,6 +86,7 @@ export const GET_BREWERY_BY_ID = gql`
     breweryById(id: $id) {
       id
       name
+      location
       city
       stateProvince
       address1

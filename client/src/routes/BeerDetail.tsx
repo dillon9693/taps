@@ -195,6 +195,7 @@ export default function BeerDetail() {
                   {formatBreweryLocation(
                     beer.brewery.city,
                     beer.brewery.stateProvince,
+                    beer.brewery.location,
                   )}
                 </Text>
                 <Group align="center" mb="lg">
@@ -339,6 +340,7 @@ export default function BeerDetail() {
                 {formatBreweryLocation(
                   beer.brewery.city,
                   beer.brewery.stateProvince,
+                  beer.brewery.location,
                 )}
               </Text>
             </Stack>

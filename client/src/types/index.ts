@@ -2,12 +2,12 @@
 export interface BreweryInfo {
   id: string;
   name: string;
-  city: string;
-  stateProvince: string;
+  city?: string;
+  stateProvince?: string;
   address1?: string;
   address2?: string;
   postalCode?: string;
-  country: string;
+  country?: string;
   longitude?: number;
   latitude?: number;
   phone?: string;
@@ -15,6 +15,8 @@ export interface BreweryInfo {
   yearFounded?: number;
   website?: string;
   beerCount?: number;
+  // Deprecated: Use city and stateProvince instead
+  location?: string;
 }
 
 export interface Tag {

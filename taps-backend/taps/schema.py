@@ -22,6 +22,8 @@ logger = logging.getLogger(__name__)
 
 class BreweryType(DjangoObjectType):
     beer_count = graphene.Int()
+    # Explicitly declare location field to add deprecation metadata.
+    # The resolver below (resolve_location) computes the value.
     location = graphene.String(
         deprecation_reason="Use city and state_province fields instead"
     )
