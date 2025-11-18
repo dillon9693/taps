@@ -1,4 +1,5 @@
 import logging
+from typing import Optional, cast
 
 import graphene
 from django.conf import settings
@@ -9,9 +10,10 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from graphene.types import ResolveInfo
 from graphene_django import DjangoObjectType
 
 from taps.decorators import login_required
@@ -35,8 +37,8 @@ class BreweryType(DjangoObjectType):
             "beers",
         )
 
-    def resolve_beer_count(self, info):
-        return self.beers.count()
+    def resolve_beer_count(self, info: ResolveInfo) -> int:
+        return cast(int, self.beers.count())
 
 
 class BeerType(DjangoObjectType):
@@ -61,10 +63,10 @@ class BeerType(DjangoObjectType):
             "updated_at",
         )
 
-    def resolve_style_display(self, info):
-        return self.get_style_display()
+    def resolve_style_display(self, info: ResolveInfo) -> str:
+        return cast(str, self.get_style_display())
 
-    def resolve_tags_with_votes(self, info):
+    def resolve_tags_with_votes(self, info: ResolveInfo) -> list["TagVoteType"]:
         tag_votes = []
 
         tags_for_beer = self.tags.all()
@@ -104,7 +106,7 @@ class BeerType(DjangoObjectType):
 
     # TODO eventually look into a more efficient way to do this b/c right now it's
     # likely sending 1 query per returned beer
-    def resolve_is_saved(self, info):
+    def resolve_is_saved(self, info: ResolveInfo) -> bool:
         user = info.context.user
         if not user.is_authenticated:
             return False
@@ -131,8 +133,8 @@ class TagType(DjangoObjectType):
         model = Tag
         fields = ("id", "name", "beers")
 
-    def resolve_beer_count(self, info):
-        return self.beers.count()
+    def resolve_beer_count(self, info: ResolveInfo) -> int:
+        return cast(int, self.beers.count())
 
 
 class UserType(DjangoObjectType):
@@ -171,8 +173,13 @@ class Query(graphene.ObjectType):
     current_user = graphene.Field(UserType)
 
     def resolve_all_beers(
-        self, info, style=None, min_abv=None, max_abv=None, search=None
-    ):
+        self,
+        info: ResolveInfo,
+        style: Optional[str] = None,
+        min_abv: Optional[float] = None,
+        max_abv: Optional[float] = None,
+        search: Optional[str] = None,
+    ) -> QuerySet[Beer]:
         qs = Beer.objects.select_related("brewery").prefetch_related("tags")
 
         if style:
@@ -188,7 +195,9 @@ class Query(graphene.ObjectType):
 
         return qs.order_by("-created_at")
 
-    def resolve_featured_beers(self, info, count=6):
+    def resolve_featured_beers(
+        self, info: ResolveInfo, count: int = 6
+    ) -> QuerySet[Beer]:
         return (
             Beer.objects.select_related("brewery")
             .prefetch_related("tags")
@@ -197,7 +206,7 @@ class Query(graphene.ObjectType):
         )
 
     @login_required
-    def resolve_saved_beers(self, info, count=10):
+    def resolve_saved_beers(self, info: ResolveInfo, count: int = 10) -> list[Beer]:
         user = info.context.user
 
         saved_beers = (
@@ -208,7 +217,7 @@ class Query(graphene.ObjectType):
 
         return [saved_beer.beer for saved_beer in saved_beers]
 
-    def resolve_beer_by_id(self, info, id):
+    def resolve_beer_by_id(self, info: ResolveInfo, id: str) -> Optional[Beer]:
         try:
             return (
                 Beer.objects.select_related("brewery")
@@ -218,7 +227,12 @@ class Query(graphene.ObjectType):
         except Beer.DoesNotExist:
             return None
 
-    def resolve_all_breweries(self, info, location=None, search=None):
+    def resolve_all_breweries(
+        self,
+        info: ResolveInfo,
+        location: Optional[str] = None,
+        search: Optional[str] = None,
+    ) -> QuerySet[Brewery]:
         qs = Brewery.objects.prefetch_related("beers")
 
         if location:
@@ -230,20 +244,26 @@ class Query(graphene.ObjectType):
 
         return qs.order_by("name")
 
-    def resolve_brewery_by_id(self, info, id):
+    def resolve_brewery_by_id(self, info: ResolveInfo, id: str) -> Optional[Brewery]:
         try:
             return Brewery.objects.prefetch_related("beers").get(id=id)
         except Brewery.DoesNotExist:
             return None
 
-    def resolve_top_tags(self, info, count=10):
+    def resolve_top_tags(self, info: ResolveInfo, count: int = 10) -> QuerySet[Tag]:
         return (
             Tag.objects.prefetch_related("beers")
             .annotate(beer_count=Count("beers"))
             .order_by("-beer_count", "name")[:count]
         )
 
-    def resolve_new_tags_for_beer(self, info, beer_id, count=10, search=None):
+    def resolve_new_tags_for_beer(
+        self,
+        info: ResolveInfo,
+        beer_id: str,
+        count: int = 10,
+        search: Optional[str] = None,
+    ) -> QuerySet[Tag]:
         qs = Tag.objects.exclude(beers__id=beer_id)
 
         if search:
@@ -253,10 +273,10 @@ class Query(graphene.ObjectType):
 
         return qs.order_by("name")[:count]
 
-    def resolve_current_user(self, info):
+    def resolve_current_user(self, info: ResolveInfo) -> Optional[User]:
         user = info.context.user
         if user.is_authenticated:
-            return user
+            return cast(User, user)
         return None
 
 
@@ -271,7 +291,14 @@ class RegisterUser(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info, email, password, first_name, last_name):
+    def mutate(
+        self,
+        info: ResolveInfo,
+        email: str,
+        password: str,
+        first_name: str,
+        last_name: str,
+    ) -> "RegisterUser":
         errors = []
 
         # Check for duplicate email
@@ -332,7 +359,7 @@ class LoginUser(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info, email, password):
+    def mutate(self, info: ResolveInfo, email: str, password: str) -> "LoginUser":
         errors = []
 
         # Authenticate using email as username (prevents timing attacks)
@@ -353,7 +380,7 @@ class LoginUser(graphene.Mutation):
 class LogoutUser(graphene.Mutation):
     success = graphene.Boolean()
 
-    def mutate(self, info):
+    def mutate(self, info: ResolveInfo) -> "LogoutUser":
         logout(info.context)
         return LogoutUser(success=True)
 
@@ -365,7 +392,7 @@ class RequestPasswordReset(graphene.Mutation):
     success = graphene.Boolean()
     message = graphene.String()
 
-    def mutate(self, info, email):
+    def mutate(self, info: ResolveInfo, email: str) -> "RequestPasswordReset":
         try:
             user = User.objects.get(email=email)
             token = default_token_generator.make_token(user)
@@ -408,7 +435,9 @@ class ResetPassword(graphene.Mutation):
     success = graphene.Boolean()
     errors = graphene.List(graphene.String)
 
-    def mutate(self, info, uid, token, new_password):
+    def mutate(
+        self, info: ResolveInfo, uid: str, token: str, new_password: str
+    ) -> "ResetPassword":
         errors = []
 
         try:
@@ -448,7 +477,9 @@ class TagVoteMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info, tag_id, beer_id, upvote):
+    def mutate(
+        self, info: ResolveInfo, tag_id: str, beer_id: str, upvote: bool
+    ) -> "TagVoteMutation":
         user = info.context.user
 
         logger.debug(
@@ -500,7 +531,9 @@ class UpdateAccountDetailsMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info, first_name, last_name):
+    def mutate(
+        self, info: ResolveInfo, first_name: str, last_name: str
+    ) -> "UpdateAccountDetailsMutation":
         user = info.context.user
 
         try:
@@ -523,7 +556,7 @@ class SaveBeerMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info, beer_id):
+    def mutate(self, info: ResolveInfo, beer_id: str) -> "SaveBeerMutation":
         user = info.context.user
 
         try:
@@ -559,7 +592,7 @@ class UnsaveBeerMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info, beer_id):
+    def mutate(self, info: ResolveInfo, beer_id: str) -> "UnsaveBeerMutation":
         user = info.context.user
 
         try:
@@ -596,7 +629,9 @@ class AddTagsForBeerMutation(graphene.Mutation):
     errors = graphene.List(graphene.String)
 
     @login_required
-    def mutate(self, info, beer_id, tag_ids):
+    def mutate(
+        self, info: ResolveInfo, beer_id: str, tag_ids: list[str]
+    ) -> "AddTagsForBeerMutation":
         try:
             beer = Beer.objects.get(id=beer_id)
         except Beer.DoesNotExist:

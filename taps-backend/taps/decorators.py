@@ -2,10 +2,12 @@
 GraphQL authentication decorators for the Taps application.
 """
 
+from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 
-def login_required(func):
+def login_required(func: Callable[..., Any]) -> Callable[..., Any]:
     """
     Decorator that checks if a user is authenticated before executing a GraphQL
     mutation or query resolver.
@@ -47,7 +49,7 @@ def login_required(func):
     """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         # Extract info from args
         # For mutations: args = (root, info, ...) where root is usually None
         # For queries: args = (self, info, ...)

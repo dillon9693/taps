@@ -33,6 +33,11 @@ jobs:
       - name: Lint checks
         run: poetry run ruff check .
 
+      - name: Type checks
+        run: poetry run mypy taps/
+        env:
+          SECRET_KEY: test-secret-key-for-mypy
+
       - name: Run tests
         run: poetry run python manage.py test
         env:

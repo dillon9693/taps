@@ -34,7 +34,7 @@ class Brewery(models.Model):
     class Meta:
         verbose_name_plural = "Breweries"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -42,7 +42,7 @@ class Tag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name
 
 
@@ -85,7 +85,7 @@ class Beer(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} by {self.brewery.name}"
 
 
@@ -102,14 +102,14 @@ class TagVote(models.Model):
     class Meta:
         unique_together = ("tag", "beer", "user")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{'Upvote' if self.upvote else 'Downvote'} for {self.tag.name} on "
             f"{self.beer.name}"
         )
 
     @classmethod
-    def vote_count(cls, beer: Beer, tag: Tag, upvote: bool):
+    def vote_count(cls, beer: Beer, tag: Tag, upvote: bool) -> int:
         """
         Gets the count of votes by type (upvote for downvote) for a given beer and tag.
         """
@@ -127,5 +127,5 @@ class SavedBeer(models.Model):
     class Meta:
         unique_together = ("beer", "user")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Saved beer for beer {self.beer.name} and user ID {self.user.id}"

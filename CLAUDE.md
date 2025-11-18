@@ -54,6 +54,7 @@ poetry run python manage.py add_sample_data # Create sample data
 poetry run python manage.py createsuperuser # Create admin user
 poetry run ruff format .                   # Format code
 poetry run ruff check .                    # Lint code
+SECRET_KEY=fake poetry run run mypy taps/  # Run type checks
 ```
 
 ### Docker Development

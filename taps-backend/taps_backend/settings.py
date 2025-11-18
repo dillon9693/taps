@@ -30,7 +30,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS: list[str] = []
 
 # Application definition
 
@@ -95,7 +95,7 @@ WSGI_APPLICATION = "taps_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 # To be set in environment-specific settings files
-DATABASES = {}
+DATABASES: dict[str, dict[str, object]] = {}
 
 
 # Password validation

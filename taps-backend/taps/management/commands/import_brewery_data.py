@@ -1,8 +1,9 @@
 import csv
 import io
+from typing import Any
 
 import requests
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandParser
 
 from taps.models import Brewery, BrewerySource
 
@@ -66,7 +67,7 @@ STATE_ABBR_TO_FILENAME = {
 class Command(BaseCommand):
     help = "Imports brewery data from OpenBreweryDB"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument(
             "--state",
             required=True,
@@ -74,7 +75,7 @@ class Command(BaseCommand):
             help="State to import data for",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args: Any, **options: Any) -> None:
         state = options["state"]
         obdb_filename = STATE_ABBR_TO_FILENAME.get(state)
         if not obdb_filename:
@@ -90,9 +91,9 @@ class Command(BaseCommand):
 
         reader = csv.DictReader(io.StringIO(contents))
 
-        breweries_created = []
-        breweries_existing = []
-        breweries_invalid = []
+        breweries_created: list[dict[str, str]] = []
+        breweries_existing: list[dict[str, str]] = []
+        breweries_invalid: list[dict[str, str]] = []
 
         for row in reader:
             total_processed = (
@@ -147,9 +148,9 @@ class Command(BaseCommand):
         self.stdout.write(f"Total existing: {len(breweries_existing)}")
         self.stdout.write(f"Total invalid: {len(breweries_invalid)}")
 
-    def validate_brewery(self, brewery_row):
+    def validate_brewery(self, brewery_row: dict[str, str]) -> list[str]:
         """Performs validations on raw brewery data before inserting."""
-        invalid_reasons = []
+        invalid_reasons: list[str] = []
 
         website_url = brewery_row["website_url"]
 
