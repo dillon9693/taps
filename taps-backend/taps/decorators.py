@@ -6,8 +6,6 @@ from collections.abc import Callable
 from functools import wraps
 from typing import Any
 
-from graphene.types.resolver import ResolveInfo
-
 
 def login_required(func: Callable[..., Any]) -> Callable[..., Any]:
     """
@@ -59,11 +57,6 @@ def login_required(func: Callable[..., Any]) -> Callable[..., Any]:
             raise Exception("Invalid resolver signature")
 
         info = args[1]
-        # Type check that the second argument is ResolveInfo as expected
-        if not isinstance(info, ResolveInfo):
-            raise TypeError(
-                f"Expected second argument to be ResolveInfo, got {type(info).__name__}"
-            )
         user = info.context.user
         error_message = "Authentication required."
 

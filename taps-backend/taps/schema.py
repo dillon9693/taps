@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from typing import Optional, cast
 
 import graphene
 from django.conf import settings
@@ -13,7 +13,7 @@ from django.db import IntegrityError
 from django.db.models import Count, QuerySet
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from graphene.types.resolver import ResolveInfo
+from graphene.types import ResolveInfo
 from graphene_django import DjangoObjectType
 
 from taps.decorators import login_required
@@ -38,8 +38,7 @@ class BreweryType(DjangoObjectType):
         )
 
     def resolve_beer_count(self, info: ResolveInfo) -> int:
-        # Django-stubs types QuerySet.count() as returning Any, but it returns int
-        return self.beers.count()  # type: ignore[no-any-return]
+        return cast(int, self.beers.count())
 
 
 class BeerType(DjangoObjectType):
@@ -65,8 +64,7 @@ class BeerType(DjangoObjectType):
         )
 
     def resolve_style_display(self, info: ResolveInfo) -> str:
-        # Django model's get_FOO_display() is typed as returning Any in django-stubs
-        return self.get_style_display()  # type: ignore[no-any-return]
+        return cast(str, self.get_style_display())
 
     def resolve_tags_with_votes(self, info: ResolveInfo) -> list["TagVoteType"]:
         tag_votes = []
@@ -136,8 +134,7 @@ class TagType(DjangoObjectType):
         fields = ("id", "name", "beers")
 
     def resolve_beer_count(self, info: ResolveInfo) -> int:
-        # Django-stubs types QuerySet.count() as returning Any, but it returns int
-        return self.beers.count()  # type: ignore[no-any-return]
+        return cast(int, self.beers.count())
 
 
 class UserType(DjangoObjectType):
@@ -279,9 +276,7 @@ class Query(graphene.ObjectType):
     def resolve_current_user(self, info: ResolveInfo) -> Optional[User]:
         user = info.context.user
         if user.is_authenticated:
-            # Django request.user is typed as AbstractBaseUser | AnonymousUser
-            # in django-stubs
-            return user  # type: ignore[no-any-return]
+            return cast(User, user)
         return None
 
 
