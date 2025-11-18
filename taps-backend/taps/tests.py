@@ -441,7 +441,9 @@ class NewTagsForBeerTestCase(TestCase):
         self.client.force_login(self.user)
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create a beer
         self.beer = Beer.objects.create(
@@ -618,7 +620,9 @@ class TagVoteMutationTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create a beer
         self.beer = Beer.objects.create(
@@ -866,7 +870,9 @@ class SaveBeerMutationTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create a beer
         self.beer = Beer.objects.create(
@@ -965,7 +971,9 @@ class UnsaveBeerMutationTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create a beer
         self.beer = Beer.objects.create(
@@ -1062,7 +1070,9 @@ class AddTagsForBeerMutationTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create a beer
         self.beer = Beer.objects.create(

@@ -7,6 +7,15 @@ const BREWERY_INFO_FRAGMENT = gql`
     id
     name
     location
+    city
+    stateProvince
+    address1
+    address2
+    postalCode
+    country
+    longitude
+    latitude
+    phone
   }
 `;
 
@@ -78,6 +87,15 @@ export const GET_BREWERY_BY_ID = gql`
       id
       name
       location
+      city
+      stateProvince
+      address1
+      address2
+      postalCode
+      country
+      longitude
+      latitude
+      phone
       description
       yearFounded
       website

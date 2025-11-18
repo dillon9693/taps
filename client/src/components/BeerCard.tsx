@@ -13,6 +13,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import type { Beer } from "../types";
+import formatBreweryLocation from "../utils/brewery";
 import Tag from "./Tag";
 
 interface BeerCardProps {
@@ -83,7 +84,7 @@ export default function BeerCard(props: BeerCardProps) {
                 {beer.brewery.name}
               </Anchor>
               {" • "}
-              {beer.brewery.location}
+              {formatBreweryLocation(beer.brewery)}
             </Text>
 
             <Rating

@@ -24,13 +24,26 @@ logger = logging.getLogger(__name__)
 
 class BreweryType(DjangoObjectType):
     beer_count = graphene.Int()
+    # Explicitly declare location field to add deprecation metadata.
+    # The resolver below (resolve_location) computes the value.
+    location = graphene.String(
+        deprecation_reason="Use city and state_province fields instead"
+    )
 
     class Meta:
         model = Brewery
         fields = (
             "id",
             "name",
-            "location",
+            "address_1",
+            "address_2",
+            "city",
+            "state_province",
+            "postal_code",
+            "country",
+            "longitude",
+            "latitude",
+            "phone",
             "description",
             "year_founded",
             "website",
@@ -39,6 +52,10 @@ class BreweryType(DjangoObjectType):
 
     def resolve_beer_count(self, info: ResolveInfo) -> int:
         return cast(int, self.beers.count())
+
+    def resolve_location(self, info: ResolveInfo) -> str:
+        """Computed field for backward compatibility. Returns 'city, state_province'."""
+        return f"{self.city}, {self.state_province}"
 
 
 class BeerType(DjangoObjectType):
@@ -157,7 +174,6 @@ class Query(graphene.ObjectType):
 
     all_breweries = graphene.List(
         BreweryType,
-        location=graphene.String(required=False),
         search=graphene.String(required=False),
     )
     brewery_by_id = graphene.Field(BreweryType, id=graphene.ID(required=True))
@@ -228,15 +244,10 @@ class Query(graphene.ObjectType):
             return None
 
     def resolve_all_breweries(
-        self,
-        info: ResolveInfo,
-        location: Optional[str] = None,
-        search: Optional[str] = None,
+        self, info: ResolveInfo, search: Optional[str] = None
     ) -> QuerySet[Brewery]:
         qs = Brewery.objects.prefetch_related("beers")
 
-        if location:
-            qs = qs.filter(location__icontains=location)
         if search:
             qs = qs.filter(name__icontains=search) | qs.filter(
                 description__icontains=search

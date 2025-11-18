@@ -18,7 +18,9 @@ class SavedBeersResolverTestCase(TestCase):
         )
 
         # Create a brewery
-        self.brewery = Brewery.objects.create(name="Test Brewery", location="Test City")
+        self.brewery = Brewery.objects.create(
+            name="Test Brewery", city="Test City", state_province="Test State"
+        )
 
         # Create multiple beers
         self.beer1 = Beer.objects.create(

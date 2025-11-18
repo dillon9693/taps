@@ -22,6 +22,7 @@ import {
 import { GET_BREWERY_BY_ID } from "../graphql/queries";
 import type { Brewery } from "../types";
 import { usePageTitle } from "../hooks/usePageTitle";
+import formatBreweryLocation from "../utils/brewery";
 
 type GetBreweryResult = {
   breweryById: Brewery;
@@ -87,7 +88,7 @@ export default function BreweryDetail() {
           <Stack gap="md">
             <Title order={1}>{brewery.name}</Title>
             <Text size="xl" c="dimmed">
-              {brewery.location}
+              {formatBreweryLocation(brewery)}
             </Text>
             {brewery.beerCount && (
               <Group align="center">
@@ -191,7 +192,7 @@ export default function BreweryDetail() {
             <Stack gap="md">
               <Group justify="space-between" align="center">
                 <Text fw={500}>Location</Text>
-                <Text>{brewery.location}</Text>
+                <Text>{formatBreweryLocation(brewery)}</Text>
               </Group>
               {brewery.yearFounded && (
                 <Group justify="space-between" align="center">
