@@ -160,6 +160,13 @@ class UserType(DjangoObjectType):
         fields = ("id", "email", "first_name", "last_name", "date_joined")
 
 
+class SearchBeersByQueryType(graphene.ObjectType):
+    matching_tags = graphene.List(graphene.String)
+    beers = graphene.List(
+        BeerType,
+    )
+
+
 class Query(graphene.ObjectType):
     all_beers = graphene.List(
         BeerType,
@@ -168,7 +175,15 @@ class Query(graphene.ObjectType):
         max_abv=graphene.Float(required=False),
         search=graphene.String(required=False),
     )
-    featured_beers = graphene.List(BeerType, count=graphene.Int(required=False))
+    featured_beers = graphene.List(
+        BeerType,
+        count=graphene.Int(required=False),
+    )
+    search_beers_by_query = graphene.Field(
+        SearchBeersByQueryType,
+        query=graphene.String(required=True),
+        count=graphene.Int(required=False),
+    )
     saved_beers = graphene.List(BeerType, count=graphene.Int(required=False))
     beer_by_id = graphene.Field(BeerType, id=graphene.ID(required=True))
 
@@ -220,6 +235,23 @@ class Query(graphene.ObjectType):
             .filter(average_rating__isnull=False)
             .order_by("-average_rating")[:count]
         )
+
+    def resolve_search_beers_by_query(
+        self, info: ResolveInfo, query: str, count: int = 10
+    ) -> SearchBeersByQueryType:
+        # 1. Convert query into set of tags - TODO
+        tags_from_query = ["Hoppy", "Fruity"]
+
+        beers_qs = Beer.objects.prefetch_related("tags")
+
+        for tag in tags_from_query:
+            beers_qs = beers_qs.filter(tags__name=tag)
+
+        # 3. Sort by match and return first `count` results - TODO
+        return {
+            "matching_tags": tags_from_query,
+            "beers": beers_qs,
+        }
 
     @login_required
     def resolve_saved_beers(self, info: ResolveInfo, count: int = 10) -> list[Beer]:
