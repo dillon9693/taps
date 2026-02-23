@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
-import { MockedProvider } from "@apollo/client/testing";
+import { MockedProvider, type MockedResponse } from "@apollo/client/testing";
 import { AuthProvider } from "../contexts/AuthContext";
 import BeerDetail from "./BeerDetail";
 import { GET_BEER, GET_CURRENT_USER } from "../graphql/queries";
@@ -67,7 +67,7 @@ const authenticatedMock = {
   },
 };
 
-const renderBeerDetail = (mocks: object[]) =>
+const renderBeerDetail = (mocks: MockedResponse[]) =>
   render(
     <MockedProvider mocks={mocks} addTypename>
       <AuthProvider>
