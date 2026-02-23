@@ -90,6 +90,7 @@ ignore_missing_imports = true
 module = [
     "taps.tests",
     "taps.test_decorators",
+    "taps.test_management_commands",
     "taps.test_queries",
 ]
 disallow_untyped_defs = false
