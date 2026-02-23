@@ -7,6 +7,7 @@ import { ApolloProvider } from "@apollo/client";
 import client from "./apollo-client";
 import { AuthProvider } from "./contexts/AuthContext";
 import App from "./App";
+import FeaturedBeers from "./routes/FeaturedBeers";
 import Home from "./routes/Home";
 import Search from "./routes/Search";
 import BeerDetail from "./routes/BeerDetail";
@@ -47,6 +48,7 @@ root.render(
               <Route path="/" element={<App />}>
                 <Route index element={<Navigate to="home" replace />} />
                 <Route path="home" element={<Home />} />
+                <Route path="featured" element={<FeaturedBeers />} />
                 <Route path="search" element={<Search />} />
                 <Route path="beer/:id" element={<BeerDetail />} />
                 <Route path="brewery/:id" element={<BreweryDetail />} />
