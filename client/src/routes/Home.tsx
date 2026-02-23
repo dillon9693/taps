@@ -50,9 +50,9 @@ export default function Home() {
         </Title>
       </Center>
 
-      <form onSubmit={onQueryFormSubmit}>
-        <Grid gutter="lg">
-          <Grid.Col span={12}>
+      <Grid gutter="lg">
+        <Grid.Col span={12}>
+          <form onSubmit={onQueryFormSubmit}>
             <TextInput
               label="What's going on today?"
               {...queryForm.getInputProps("query")}
@@ -63,46 +63,46 @@ export default function Home() {
                 Find some beers!
               </Button>
             </Group>
+          </form>
+        </Grid.Col>
+
+        {queryLoading && (
+          // <Center mt="md">
+          <Grid.Col span={12}>
+            <Center>
+              <Loader />
+            </Center>
           </Grid.Col>
+        )}
 
-          {queryLoading && (
-            // <Center mt="md">
-            <Grid.Col span={12}>
-              <Center>
-                <Loader />
-              </Center>
-            </Grid.Col>
-          )}
+        {queryError && !queryLoading && (
+          // <Center mt="md">
+          <Grid.Col span={12}>
+            <Center>
+              <Text c="red" size="sm" mt="md">
+                Error loading beers. Try again
+              </Text>
+            </Center>
+          </Grid.Col>
+        )}
 
-          {queryError && !queryLoading && (
-            // <Center mt="md">
-            <Grid.Col span={12}>
-              <Center>
-                <Text c="red" size="sm" mt="md">
-                  Error loading beers. Try again
-                </Text>
-              </Center>
-            </Grid.Col>
-          )}
+        {!queryLoading && !queryError && queryData && (
+          <>
+            {queryData?.searchBeersByQuery?.matchingTags && (
+              <Grid.Col span={12}>
+                Tags used:{" "}
+                {queryData?.searchBeersByQuery?.matchingTags?.join(", ")}
+              </Grid.Col>
+            )}
 
-          {!queryLoading && !queryError && queryData && (
-            <>
-              {queryData?.searchBeersByQuery?.matchingTags && (
-                <Grid.Col span={12}>
-                  Tags used:{" "}
-                  {queryData?.searchBeersByQuery?.matchingTags?.join(", ")}
-                </Grid.Col>
-              )}
-
-              {queryData?.searchBeersByQuery?.beers?.map((beer) => (
-                <Grid.Col key={beer.id} span={{ base: 12, sm: 6, md: 4 }}>
-                  <BeerCard beer={beer} />
-                </Grid.Col>
-              ))}
-            </>
-          )}
-        </Grid>
-      </form>
+            {queryData?.searchBeersByQuery?.beers?.map((beer) => (
+              <Grid.Col key={beer.id} span={{ base: 12, sm: 6, md: 4 }}>
+                <BeerCard beer={beer} />
+              </Grid.Col>
+            ))}
+          </>
+        )}
+      </Grid>
     </Container>
   );
 }
