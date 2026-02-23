@@ -240,17 +240,26 @@ class Query(graphene.ObjectType):
         self, info: ResolveInfo, query: str, count: int = 10
     ) -> SearchBeersByQueryType:
         # 1. Convert query into set of tags - TODO
-        tags_from_query = ["Hoppy", "Fruity"]
+        tags_from_query = ["Hoppy", "Fruity", "Citrus"]
 
         beers_qs = Beer.objects.prefetch_related("tags")
 
+        tag_query = Q()
+
         for tag in tags_from_query:
-            beers_qs = beers_qs.filter(tags__name=tag)
+            tag_query.add(Q(tags__name=tag), Q.OR)
+
+        beers_qs = beers_qs.filter(tag_query)
 
         # Sort by beers whose tags have the highest score (i.e. upvote minus downvote)
         # TODO consider moving score logic into method on model
         beers_qs = (
             beers_qs.annotate(
+                tag_match_count=Count(
+                    "tags",
+                    filter=Q(tags__name__in=tags_from_query),
+                    distinct=True,
+                ),
                 upvote_count=Count(
                     "tag_votes", filter=Q(tag_votes__upvote=True), distinct=True
                 ),
@@ -261,7 +270,8 @@ class Query(graphene.ObjectType):
                     F("upvote_count") - F("downvote_count"), output_field=IntegerField()
                 ),
             )
-            .order_by("-score")
+            # TODO do we want to sort by those with all tags? Or by score?
+            .order_by("-tag_match_count", "-score")
             .distinct()
         )
 
