@@ -76,6 +76,16 @@ export default function App() {
             >
               Home
             </Button>
+
+            <Button
+              variant="subtle"
+              component={Link}
+              to="/featured"
+              style={{ color: "white" }}
+            >
+              Featured
+            </Button>
+
             <Button
               variant="subtle"
               component={Link}

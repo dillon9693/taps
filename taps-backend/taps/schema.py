@@ -10,7 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Count, QuerySet
+from django.db.models import Count, ExpressionWrapper, F, IntegerField, Q, QuerySet
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene.types import ResolveInfo
@@ -160,6 +160,13 @@ class UserType(DjangoObjectType):
         fields = ("id", "email", "first_name", "last_name", "date_joined")
 
 
+class SearchBeersByQueryType(graphene.ObjectType):
+    matching_tags = graphene.List(graphene.String)
+    beers = graphene.List(
+        BeerType,
+    )
+
+
 class Query(graphene.ObjectType):
     all_beers = graphene.List(
         BeerType,
@@ -168,7 +175,15 @@ class Query(graphene.ObjectType):
         max_abv=graphene.Float(required=False),
         search=graphene.String(required=False),
     )
-    featured_beers = graphene.List(BeerType, count=graphene.Int(required=False))
+    featured_beers = graphene.List(
+        BeerType,
+        count=graphene.Int(required=False),
+    )
+    search_beers_by_query = graphene.Field(
+        SearchBeersByQueryType,
+        query=graphene.String(required=True),
+        count=graphene.Int(required=False),
+    )
     saved_beers = graphene.List(BeerType, count=graphene.Int(required=False))
     beer_by_id = graphene.Field(BeerType, id=graphene.ID(required=True))
 
@@ -220,6 +235,50 @@ class Query(graphene.ObjectType):
             .filter(average_rating__isnull=False)
             .order_by("-average_rating")[:count]
         )
+
+    def resolve_search_beers_by_query(
+        self, info: ResolveInfo, query: str, count: int = 10
+    ) -> SearchBeersByQueryType:
+        # 1. Convert query into set of tags - TODO
+        tags_from_query = ["Hoppy", "Fruity", "Citrus"]
+
+        beers_qs = Beer.objects.prefetch_related("tags")
+
+        tag_query = Q()
+
+        for tag in tags_from_query:
+            tag_query.add(Q(tags__name=tag), Q.OR)
+
+        beers_qs = beers_qs.filter(tag_query)
+
+        # Sort by beers whose tags have the highest score (i.e. upvote minus downvote)
+        # TODO consider moving score logic into method on model
+        beers_qs = (
+            beers_qs.annotate(
+                tag_match_count=Count(
+                    "tags",
+                    filter=Q(tags__name__in=tags_from_query),
+                    distinct=True,
+                ),
+                upvote_count=Count(
+                    "tag_votes", filter=Q(tag_votes__upvote=True), distinct=True
+                ),
+                downvote_count=Count(
+                    "tag_votes", filter=Q(tag_votes__upvote=False), distinct=True
+                ),
+                score=ExpressionWrapper(
+                    F("upvote_count") - F("downvote_count"), output_field=IntegerField()
+                ),
+            )
+            # TODO do we want to sort by those with all tags? Or by score?
+            .order_by("-tag_match_count", "-score")
+            .distinct()
+        )
+
+        return {
+            "matching_tags": tags_from_query,
+            "beers": beers_qs[:count],
+        }
 
     @login_required
     def resolve_saved_beers(self, info: ResolveInfo, count: int = 10) -> list[Beer]:

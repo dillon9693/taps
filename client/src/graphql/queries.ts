@@ -150,3 +150,22 @@ export const NEW_TAGS_FOR_BEER = gql`
     }
   }
 `;
+
+export type SearchBeersByQueryResult = {
+  searchBeersByQuery: {
+    matchingTags: string[];
+    beers: Beer[];
+  };
+};
+
+export const SEARCH_BEERS_BY_QUERY = gql`
+  query SearchBeersByQuery($query: String!, $count: Int) {
+    searchBeersByQuery(query: $query, count: $count) {
+      matchingTags
+      beers {
+        ...BeerFields
+      }
+    }
+  }
+  ${BEER_FIELDS_FRAGMENT}
+`;
