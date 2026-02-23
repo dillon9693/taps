@@ -10,7 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.db import IntegrityError
-from django.db.models import Count, QuerySet
+from django.db.models import Count, ExpressionWrapper, F, IntegerField, Q, QuerySet
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from graphene.types import ResolveInfo
@@ -247,10 +247,27 @@ class Query(graphene.ObjectType):
         for tag in tags_from_query:
             beers_qs = beers_qs.filter(tags__name=tag)
 
-        # 3. Sort by match and return first `count` results - TODO
+        # Sort by beers whose tags have the highest score (i.e. upvote minus downvote)
+        # TODO consider moving score logic into method on model
+        beers_qs = (
+            beers_qs.annotate(
+                upvote_count=Count(
+                    "tag_votes", filter=Q(tag_votes__upvote=True), distinct=True
+                ),
+                downvote_count=Count(
+                    "tag_votes", filter=Q(tag_votes__upvote=False), distinct=True
+                ),
+                score=ExpressionWrapper(
+                    F("upvote_count") - F("downvote_count"), output_field=IntegerField()
+                ),
+            )
+            .order_by("-score")
+            .distinct()
+        )
+
         return {
             "matching_tags": tags_from_query,
-            "beers": beers_qs,
+            "beers": beers_qs[:count],
         }
 
     @login_required
