@@ -159,8 +159,8 @@ export type SearchBeersByQueryResult = {
 };
 
 export const SEARCH_BEERS_BY_QUERY = gql`
-  query SearchBeersByQuery($query: String!) {
-    searchBeersByQuery(query: $query) {
+  query SearchBeersByQuery($query: String!, $count: Int) {
+    searchBeersByQuery(query: $query, count: $count) {
       matchingTags
       beers {
         ...BeerFields
