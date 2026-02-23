@@ -1,13 +1,21 @@
+import { useLazyQuery } from "@apollo/client";
 import {
   Button,
   Center,
   Container,
   Grid,
   Group,
+  Loader,
+  Text,
   TextInput,
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import {
+  SEARCH_BEERS_BY_QUERY,
+  SearchBeersByQueryResult,
+} from "../graphql/queries";
+import BeerCard from "../components/BeerCard";
 
 export default function Home() {
   const queryForm = useForm({
@@ -15,11 +23,23 @@ export default function Home() {
     initialValues: {
       query: "",
     },
+    validate: {
+      query: (value: string) =>
+        value.length <= 0 ? "You must be doing something!" : null,
+    },
   });
 
+  const [
+    searchBeersByQuery,
+    { loading: queryLoading, error: queryError, data: queryData },
+  ] = useLazyQuery<SearchBeersByQueryResult>(SEARCH_BEERS_BY_QUERY);
+
   const onQueryFormSubmit = queryForm.onSubmit((values) => {
-    console.log(values);
-    // TODO send request
+    searchBeersByQuery({
+      variables: {
+        query: values.query,
+      },
+    });
   });
 
   return (
@@ -39,9 +59,48 @@ export default function Home() {
             />
 
             <Group justify="flex-end" mt="md">
-              <Button type="submit">Find some beers!</Button>
+              <Button type="submit" disabled={queryLoading}>
+                Find some beers!
+              </Button>
             </Group>
           </Grid.Col>
+
+          {queryLoading && (
+            // <Center mt="md">
+            <Grid.Col span={12}>
+              <Center>
+                <Loader />
+              </Center>
+            </Grid.Col>
+          )}
+
+          {queryError && !queryLoading && (
+            // <Center mt="md">
+            <Grid.Col span={12}>
+              <Center>
+                <Text c="red" size="sm" mt="md">
+                  Error loading beers. Try again
+                </Text>
+              </Center>
+            </Grid.Col>
+          )}
+
+          {!queryLoading && !queryError && queryData && (
+            <>
+              {queryData?.searchBeersByQuery?.matchingTags && (
+                <Grid.Col span={12}>
+                  Tags used:{" "}
+                  {queryData?.searchBeersByQuery?.matchingTags?.join(", ")}
+                </Grid.Col>
+              )}
+
+              {queryData?.searchBeersByQuery?.beers?.map((beer) => (
+                <Grid.Col key={beer.id} span={{ base: 12, sm: 6, md: 4 }}>
+                  <BeerCard beer={beer} />
+                </Grid.Col>
+              ))}
+            </>
+          )}
         </Grid>
       </form>
     </Container>
