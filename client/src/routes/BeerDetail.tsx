@@ -204,22 +204,31 @@ export default function BeerDetail() {
                   <Text size="lg">{beer.averageRating}/5</Text>
                 </Group>
                 <Group align="center" mb="lg">
-                  <Button
-                    size="sm"
-                    radius="md"
-                    variant={isSaved ? "filled" : "outline"}
-                    color={theme.colors.accent[5]}
-                    style={{ minWidth: "85px" }}
-                    onClick={onSaveButtonClick}
-                    aria-label={isSaved ? "Unsave this beer" : "Save this beer"}
-                    aria-busy={saveBeerLoading || unsaveBeerLoading}
+                  <Tooltip
+                    label="Sign in to save beers"
+                    disabled={isAuthenticated}
+                    withArrow
                   >
-                    {saveBeerLoading || unsaveBeerLoading ? (
-                      <Loader size="xs" color="white" />
-                    ) : (
-                      saveButtonText
-                    )}
-                  </Button>
+                    <Button
+                      size="sm"
+                      radius="md"
+                      variant={isSaved ? "filled" : "outline"}
+                      color={theme.colors.accent[5]}
+                      style={{ minWidth: "85px" }}
+                      onClick={onSaveButtonClick}
+                      disabled={!isAuthenticated}
+                      aria-label={
+                        isSaved ? "Unsave this beer" : "Save this beer"
+                      }
+                      aria-busy={saveBeerLoading || unsaveBeerLoading}
+                    >
+                      {saveBeerLoading || unsaveBeerLoading ? (
+                        <Loader size="xs" color="white" />
+                      ) : (
+                        saveButtonText
+                      )}
+                    </Button>
+                  </Tooltip>
                 </Group>
               </Stack>
             </Card.Section>
